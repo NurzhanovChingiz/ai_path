@@ -1,2 +1,2 @@
 # ai_path
-Repeat what knowledge 
+Repeat all known knowledge 

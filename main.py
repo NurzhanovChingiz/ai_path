@@ -1,36 +1,37 @@
 import torch
-def drop_column(A: torch.tensor) -> torch.tensor:
+from torch import Tensor
+from torch import nn
+from torch.nn import functional as F
+class CustomGELU(nn.Module):
     """
-    Drops the column of A containing the most 0 values.
-
-    Parameters:
-        tensor: A 2D tensor.
-    Returns:
-        tensor: The input tensor with the column containing the most 0 values removed.
+    Custom GELU activation function.
     """
-
-    result = None
-    ### your code here ###
-    # Find the column with the most zeros
-    n_rows = A.size()[0]
-    n_cols = A.size()[1]
-    
-    # cols_with_zeros = torch.sum(A == 0, dim=0)
-    zero_counts = (A == 0).sum(dim=0)
-    col_to_remove = torch.argmax(zero_counts)
-    mask = torch.arange(A.size(1)) != col_to_remove
-    print(mask)
-    # col_with_most_zeros = torch.where(A == 0)
-    # print(col_with_most_zeros)
-    
-    print(result)
-    # Drop that column
-    # result = torch.cat([A[:, :col_with_most_zeros[1][0]], A[:, col_with_most_zeros[1][0] + 1:]], dim=1)
-    # return result
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return 0.5 * x * (1.0 + torch.tanh(0.797884561 * (x + 0.044715 * x**3)))
 if __name__ == "__main__":
-    x = torch.tensor([[0, 0, 7],
-        [0, 0, 1],
-        [3, 0, 5]])
-    # print(x)
-    print(drop_column(x))
-    
+    # Example usage
+    # Plot the activation functions
+    import matplotlib.pyplot as plt
+    import numpy as np
+    x = torch.linspace(-5, 5, 100)
+    plt.figure(figsize=(10, 6))
+    plt.title("Custom PReLU Activation Function")
+    plt.xlabel("Input")
+    plt.ylabel("Output")
+    plt.grid()
+    plt.axhline(0, color='black', lw=0.5, ls='--')
+    plt.axvline(0, color='black', lw=0.5, ls='--')
+    plt.plot(x.numpy(), CustomGELU()(x).detach().numpy(), label='Custom PReLU', color='blue')
+    plt.legend()
+    plt.show()
+    # Plot the activation functions
+    plt.figure(figsize=(10, 6))
+    plt.title("PReLU Activation Function")
+    plt.xlabel("Input")
+    plt.ylabel("Output")
+    plt.grid()
+    plt.axhline(0, color='black', lw=0.5, ls='--')
+    plt.axvline(0, color='black', lw=0.5, ls='--')
+    plt.plot(x.numpy(), nn.GELU()(x).detach().numpy(), label='Custom PReLU', color='blue')
+    plt.legend()
+    plt.show()

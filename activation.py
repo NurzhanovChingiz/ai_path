@@ -64,6 +64,13 @@ class CustomSigmoid(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return 1 / (1 + torch.exp(-x))
 
+class CustomMish(nn.Module):
+    """
+    Custom Mish activation function.
+    """
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x * torch.tanh(F.softplus(x))
+
 class CustomSoftplus(nn.Module):
     """
     Custom Softplus activation function.
@@ -83,7 +90,7 @@ class CustomSoftmax(nn.Module):
     Custom Softmax activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.exp(x) / torch.sum(torch.exp(x), dim=1, keepdim=True)   
+        return torch.exp(x) / torch.sum(torch.exp(x), dim=0, keepdim=True)   
 class CustomLeakyReLU(nn.Module):
     """
     Custom Leaky ReLU activation function.
@@ -117,8 +124,7 @@ if __name__ == "__main__":
     x = torch.tensor([[0, 0, 7],
         [-1, 0, 1],
         [3, -5, 5]])
-    from torch import nn
-    nn.LeakyReLU()
+    
     print('CustomReLU', CustomReLU()(x))
     print('CustomReLU6', CustomReLU6()(x))
     print('CustomPReLU', CustomPReLU()(x))
@@ -126,6 +132,7 @@ if __name__ == "__main__":
     print('CustomCELU', CustomCELU()(x))
     print('CustomGELU', CustomGELU()(x))
     print('CustomSigmoid', CustomSigmoid()(x))
+    print('CustomMish', CustomMish()(x))
     print('CustomSoftplus', CustomSoftplus()(x))
     print('CustomTanh', CustomTanh()(x))
     print('CustomSoftmax', CustomSoftmax()(x))

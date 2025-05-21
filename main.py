@@ -1,37 +1,74 @@
 import torch
-from torch import Tensor
 from torch import nn
 from torch.nn import functional as F
-class CustomGELU(nn.Module):
+import matplotlib.pyplot as plt
+from activation import *
+class CustomMish(nn.Module):
     """
-    Custom GELU activation function.
+    Custom Mish activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return 0.5 * x * (1.0 + torch.tanh(0.797884561 * (x + 0.044715 * x**3)))
+        return x * torch.tanh(F.softplus(x))
+
+
+def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000):
+    """
+    Plot the activation function.
+    
+    Parameters:
+    - activation_func: The activation function to plot.
+    - x_range: The range of x values to plot.
+    - num_points: The number of points to plot.
+    """
+    print(f"Plotting {activation_func.__name__} activation function")
+
+    x = torch.linspace(-1, 1, num_points)
+    plt.figure(figsize=(10, 6))
+    plt.plot(x.numpy(), activation_func()(x).detach().numpy(), color='blue')
+    plt.xlabel("Input")
+    plt.ylabel("Output")
+    plt.title(f"Activation Function: {activation_func.__name__}")
+    plt.grid()
+    plt.savefig(f"results/activation_fun/{activation_func.__name__}.png")
+    plt.show()
 if __name__ == "__main__":
     # Example usage
     # Plot the activation functions
-    import matplotlib.pyplot as plt
-    import numpy as np
-    x = torch.linspace(-5, 5, 100)
-    plt.figure(figsize=(10, 6))
-    plt.title("Custom PReLU Activation Function")
-    plt.xlabel("Input")
-    plt.ylabel("Output")
-    plt.grid()
-    plt.axhline(0, color='black', lw=0.5, ls='--')
-    plt.axvline(0, color='black', lw=0.5, ls='--')
-    plt.plot(x.numpy(), CustomGELU()(x).detach().numpy(), label='Custom PReLU', color='blue')
-    plt.legend()
-    plt.show()
-    # Plot the activation functions
-    plt.figure(figsize=(10, 6))
-    plt.title("PReLU Activation Function")
-    plt.xlabel("Input")
-    plt.ylabel("Output")
-    plt.grid()
-    plt.axhline(0, color='black', lw=0.5, ls='--')
-    plt.axvline(0, color='black', lw=0.5, ls='--')
-    plt.plot(x.numpy(), nn.GELU()(x).detach().numpy(), label='Custom PReLU', color='blue')
-    plt.legend()
-    plt.show()
+    activatetion_functions_custom = [
+        CustomReLU,
+        CustomReLU6,
+        CustomPReLU,
+        CustomSELU,
+        CustomCELU,
+        CustomGELU,
+        CustomSigmoid,
+        CustomMish,
+        CustomSoftplus,
+        CustomTanh,
+        CustomSoftmax,
+        CustomLeakyReLU,
+        CustomELU,
+        CustomSwiff
+    ]
+    activatetion_functions_original = [
+        nn.ReLU,
+        nn.ReLU6,
+        nn.PReLU,
+        nn.SELU,
+        nn.CELU,
+        nn.GELU,
+        nn.Sigmoid,
+        nn.Mish,
+        nn.Softplus,
+        nn.Tanh,
+        nn.Softmax,
+        nn.LeakyReLU,
+        nn.ELU
+    ]
+        
+        
+    for func in zip(activatetion_functions_custom, activatetion_functions_original):
+        custom_func, original_func = func
+        plot_activation_function(custom_func)
+        plot_activation_function(original_func)
+

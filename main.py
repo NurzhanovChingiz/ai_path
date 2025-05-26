@@ -4,7 +4,8 @@ from torch.nn import functional as F
 from activation import *
 import matplotlib.pyplot as plt
 import os
-def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000):
+from config import CFG
+def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000, save = True):
     """
     Plot the activation function.
     
@@ -22,7 +23,8 @@ def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000):
     plt.ylabel("Output")
     plt.title(f"Activation Function: {activation_func.__name__}")
     plt.grid()
-    plt.savefig(os.getcwd() + f"/results/activation_fun/{activation_func.__name__}.png")
+    if save:
+        plt.savefig(os.getcwd() + f"/results/activation_fun/{activation_func.__name__}.png")
     plt.show() 
 
 if __name__ == "__main__":
@@ -63,6 +65,6 @@ if __name__ == "__main__":
         
     for func in zip(activatetion_functions_custom, activatetion_functions_original):
         custom_func, original_func = func
-        plot_activation_function(custom_func)
-        plot_activation_function(original_func)
+        plot_activation_function(custom_func, save=CFG.is_save)
+        plot_activation_function(original_func, save=CFG.is_save)
 

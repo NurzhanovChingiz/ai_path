@@ -124,19 +124,25 @@ if __name__ == "__main__":
     x = torch.tensor([[0, 0, 7],
         [-1, 0, 1],
         [3, -5, 5]])
-    
-    print('CustomReLU', CustomReLU()(x))
-    print('CustomReLU6', CustomReLU6()(x))
-    print('CustomPReLU', CustomPReLU()(x))
-    print('CustomSELU', CustomSELU()(x))
-    print('CustomCELU', CustomCELU()(x))
-    print('CustomGELU', CustomGELU()(x))
-    print('CustomSigmoid', CustomSigmoid()(x))
-    print('CustomMish', CustomMish()(x))
-    print('CustomSoftplus', CustomSoftplus()(x))
-    print('CustomTanh', CustomTanh()(x))
-    print('CustomSoftmax', CustomSoftmax()(x))
-    print('CustomLeakyReLU', CustomLeakyReLU()(x))
-    print('CustomELU', CustomELU()(x))
-    print('CustomSwiff', CustomSwiff()(x))
+    DDP = torch.nn.DataParallel 
 
+    # Move the model to the correct device
+    # model = model.to(device)
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    CustomReLU6 = DDP(CustomReLU6, device_ids=device)
+    CustomReLU6 = torch.compile(CustomReLU6, mode='max-autotune-no-cudagraphs', dynamic=True, fullgraph=True)
+    print('CustomReLU', CustomReLU6()(x))
+    # print('CustomReLU6', CustomReLU6()(x))
+    # print('CustomPReLU', CustomPReLU()(x))
+    # print('CustomSELU', CustomSELU()(x))
+    # print('CustomCELU', CustomCELU()(x))
+    # print('CustomGELU', CustomGELU()(x))
+    # print('CustomSigmoid', CustomSigmoid()(x))
+    # print('CustomMish', CustomMish()(x))
+    # print('CustomSoftplus', CustomSoftplus()(x))
+    # print('CustomTanh', CustomTanh()(x))
+    # print('CustomSoftmax', CustomSoftmax()(x))
+    # print('CustomLeakyReLU', CustomLeakyReLU()(x))
+    # print('CustomELU', CustomELU()(x))
+    # print('CustomSwiff', CustomSwiff()(x))
+    

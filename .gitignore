@@ -1,0 +1,12 @@
+# Node modules
+ai_path/results/activation_fun
+
+# Python cache
+__pycache__/
+*.pyc
+
+# MacOS files
+.DS_Store
+
+# Logs
+*.log

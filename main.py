@@ -1,16 +1,9 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-import matplotlib.pyplot as plt
 from activation import *
-class CustomMish(nn.Module):
-    """
-    Custom Mish activation function.
-    """
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return x * torch.tanh(F.softplus(x))
-
-
+import matplotlib.pyplot as plt
+import os
 def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000):
     """
     Plot the activation function.
@@ -29,8 +22,9 @@ def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000):
     plt.ylabel("Output")
     plt.title(f"Activation Function: {activation_func.__name__}")
     plt.grid()
-    plt.savefig(f"results/activation_fun/{activation_func.__name__}.png")
-    plt.show()
+    plt.savefig(os.getcwd() + f"/results/activation_fun/{activation_func.__name__}.png")
+    plt.show() 
+
 if __name__ == "__main__":
     # Example usage
     # Plot the activation functions

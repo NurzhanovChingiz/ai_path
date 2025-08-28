@@ -4,6 +4,10 @@ ai_path/results/activation_fun
 # Python cache
 __pycache__/
 *.pyc
+# all results folders
+
+*/results/
+
 
 # MacOS files
 .DS_Store

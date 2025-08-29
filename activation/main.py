@@ -68,7 +68,7 @@ if __name__ == "__main__":
         nn.ELU
     ]
         
-        
+
     for func in zip(activatetion_functions_custom, activatetion_functions_original):
         custom_func, original_func = func
         plot_activation_function(custom_func, save=CFG.is_save)

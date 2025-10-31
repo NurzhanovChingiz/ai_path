@@ -15,4 +15,4 @@ __pycache__/
 */mnist_data
 
 # ignore structure file
-*structure.txt
+structure.txt

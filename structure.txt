@@ -1,0 +1,27 @@
+ai_path/
+├── __init__.py
+├── activation/
+│   ├── activation.py
+│   ├── config.py
+│   ├── main.py
+│   ├── results/
+├── common_alg_cv/
+│   ├── config.py
+│   ├── mnist_download.py
+│   ├── prepare_mnist_dataset.py
+│   ├── read_img.py
+│   ├── test.py
+│   ├── __init__.py
+│   ├── mnist_data/
+│   │   ├── images/
+│   ├── __pycache__/
+├── common_alg_ml/
+│   ├── helper.py
+│   ├── rle_encoder.py
+│   ├── time_it.py
+│   ├── __init__.py
+├── optim/
+│   ├── DION.py
+│   ├── LAMB.py
+│   ├── main.py
+│   ├── __init__.py

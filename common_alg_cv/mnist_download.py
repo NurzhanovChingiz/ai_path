@@ -2,19 +2,20 @@ import kagglehub
 import os
 import shutil
 from pathlib import Path
+from config import CFG
 
 def download_mnist_data():
     # Delete existing data folder if exists
-    shutil.rmtree(os.path.join(Path(__file__).parent, "mnist_data"), ignore_errors=True)
+    shutil.rmtree(os.path.join(Path(__file__).parent, CFG.DOWNLOAD_PATH), ignore_errors=True)
     # Download latest version
     print('parents:', Path(__file__).parent)
-    image_folder = os.path.join(Path(__file__).parent, "mnist_data")
+    image_folder = os.path.join(Path(__file__).parent, CFG.DOWNLOAD_PATH)
     os.makedirs(image_folder, exist_ok=True)
     print("Downloading MNIST dataset to:", image_folder)
     path = kagglehub.dataset_download("animatronbot/mnist-digit-recognizer")
     shutil.move(path, image_folder)
     print("MNIST dataset downloaded to:", image_folder)
-    image_folder = Path(__file__).parent / "mnist_data"
+    image_folder = Path(__file__).parent / CFG.DOWNLOAD_PATH
     nested_folders = [p for p in image_folder.iterdir() if p.is_dir()]
 
     for folder in nested_folders:
@@ -33,7 +34,7 @@ def make_images_from_csv():
     import cv2
     import numpy as np
 
-    image_folder = Path(__file__).parent / "mnist_data"
+    image_folder = Path(__file__).parent / CFG.DOWNLOAD_PATH
     csv_file = image_folder / "train.csv"
     df = pd.read_csv(csv_file)
 

@@ -1,4 +1,6 @@
 ai_path/
+├── config.py
+├── run.py
 ├── __init__.py
 ├── activation/
 │   ├── activation.py
@@ -6,7 +8,6 @@ ai_path/
 │   ├── main.py
 │   ├── results/
 ├── common_alg_cv/
-│   ├── config.py
 │   ├── mnist_download.py
 │   ├── prepare_mnist_dataset.py
 │   ├── read_img.py
@@ -20,8 +21,10 @@ ai_path/
 │   ├── rle_encoder.py
 │   ├── time_it.py
 │   ├── __init__.py
+│   ├── __pycache__/
 ├── optim/
 │   ├── DION.py
 │   ├── LAMB.py
 │   ├── main.py
 │   ├── __init__.py
+├── __pycache__/

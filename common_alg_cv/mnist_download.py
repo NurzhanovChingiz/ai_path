@@ -1,10 +1,13 @@
+
 import kagglehub
 import os
+import concurrent.futures as _cf
+import asyncio
 import shutil
 from pathlib import Path
 from config import CFG
-from common_alg_ml.time_it import time_it
 
+from common_alg_ml.time_it import time_it
 
 def download_mnist_data():
     # Delete existing data folder if exists
@@ -43,15 +46,24 @@ def make_images_from_csv():
 
     images_dir = image_folder / "images"
     os.makedirs(images_dir, exist_ok=True)
-
-    for index, row in df.iterrows():
-        label = row['label']
-        pixels = row[1:].values.astype(np.uint8)
+    data = df.to_numpy()
+    async def write_one(data):
+        index, row = data
+        label = row[0]
+        pixels = row[1:].astype(np.uint8)
         img = pixels.reshape(28, 28)
         img_path = images_dir / f"{index}_{label}.png"
         cv2.imwrite(str(img_path), img)
-    
+        
+    max_workers = os.cpu_count()
+    with _cf.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        loop = asyncio.get_event_loop()
+        tasks = []
+        for item in enumerate(data):
+            tasks.append(loop.run_in_executor(executor, write_one, item))
+        loop.run_until_complete(asyncio.gather(*tasks))
     print(f"Images saved to: {images_dir}")
+
 
 if __name__ == "__main__":
     download_mnist_data()

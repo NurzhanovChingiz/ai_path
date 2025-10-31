@@ -3,6 +3,8 @@ import os
 import shutil
 from pathlib import Path
 from config import CFG
+from common_alg_ml.time_it import time_it
+
 
 def download_mnist_data():
     # Delete existing data folder if exists
@@ -29,6 +31,7 @@ def download_mnist_data():
 
     print("Data flattened into:", image_folder)
 
+@time_it(iterations=1, label="Make Images from CSV")
 def make_images_from_csv():
     import pandas as pd
     import cv2

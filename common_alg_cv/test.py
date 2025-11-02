@@ -8,7 +8,7 @@ if __name__ == "__main__":
     print(__file__)
     main_folder = os.getcwd()
     print("main_path:", main_folder)
-    images_dir = Path(__file__).parent / "mnist_data/images"
+    images_dir = Path(__file__).parent / "mnist_data/images/train"
     print("read_img.py path:", Path(__file__).parent)
     pattern = str(images_dir / "*.png")
     image_paths = sorted(glob.glob(pattern))

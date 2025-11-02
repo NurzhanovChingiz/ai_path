@@ -16,5 +16,6 @@ def read_image(img_path):
     except Exception as e:
         print(f"Error reading image at {img_path}: {e}")
         
+
 if __name__ == "__main__":
     pass

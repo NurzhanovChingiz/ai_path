@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 # all results folders
 
-*/results/
+*/results
 
 
 # MacOS files

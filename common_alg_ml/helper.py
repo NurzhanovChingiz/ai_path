@@ -1,12 +1,12 @@
 import os
 
-def save_py_files_structure(base_folder, output_file):
+def save_py_files_structure(base_folder: str, output_file: str) -> None:
     """
     Traverse base_folder and its subdirectories, save the directory structure
     of all .py files into a single file, indicating the file name as comments.
-
-    :param base_folder: Directory to start traversal from.
-    :param output_file: Path to the output file.
+    args:
+        base_folder (str): The root directory to start the search.
+        output_file (str): The file to save the structure to.
     """
     with open(output_file, 'w', encoding='utf-8') as outfile:
         for root, dirs, files in os.walk(base_folder):
@@ -23,6 +23,7 @@ def save_py_files_structure(base_folder, output_file):
             py_files = [file for file in files if file.endswith('.py')]
             for file in py_files:
                 outfile.write(f"{sub_indent}{file}\n")
+                
 if __name__ == "__main__":
 # Example usage:
     base_folder = 'C:\\code\\cv\\ai_path\\ai_path'

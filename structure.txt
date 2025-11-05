@@ -1,12 +1,36 @@
 ai_path/
 ├── config.py
-├── run.py
+├── run_common_alg_cv.py
 ├── __init__.py
 ├── activation/
 │   ├── activation.py
 │   ├── config.py
 │   ├── main.py
 │   ├── results/
+│   ├── __pycache__/
+├── common_alg/
+│   ├── __init__.py
+│   ├── distance/
+│   │   ├── chebyshev.py
+│   │   ├── cosine.py
+│   │   ├── euclidean.py
+│   │   ├── jaccard.py
+│   │   ├── main.py
+│   │   ├── manhattan.py
+│   │   ├── minkowski.py
+│   │   ├── __pycache__/
+│   ├── sorting_technique/
+│   │   ├── bubble_sort.py
+│   │   ├── insertion_sort.py
+│   │   ├── merge_sort.py
+│   │   ├── quick_sort.py
+│   │   ├── test.py
+│   │   ├── __pycache__/
+│   ├── statistic/
+│   ├── technique/
+│   │   ├── linked_list.py
+│   │   ├── sliding_window.py
+│   │   ├── two_pointers.py
 ├── common_alg_cv/
 │   ├── mnist_download.py
 │   ├── prepare_mnist_dataset.py
@@ -15,11 +39,14 @@ ai_path/
 │   ├── __init__.py
 │   ├── mnist_data/
 │   │   ├── images/
+│   │   │   ├── train/
+│   │   │   ├── val/
+│   ├── models/
+│   │   ├── resnet.py
 │   ├── __pycache__/
 ├── common_alg_ml/
 │   ├── helper.py
 │   ├── rle_encoder.py
-│   ├── time_it.py
 │   ├── __init__.py
 │   ├── __pycache__/
 ├── optim/

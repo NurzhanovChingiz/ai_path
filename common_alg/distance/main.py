@@ -4,6 +4,7 @@ from manhattan import manhattan
 from minkowski import minkowski
 from chebyshev import chebyshev
 from cosine import cosine
+from jaccard import jaccard
 
 if __name__ == "__main__":
     d1 = np.array([1, 2, 3])
@@ -14,3 +15,4 @@ if __name__ == "__main__":
     print('Minkowski distance:',minkowski(d1, d2, 2))
     print('Chebyshev distance:',chebyshev(d1, d2))
     print('Cosine distance:',cosine(d1, d2))
+    print('Jaccard distance:',jaccard(d1, d2))

@@ -2,6 +2,7 @@ import numpy as np
 from euclidean import euclidean
 from manhattan import manhattan
 from minkowski import minkowski
+from chebyshev import chebyshev
 
 if __name__ == "__main__":
     d1 = np.array([1, 2, 3])
@@ -10,3 +11,4 @@ if __name__ == "__main__":
     print('Euclidean distance:',euclidean(d1, d2))
     print('Manhattan distance:',manhattan(d1, d2))
     print('Minkowski distance:',minkowski(d1, d2, 2))
+    print('Chebyshev distance:',chebyshev(d1, d2))

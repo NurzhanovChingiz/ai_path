@@ -1,8 +1,8 @@
-# Manhattan distance
+# Manhattan distance or L1 norm
 import numpy as np
 
 def manhattan(d1: np.ndarray, d2: np.ndarray) -> float:
-    '''Calculate the Manhattan distance between two points.
+    '''Calculate the Manhattan distance or L1 norm between two points.
     args:
         d1: First point as a numpy array.
         d2: Second point as a numpy array.

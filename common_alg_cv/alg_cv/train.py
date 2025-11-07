@@ -13,4 +13,4 @@ def train(model, data_loader, criterion, optimizer, device):
         loss.backward()
         optimizer.step()
         if (b + 1) % 100 == 0:
-            print(f"Batch [{b + 1}/{size}], Loss: {loss.item():.4f}")
+            print(f"Train batch [{b + 1}/{size}], Train AVG Loss: {loss.item():.4f}")

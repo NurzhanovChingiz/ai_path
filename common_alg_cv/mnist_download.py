@@ -155,7 +155,3 @@ def make_images_from_csv():
         list(executor.map(write_one, range(len(labels)), chunksize=512))
 
     print(f"Images saved to: {images_dir}")
-
-if __name__ == "__main__":
-    download_mnist_data()
-    make_images_from_csv()

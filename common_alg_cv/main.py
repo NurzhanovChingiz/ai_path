@@ -3,6 +3,7 @@ from pathlib import Path
 import glob, os
 import cv2
 import random
+import numpy as np
 from config import CFG
 
 from alg_cv.clear_gpu import clear_memory
@@ -10,24 +11,28 @@ from alg_cv.dataset import MNISTImageDataset
 from alg_cv.train import train
 from alg_cv.test import test
 import torch
-from torch.utils.data import DataLoader
-from torchvision import transforms
+import torch.nn as nn
 
-from 
+from torchvision import transforms
+from PIL import Image
+from torch.utils.data import DataLoader
+from models.CNNModel import CNNModel
 
 train_transform = transforms.Compose([
+    transforms.Lambda(lambda x: Image.fromarray(x) if isinstance(x, np.ndarray) else x),
     transforms.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ]) 
 test_transform = transforms.Compose([
-    transforms.Resize((CFG.img_size, CFG.img_size)),
+    transforms.Lambda(lambda x: Image.fromarray(x) if isinstance(x, np.ndarray) else x),
+    transforms.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465),
                          (0.2023, 0.1994, 0.2010)),
     ])
-        
+
 if __name__ == "__main__":
     clear_memory()
     print(__file__)
@@ -49,6 +54,11 @@ if __name__ == "__main__":
     train_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in train_image_paths]
     test_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in test_image_paths]
     val_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in val_image_paths]
+    # to torch
+    train_labels = torch.tensor(train_labels)
+    test_labels = torch.tensor(test_labels)
+    val_labels = torch.tensor(val_labels)
+    
     
     # Create datasets
     train_dataset = MNISTImageDataset(train_image_paths, train_labels, transform=train_transform)
@@ -63,7 +73,11 @@ if __name__ == "__main__":
     print(f"Number of testing samples in dataset: {len(test_dataset)}")
     print(f"Number of validation samples in dataset: {len(val_dataset)}")
     
-    # train
+    # look dataloader
+    for images, labels in train_loader:
+        print(f"Image batch shape: {images.size()}")
+        print(f"Label batch shape: {labels.size()}")
+        break
     
     if CFG.SHOW_IMG:
         n = 3 # 3 random images from dataset
@@ -73,3 +87,15 @@ if __name__ == "__main__":
             cv2.imshow("Image", cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
             cv2.waitKey(0)
             cv2.destroyAllWindows()
+    # train
+    model = CNNModel().to(CFG.DEVICE)
+    
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=3e-2, momentum=CFG.MOMENTUM, weight_decay=CFG.WEIGHT_DECAY)
+    for epoch in range(CFG.EPOCHS):
+        print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
+        train(model, train_loader, loss_fn, optimizer, CFG.DEVICE)
+        test(model, val_loader, loss_fn, CFG.DEVICE)
+        
+        
+    

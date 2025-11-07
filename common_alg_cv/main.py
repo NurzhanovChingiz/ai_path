@@ -7,6 +7,8 @@ import numpy as np
 from config import CFG
 
 from alg_cv.clear_gpu import clear_memory
+from alg_cv.set_seed import set_seed
+set_seed(CFG.SEED)
 from alg_cv.dataset import MNISTImageDataset
 from alg_cv.train import train
 from alg_cv.test import test
@@ -96,6 +98,4 @@ if __name__ == "__main__":
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
         train(model, train_loader, loss_fn, optimizer, CFG.DEVICE)
         test(model, val_loader, loss_fn, CFG.DEVICE)
-        
-        
     

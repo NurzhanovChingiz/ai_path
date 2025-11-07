@@ -5,6 +5,8 @@ import cv2
 import random
 from config import CFG
 
+from alg_cv.clear_gpu import clear_memory
+
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms
@@ -31,6 +33,7 @@ class CachedDataset(Dataset):
             return self.data[idx]
         
 if __name__ == "__main__":
+    clear_memory()
     print(__file__)
     main_folder = os.getcwd()
     print("main_path:", main_folder)

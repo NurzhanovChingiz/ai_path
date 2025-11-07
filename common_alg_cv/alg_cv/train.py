@@ -1,16 +1,20 @@
 # Train function
-def train(model, data_loader, criterion, optimizer, device):
-    model.train()
-    optimizer.train()
-    loss = 0.0
-    size = len(data_loader)
-    for b, (img, label) in data_loader:
-        img, label = img.to(device), label.to(device)
-        optimizer.zero_grad()
-        pred = model(img)
-        loss = criterion(pred, label)
-        loss += loss.item()
-        loss.backward()
-        optimizer.step()
-        if (b + 1) % 100 == 0:
-            print(f"Train batch [{b + 1}/{size}], Train AVG Loss: {loss.item():.4f}")
+def train(model, dataloader, loss_fn, optimizer, device):
+
+    size = len(dataloader.dataset)  
+
+    model.train()  
+    for b, (X, y) in enumerate(dataloader):  
+        X, y = X.to(device), y.to(
+            device)  
+        optimizer.zero_grad()  
+        pred = model(X)  
+
+        loss = loss_fn(pred, y)  
+
+        loss.backward()  
+        optimizer.step()  
+        
+        if b % 100 == 0:
+            loss, current = loss.item(), b * len(X)
+            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")

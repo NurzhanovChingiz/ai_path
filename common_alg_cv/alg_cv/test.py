@@ -1,20 +1,16 @@
-# Test function
-
 import torch
+def test(model, dataloader, loss_fn, device):
 
-def test(model, data_loader, criterion, optimizer, device):
     model.eval()
-    optimizer.eval()
-    size = len(data_loader)
-    loss, correct, total = 0, 0, 0
+    test_loss, correct, total = 0, 0, 0
     with torch.no_grad():
-        for b, (img, label) in enumerate(data_loader):
-            img, label = img.to(device), label.to(device)
-            pred = model(img)
-            loss += criterion(pred, label).item()
-            total += label.size(0)
-            correct += (pred.argmax(1) == label).type(torch.float).sum().item()
-    loss = loss / (b + 1)
+        for batch_idx, (X, y) in enumerate(dataloader):
+            X, y = X.to(device), y.to(device)
+            pred = model(X)
+            test_loss += loss_fn(pred, y).item()
+            total += y.size(0)
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    loss = test_loss / batch_idx
+
     correct = 100.*correct/total
-    if (b + 1) % 100 == 0:
-        print(f"Test batch [{b + 1}/{size}], Test AVG Loss: {loss:.4f}, Test Accuracy: {correct:.2f}%")
+    print(f"Test Error:\n Accuracy: {(correct):>.1f}%, Avg loss: {(loss):>.8f}\n")

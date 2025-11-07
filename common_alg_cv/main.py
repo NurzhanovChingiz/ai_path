@@ -6,31 +6,27 @@ import random
 from config import CFG
 
 from alg_cv.clear_gpu import clear_memory
-
+from alg_cv.dataset import MNISTImageDataset
+from alg_cv.train import train
+from alg_cv.test import test
 import torch
-from torch.utils.data import Dataset, DataLoader
-from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+from torchvision import transforms
+
+from 
 
 train_transform = transforms.Compose([
-    transforms.RandomCrop(32, padding=4),
+    transforms.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ]) 
 test_transform = transforms.Compose([
+    transforms.Resize((CFG.img_size, CFG.img_size)),
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465),
                          (0.2023, 0.1994, 0.2010)),
     ])
-
-class CachedDataset(Dataset):
-    def __init__(self, base_dataset):
-        self.data = [base_dataset[i] for i in range(len(base_dataset))] 
-
-        def __len__(self):
-            return len(self.data)
-        def __getitem__(self, idx):
-            return self.data[idx]
         
 if __name__ == "__main__":
     clear_memory()
@@ -53,6 +49,21 @@ if __name__ == "__main__":
     train_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in train_image_paths]
     test_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in test_image_paths]
     val_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in val_image_paths]
+    
+    # Create datasets
+    train_dataset = MNISTImageDataset(train_image_paths, train_labels, transform=train_transform)
+    test_dataset = MNISTImageDataset(test_image_paths, test_labels, transform=test_transform)
+    val_dataset = MNISTImageDataset(val_image_paths, val_labels, transform=test_transform)
+
+    train_loader = DataLoader(train_dataset, batch_size=CFG.BATCH_SIZE, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=CFG.BATCH_SIZE, shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size=CFG.BATCH_SIZE, shuffle=False)
+
+    print(f"Number of training samples in dataset: {len(train_dataset)}")
+    print(f"Number of testing samples in dataset: {len(test_dataset)}")
+    print(f"Number of validation samples in dataset: {len(val_dataset)}")
+    
+    # train
     
     if CFG.SHOW_IMG:
         n = 3 # 3 random images from dataset

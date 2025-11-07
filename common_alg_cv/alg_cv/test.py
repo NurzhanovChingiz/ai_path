@@ -1,3 +1,5 @@
+# Test function
+
 import torch
 
 def test(model, data_loader, criterion, optimizer, device):

@@ -1,23 +1,18 @@
+from config import CFG
 
 from read_img import read_image
 from pathlib import Path
 import glob, os
 import cv2
 import random
-from config import CFG
 
-from alg_cv.clear_gpu import clear_memory
-from alg_cv.set_seed import set_seed
-set_seed(CFG.SEED)
 from alg_cv.dataset import MNISTImageDataset
 from alg_cv.train import train
 from alg_cv.test import test
 import torch
-import torch.nn as nn
 
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
-
 
 import tqdm 
 
@@ -36,7 +31,6 @@ test_transform = v2.Compose([
     ])
 
 if __name__ == "__main__":
-    clear_memory()
     print(__file__)
     main_folder = os.getcwd()
     print("main_path:", main_folder)
@@ -90,15 +84,9 @@ if __name__ == "__main__":
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     # train
-    from models.CNNModel import CNNModel
-    from models.resnet import ResNet, BasicBlock, cfg_resnet
-    
-    model = ResNet(BasicBlock, cfg_resnet['ResNet34']).to(CFG.DEVICE)
-
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=3e-2, momentum=CFG.MOMENTUM, weight_decay=CFG.WEIGHT_DECAY)
+    optimizer = torch.optim.SGD(CFG.MODEL.parameters(), lr=CFG.LR)
     for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
-        train(model, train_loader, loss_fn, optimizer, CFG.DEVICE)
-        test(model, val_loader, loss_fn, CFG.DEVICE)
-    
+        train(CFG.MODEL, train_loader, CFG.LOSS_FN, optimizer, CFG.DEVICE)
+        test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE)
+    test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE)

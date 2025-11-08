@@ -1,6 +1,7 @@
 import cv2
+import numpy as np
 
-def read_image(img_path):
+def read_image(img_path: str) -> np.ndarray:
     """
     Reads an image from the specified file path.
 

@@ -27,7 +27,6 @@ test_transform = v2.Compose([
     v2.ToImage(),
     v2.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
     v2.ToDtype(torch.float32, scale=True),
-
     ])
 
 if __name__ == "__main__":

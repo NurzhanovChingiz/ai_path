@@ -1,9 +1,9 @@
+
 from read_img import read_image
 from pathlib import Path
 import glob, os
 import cv2
 import random
-import numpy as np
 from config import CFG
 
 from alg_cv.clear_gpu import clear_memory
@@ -15,24 +15,24 @@ from alg_cv.test import test
 import torch
 import torch.nn as nn
 
-from torchvision import transforms
-from PIL import Image
+from torchvision.transforms import v2
 from torch.utils.data import DataLoader
-from models.CNNModel import CNNModel
 
-train_transform = transforms.Compose([
-    transforms.Lambda(lambda x: Image.fromarray(x) if isinstance(x, np.ndarray) else x),
-    transforms.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+
+import tqdm 
+
+train_transform = v2.Compose([
+    v2.ToImage(),
+    v2.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
+    v2.RandomHorizontalFlip(),
+    v2.ToDtype(torch.float32, scale=True),
+
     ]) 
-test_transform = transforms.Compose([
-    transforms.Lambda(lambda x: Image.fromarray(x) if isinstance(x, np.ndarray) else x),
-    transforms.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465),
-                         (0.2023, 0.1994, 0.2010)),
+test_transform = v2.Compose([
+    v2.ToImage(),
+    v2.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
+    v2.ToDtype(torch.float32, scale=True),
+
     ])
 
 if __name__ == "__main__":
@@ -90,11 +90,14 @@ if __name__ == "__main__":
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     # train
-    model = CNNModel().to(CFG.DEVICE)
+    from models.CNNModel import CNNModel
+    from models.resnet import ResNet, BasicBlock, cfg_resnet
     
+    model = ResNet(BasicBlock, cfg_resnet['ResNet34']).to(CFG.DEVICE)
+
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=3e-2, momentum=CFG.MOMENTUM, weight_decay=CFG.WEIGHT_DECAY)
-    for epoch in range(CFG.EPOCHS):
+    for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
         train(model, train_loader, loss_fn, optimizer, CFG.DEVICE)
         test(model, val_loader, loss_fn, CFG.DEVICE)

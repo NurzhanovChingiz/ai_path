@@ -3,8 +3,8 @@ class CFG:
     SEED = 42
     SHOW_IMG = False
     IMG_SIZE = 28
-    BATCH_SIZE = 32
-    EPOCHS = 3
+    BATCH_SIZE = 64
+    EPOCHS = 10
     LEARNING_RATE = 0.001
     WEIGHT_DECAY = 1e-4
     MOMENTUM = 0.9

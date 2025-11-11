@@ -1,5 +1,5 @@
 import torch
-def test(model, dataloader, loss_fn, device):
+def test(model, dataloader, loss_fn, device, mode="Test"):
 
     model.eval()
     test_loss, correct, total = 0, 0, 0
@@ -13,4 +13,4 @@ def test(model, dataloader, loss_fn, device):
     loss = test_loss / batch_idx
 
     correct = 100.*correct/total
-    print(f"Test Error:\n Accuracy: {(correct):>.1f}%, Avg loss: {(loss):>.8f}\n")
+    print(f"{mode} Error:\n Accuracy: {(correct):>.1f}%, Avg loss: {(loss):>.8f}\n")

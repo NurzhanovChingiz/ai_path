@@ -12,22 +12,29 @@ cfg = {
 }
 
 class VGG(nn.Module):
-    def __init__(self, features: list, num_classes: int = 1000, init_weights: bool = True) -> None:
+    def __init__(self, features: list, num_classes: int = 1000, p: float = 0.5, init_weights: bool = True) -> None:
         super().__init__()
         self.features = self._make_layers(features)
-        self.classifier = nn.Sequential(
-            nn.Linear(512 * 1 * 1, 4096), # adjust for input size, original was 7*7
-            nn.ReLU(inplace=True),
-            nn.Dropout(), # drop out off because that give me x2 to epoch time with vgg9 on directml on rocm not a problem
-            nn.Linear(4096, 4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, num_classes)
-        )
+        self.classifier = nn.Sequential()
+        self.classifier.add_module('fc1', nn.Linear(512 * 1 * 1, 4096)) # adjust for input size, original was 7*7
+        self.classifier.add_module('relu1', nn.ReLU(inplace=True))
+        
+        
+
+        self.classifier.add_module('dropout1', nn.Dropout(p=p))
+        self.classifier.add_module('fc2', nn.Linear(4096, 4096))
+        self.classifier.add_module('relu2', nn.ReLU(inplace=True))
+        self.classifier.add_module('dropout2', nn.Dropout(p=p))
+        self.classifier.add_module('fc3', nn.Linear(4096, num_classes))
+
         if init_weights:
             self._initialize_weights()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        device = next(self.parameters()).device
+        if device.type != 'cuda':
+            self.classifier.dropout1 = nn.Identity()
+            self.classifier.dropout2 = nn.Identity()
         x = self.features(x)
         x = x.flatten(1)
         x = self.classifier(x)

@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 from read_img import read_image
+from torch import tensor
 
 class MNISTImageDataset(Dataset):
     def __init__(self, image_paths, labels, transform=None):
@@ -16,4 +17,4 @@ class MNISTImageDataset(Dataset):
         label = self.labels[idx]
         if self.transform:
             image = self.transform(image)
-        return image, label
+        return image, tensor(label)

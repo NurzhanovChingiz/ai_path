@@ -7,7 +7,7 @@ import cv2
 import random
 
 from alg_cv.dataset import MNISTImageDataset
-from alg_cv.train import train
+from alg_cv.train_cuda import train, CUDAPrefetcher
 from alg_cv.test import test
 import torch
 
@@ -15,7 +15,7 @@ from torchvision.transforms import v2
 from torch.utils.data import DataLoader
 
 import tqdm 
-
+import time
 train_transform = v2.Compose([
     v2.ToImage(),
     v2.Resize((CFG.IMG_SIZE, CFG.IMG_SIZE)),
@@ -49,14 +49,9 @@ if __name__ == "__main__":
     train_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in train_image_paths]
     test_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in test_image_paths]
     val_labels = [int(Path(p).name.split("_")[1].split(".")[0]) for p in val_image_paths]
-    # to torch
-    train_labels = torch.tensor(train_labels)
-    test_labels = torch.tensor(test_labels)
-    val_labels = torch.tensor(val_labels)
-    
     
     # Create datasets
-    train_dataset = MNISTImageDataset(train_image_paths, train_labels, transform=train_transform)
+    train_dataset = MNISTImageDataset(train_image_paths, train_labels, transform=train_transform, )
     test_dataset = MNISTImageDataset(test_image_paths, test_labels, transform=test_transform)
     val_dataset = MNISTImageDataset(val_image_paths, val_labels, transform=test_transform)
 
@@ -83,8 +78,17 @@ if __name__ == "__main__":
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     # train
+    prefetcher_train = CUDAPrefetcher(train_loader, CFG.DEVICE)
+    prefetcher_test = CUDAPrefetcher(test_loader, CFG.DEVICE)
+    prefetcher_val = CUDAPrefetcher(val_loader, CFG.DEVICE)
     for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
+        start = time.time()
+        if hasattr(train_loader.sampler, "set_epoch"):
+            train_loader.sampler.set_epoch(epoch)
+        prefetcher_train.reset()
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
-        train(CFG.MODEL, train_loader, CFG.LOSS_FN, CFG.OPTIMIZER, CFG.DEVICE)
+        train(CFG.MODEL, train_loader, CFG.LOSS_FN, CFG.OPTIMIZER, CFG.DEVICE, prefetcher=prefetcher_train)
         test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Validation")
+        end = time.time()
+        print(f"Epoch [{epoch+1}/{CFG.EPOCHS}] completed in {end - start:.2f} seconds")
     test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Test")

@@ -1,4 +1,4 @@
-import torch_directml
+# import torch_directml
 from torch import nn
 import torch
 from models.ResNet import ResNet, cfg_resnet, BasicBlock
@@ -8,7 +8,6 @@ from alg_cv.set_seed import set_seed
 from alg_cv.clear_gpu import clear_memory
 from alg_cv.summary import summary
 from torch.backends import cudnn
-
 
 class CFG: 
     SEED: int = 42
@@ -26,10 +25,15 @@ class CFG:
     NUM_CLASSES: int = 10
 
     # Define the model, loss function, and optimizer
-    DEVICE = torch_directml.device(torch_directml.default_device())
+    # DEVICE = torch_directml.device(torch_directml.default_device())
+    # Get device from rocm                       7.10.0a20251106
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device:", DEVICE)
     # MODEL = ResNet(BasicBlock, cfg_resnet['ResNet34']).to(DEVICE)
     MODEL = VGG(cfg['VGG9'], num_classes=10, init_weights=True).to(DEVICE)
+
     # MODEL = MobileNetV1(num_classes=NUM_CLASSES).to(DEVICE)
     summary(MODEL)
     LOSS_FN = nn.CrossEntropyLoss()
     OPTIMIZER = torch.optim.SGD(MODEL.parameters(), lr=LR, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+    # OPTIMIZER = torch.optim.Adam(MODEL.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)

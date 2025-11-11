@@ -86,5 +86,5 @@ if __name__ == "__main__":
     for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
         train(CFG.MODEL, train_loader, CFG.LOSS_FN, CFG.OPTIMIZER, CFG.DEVICE)
-        test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE)
-    test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE)
+        test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Validation")
+    test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Test")

@@ -83,6 +83,7 @@ if __name__ == "__main__":
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     # train
+    
     optimizer = torch.optim.SGD(CFG.MODEL.parameters(), lr=CFG.LR)
     for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")

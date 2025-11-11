@@ -13,6 +13,8 @@ def read_image(img_path: str) -> np.ndarray:
     try:
         image = cv2.imread(img_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # Gray scale
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         return image
     except Exception as e:
         print(f"Error reading image at {img_path}: {e}")

@@ -18,10 +18,10 @@ class VGG(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(512 * 1 * 1, 4096), # adjust for input size, original was 7*7
             nn.ReLU(inplace=True),
-            # nn.Dropout(), # drop out off because that give me x2 to epoch time with vgg9
+            nn.Dropout(), # drop out off because that give me x2 to epoch time with vgg9 on directml on rocm not a problem
             nn.Linear(4096, 4096),
             nn.ReLU(inplace=True),
-            # nn.Dropout(),
+            nn.Dropout(),
             nn.Linear(4096, num_classes)
         )
         if init_weights:

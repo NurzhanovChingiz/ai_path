@@ -32,17 +32,31 @@ ai_path/
 │   │   ├── sliding_window.py
 │   │   ├── two_pointers.py
 ├── common_alg_cv/
+│   ├── config.py
+│   ├── main_standart.py
 │   ├── mnist_download.py
 │   ├── prepare_mnist_dataset.py
 │   ├── read_img.py
-│   ├── test.py
 │   ├── __init__.py
+│   ├── alg_cv/
+│   │   ├── clear_gpu.py
+│   │   ├── dataset.py
+│   │   ├── set_seed.py
+│   │   ├── summary.py
+│   │   ├── test.py
+│   │   ├── train.py
+│   │   ├── __pycache__/
 │   ├── mnist_data/
 │   │   ├── images/
+│   │   │   ├── test/
 │   │   │   ├── train/
 │   │   │   ├── val/
 │   ├── models/
-│   │   ├── resnet.py
+│   │   ├── CNNModel.py
+│   │   ├── MobileNetv1.py
+│   │   ├── ResNet.py
+│   │   ├── VGG.py
+│   │   ├── __pycache__/
 │   ├── __pycache__/
 ├── common_alg_ml/
 │   ├── helper.py

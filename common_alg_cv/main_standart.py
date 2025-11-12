@@ -8,7 +8,7 @@ import random
 
 from alg_cv.dataset import MNISTImageDataset
 from alg_cv.train_cuda import train, CUDAPrefetcher
-from alg_cv.test_fusion import test
+from alg_cv.test import test
 import torch
 
 from torchvision.transforms import v2

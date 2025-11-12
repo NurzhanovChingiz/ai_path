@@ -18,9 +18,6 @@ class VGG(nn.Module):
         self.classifier = nn.Sequential()
         self.classifier.add_module('fc1', nn.Linear(512 * 1 * 1, 4096)) # adjust for input size, original was 7*7
         self.classifier.add_module('relu1', nn.ReLU(inplace=True))
-        
-        
-
         self.classifier.add_module('dropout1', nn.Dropout(p=p))
         self.classifier.add_module('fc2', nn.Linear(4096, 4096))
         self.classifier.add_module('relu2', nn.ReLU(inplace=True))

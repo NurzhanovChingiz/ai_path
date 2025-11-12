@@ -31,8 +31,8 @@ class CFG:
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", DEVICE)
     # MODEL = ResNet(BasicBlock, cfg_resnet['ResNet34']).to(DEVICE)
-    # MODEL = VGG(cfg['VGG9'], num_classes=10, init_weights=True).to(DEVICE)
-    MODEL = CNNModel().to(DEVICE)
+    MODEL = VGG(cfg['VGG9'], num_classes=10, init_weights=True).to(DEVICE)
+    # MODEL = CNNModel().to(DEVICE)
 
     # MODEL = MobileNetV1(num_classes=NUM_CLASSES).to(DEVICE)
     summary(MODEL)

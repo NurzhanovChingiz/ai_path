@@ -82,12 +82,12 @@ if __name__ == "__main__":
     prefetcher_test = CUDAPrefetcher(test_loader, CFG.DEVICE)
     prefetcher_val = CUDAPrefetcher(val_loader, CFG.DEVICE)
     for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
+        start = time.time()
         if hasattr(train_loader.sampler, "set_epoch"):
             train_loader.sampler.set_epoch(epoch)
         prefetcher_train.reset()
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
         train(CFG.MODEL, train_loader, CFG.LOSS_FN, CFG.OPTIMIZER, CFG.DEVICE, prefetcher=prefetcher_train)
-        start = time.time()
         test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Validation")
         end = time.time()
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}] completed in {end - start:.2f} seconds")

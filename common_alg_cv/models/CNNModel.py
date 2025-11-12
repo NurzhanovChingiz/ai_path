@@ -23,7 +23,6 @@ class CNNModel(nn.Module):
         self.fc1 = nn.Linear(32 * 4 * 4, 10) 
     
     def forward(self, x):
-        # img_input = x.view(-1,1,28,28)
         # Convolution 1
         x = self.relu1(self.cnn1(x))
         # Max pool 1
@@ -36,7 +35,7 @@ class CNNModel(nn.Module):
         x = self.maxpool2(x)
     
         # flatten
-        x = x.view(x.size(0), -1)
+        x = x.flatten(1)
 
         # Linear function (readout)
         x = self.fc1(x)

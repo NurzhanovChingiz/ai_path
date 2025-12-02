@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 class KaggleDatasetDownloader:
-    def __init__(self, dataset_id: str) -> None:
+    def __init__(self, dataset_id: str, path_to_save: str) -> None:
         '''
         Initializes the KaggleDatasetDownloader with the specified dataset ID.
         Args:
@@ -18,7 +18,9 @@ class KaggleDatasetDownloader:
         self.dataset_id = dataset_id
         assert self.dataset_id, "Dataset ID must be provided."
         assert isinstance(self.dataset_id, str), "Dataset ID must be a string."
-        assert CFG and CFG.DOWNLOAD_PATH, "CFG and CFG.DOWNLOAD_PATH must be set in config."
+        self.path_to_save = path_to_save
+        assert self.path_to_save, "Path to save must be provided."
+        assert isinstance(self.path_to_save, str), "Path to save must be a string."
         
     def resolve_base_dir(self) -> Path:
         '''
@@ -38,7 +40,7 @@ class KaggleDatasetDownloader:
         Args:
             data_folder (str): The path to the dataset folder.
         '''
-        shutil.rmtree(os.path.join(self.resolve_base_dir(), CFG.DOWNLOAD_PATH), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.resolve_base_dir(), self.path_to_save), ignore_errors=True)
         os.makedirs(data_folder, exist_ok=True)
     
     def download_dataset(self, data_folder: str) -> Path:
@@ -123,7 +125,7 @@ class KaggleDatasetDownloader:
         Executes the dataset download and organization process.
         '''
         base_dir = self.resolve_base_dir()
-        data_folder = os.path.join(base_dir, CFG.DOWNLOAD_PATH)
+        data_folder = os.path.join(base_dir, self.path_to_save)
         self.clean_target_folder(data_folder)
         src_root = self.download_dataset(data_folder)
         data_folder_path = Path(data_folder)
@@ -132,6 +134,8 @@ class KaggleDatasetDownloader:
         self.check_files_exist(data_folder)
         print(f"{self.dataset_id} dataset downloaded and organized.")
 
+
+    
 def make_images_from_csv():
     image_folder = Path(__file__).parent / CFG.DOWNLOAD_PATH
     csv_file = image_folder / "train.csv"

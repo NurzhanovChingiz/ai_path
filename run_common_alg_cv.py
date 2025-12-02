@@ -4,7 +4,7 @@ from config import CFG
 import time 
 
 def run_data_preparation():
-    mnist_downloader = KaggleDatasetDownloader(dataset_id=CFG.DATASET)
+    mnist_downloader = KaggleDatasetDownloader(dataset_id=CFG.DATASET, path_to_save=CFG.IMAGES_PATH)
     mnist_downloader.run()
     make_images_from_csv()
     prepare_mnist_dataset()

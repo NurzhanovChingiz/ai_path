@@ -55,10 +55,11 @@ if __name__ == "__main__":
     test_dataset = MNISTImageDataset(test_image_paths, test_labels, transform=test_transform)
     val_dataset = MNISTImageDataset(val_image_paths, val_labels, transform=test_transform)
 
+    # Create dataloaders
+
     train_loader = DataLoader(train_dataset, batch_size=CFG.BATCH_SIZE, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=CFG.BATCH_SIZE, shuffle=False)
     val_loader = DataLoader(val_dataset, batch_size=CFG.BATCH_SIZE, shuffle=False)
-
     print(f"Number of training samples in dataset: {len(train_dataset)}")
     print(f"Number of testing samples in dataset: {len(test_dataset)}")
     print(f"Number of validation samples in dataset: {len(val_dataset)}")
@@ -93,3 +94,7 @@ if __name__ == "__main__":
         print(f"Epoch [{epoch+1}/{CFG.EPOCHS}] completed in {end - start:.2f} seconds")
         
     test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Test")
+    
+    #
+    #
+    #15.11

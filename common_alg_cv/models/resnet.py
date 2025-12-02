@@ -21,7 +21,7 @@ class BasicBlock(nn.Module):
     expansion: int = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
-        super(f).__init__()
+        super().__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU(inplace=True)
@@ -52,7 +52,7 @@ class ResNet(nn.Module):
     def __init__(self, block, layers, num_classes=10):
         self.inplanes = 64
         super().__init__()
-        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)

@@ -82,6 +82,7 @@ class CUDAPrefetcher:
         self._next = None
         self._preload()
 
+
 def train(model, dataloader, loss_fn, optimizer, device, prefetcher=None):
 
     size = len(dataloader.dataset)  
@@ -109,19 +110,3 @@ def train(model, dataloader, loss_fn, optimizer, device, prefetcher=None):
     if count > 0:
         print(f"Train count: {count:>7d}  [{size:>5d}/{size:>5d}], Avg loss: {(loss_train/count):>.8f}")
 
-
-# how to train with prefetcher
-#  prefetcher_train = CUDAPrefetcher(train_loader, CFG.DEVICE)
-#  prefetcher_test = CUDAPrefetcher(test_loader, CFG.DEVICE)
-#  prefetcher_val = CUDAPrefetcher(val_loader, CFG.DEVICE)
-#  for epoch in tqdm.tqdm(range(CFG.EPOCHS), desc="Epochs"):
-#      start = time.time()
-#      if hasattr(train_loader.sampler, "set_epoch"):
-#          train_loader.sampler.set_epoch(epoch)
-#      prefetcher_train.reset()
-#      print(f"Epoch [{epoch+1}/{CFG.EPOCHS}]")
-#      train(CFG.MODEL, train_loader, CFG.LOSS_FN, CFG.OPTIMIZER, CFG.DEVICE, prefetcher=prefetcher_train)
-#      test(CFG.MODEL, val_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Validation")
-#      end = time.time()
-#      print(f"Epoch [{epoch+1}/{CFG.EPOCHS}] completed in {end - start:.2f} seconds")
-#  test(CFG.MODEL, test_loader, CFG.LOSS_FN, CFG.DEVICE, mode="Test")

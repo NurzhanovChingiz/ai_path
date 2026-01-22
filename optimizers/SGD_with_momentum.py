@@ -13,24 +13,26 @@ def set_seed(seed: int = 42):
     random.seed(seed)
     print(f"Random Seed : {seed}")
 
-class SGD(Optimizer):
-    def __init__(self, params, lr, inplace=True) -> None:
-        super().__init__(params, defaults=dict(lr=lr))
+class SGD_with_momentum(Optimizer):
+    def __init__(self, params, lr, inplace=True, momentum=0.9) -> None:
+        super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
+        self.momentum=momentum
         self.inplace=inplace
     def step(self):
         for group in self.param_groups:
             lr = group['lr']
+            momentum = group['momentum']
             for p in group['params']:
                 if self.inplace:
-                    p.data.sub_(p.grad*lr)
+                    p.data.sub_(p.grad*lr + momentum*p.data.clone())
                 else:
-                    update = p.grad*lr
+                    update = p.grad*lr + momentum*p.data.clone()
                     p.data = p.data.clone() - update 
 # testing
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(10, 10)
-    optimizer = SGD(model.parameters(), lr=0.01, inplace=True)
+    optimizer = SGD_with_momentum(model.parameters(), lr=0.01, inplace=False, momentum=0.9)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(5, 10)

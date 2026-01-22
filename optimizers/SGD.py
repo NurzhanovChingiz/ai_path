@@ -17,24 +17,29 @@ class SGD(Optimizer):
     def __init__(self, params, lr, inplace=True) -> None:
         super().__init__(params, defaults=dict(lr=lr))
         self.inplace=inplace
+    
+    @torch.no_grad()
     def step(self):
         for group in self.param_groups:
             lr = group['lr']
             for p in group['params']:
+                if p.grad is None:
+                    continue
                 if self.inplace:
                     p.data.sub_(p.grad*lr)
                 else:
                     update = p.grad*lr
                     p.data = p.data.clone() - update 
+                    
 # testing
 if __name__ == "__main__":
     set_seed(42)
-    model = nn.Linear(10, 10)
-    optimizer = SGD(model.parameters(), lr=0.01, inplace=True)
+    model = nn.Linear(1, 1)
+    optimizer = SGD(model.parameters(), lr=0.01, inplace=False)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
-    x = torch.randn(5, 10)
-    y = torch.randn(5, 10)
+    x = torch.randn(10, 1)
+    y = torch.randn(10, 1)
     output = model(x)
     loss = nn.MSELoss()(output, y)
     
@@ -44,6 +49,7 @@ if __name__ == "__main__":
     # Now we can call step()
     optimizer.step()
     print(optimizer.state_dict())
+    print(model.state_dict())
     print(model.weight.data.clone())
     
     

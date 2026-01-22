@@ -13,10 +13,9 @@ def set_seed(seed: int = 42):
     random.seed(seed)
     print(f"Random Seed : {seed}")
 
-class SGD_with_momentum(Optimizer):
-    def __init__(self, params, lr, inplace=True, momentum=0.9) -> None:
-        super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
-        self.momentum=momentum
+class Adam(Optimizer):
+    def __init__(self, params, lr, inplace=True, momentum=(0.9, 0.999), eps=1e-8) -> None:
+        super().__init__(params, defaults=dict(lr=lr, momentum=momentum, eps=eps))
         self.inplace=inplace
         
     @torch.no_grad()
@@ -24,33 +23,45 @@ class SGD_with_momentum(Optimizer):
         for group in self.param_groups:
             lr = group['lr']
             momentum = group['momentum']
+            eps = group['eps']
             for p in group['params']:
                 if p.grad is None:
                     continue
-                grad = p.grad
-                
+                grad = p.grad.clone()
                 state = self.state[p]
                 if len(state) == 0:
                     state["t"] = 0
+                    state["m"] = torch.zeros_like(p)
                     state["v"] = torch.zeros_like(p)
                 state["t"] += 1
                 t = state["t"]
+                m = state["m"]
                 v = state["v"]
                 if self.inplace:
-                    v.mul_(momentum).add_(grad)
-                    p.data.sub_(lr * v)
+                    m.mul_(momentum[0]).add_(grad, alpha=1 - momentum[0])
+                    v.mul_(momentum[1]).addcmul_(grad, grad, value=1 - momentum[1])
+                    m_hat = m / (1 - momentum[0] ** t)
+                    v_hat = v / (1 - momentum[1] ** t)
+                    p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps))
                 else:
-                    v = momentum*v + grad
-                    update = lr * v
-                    p.data = p.data.clone() - update 
-                    state['v'] = v.clone()
+                    m = momentum[0]*m + (1-momentum[0])*grad
+                    v = momentum[1]*v + (1-momentum[1])*grad**2
+                    m_hat = m/(1-momentum[0]**t)
+                    v_hat = v/(1-momentum[1]**t)
+                    update = lr * m_hat / (v_hat.sqrt() + eps)
+
+                    p.data = p.data.clone() - update
+
+                    state["m"] = m.clone()
+                    state["v"] = v.clone()
                     state["t"] = t
-                
+
+        
 # testing
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = SGD_with_momentum(model.parameters(), lr=0.01, inplace=False, momentum=0.9)
+    optimizer = Adam(model.parameters(), lr=0.01, inplace=True, momentum=(0.9, 0.999), eps=1e-10)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)
@@ -66,3 +77,6 @@ if __name__ == "__main__":
     print(optimizer.state_dict())
     print(model.state_dict())
     print(model.weight.data.clone())
+    
+    
+    

@@ -14,15 +14,15 @@ def set_seed(seed: int = 42):
     print(f"Random Seed : {seed}")
 
 class Adam(Optimizer):
-    def __init__(self, params, lr, inplace=True, momentum=(0.9, 0.999), eps=1e-8) -> None:
-        super().__init__(params, defaults=dict(lr=lr, momentum=momentum, eps=eps))
+    def __init__(self, params, lr, inplace=True, betas=(0.9, 0.999), eps=1e-8) -> None:
+        super().__init__(params, defaults=dict(lr=lr, betas=betas, eps=eps))
         self.inplace=inplace
         
     @torch.no_grad()
     def step(self):
         for group in self.param_groups:
             lr = group['lr']
-            momentum = group['momentum']
+            betas = group['betas']
             eps = group['eps']
             for p in group['params']:
                 if p.grad is None:
@@ -38,16 +38,16 @@ class Adam(Optimizer):
                 m = state["m"]
                 v = state["v"]
                 if self.inplace:
-                    m.mul_(momentum[0]).add_(grad, alpha=1 - momentum[0])
-                    v.mul_(momentum[1]).addcmul_(grad, grad, value=1 - momentum[1])
-                    m_hat = m / (1 - momentum[0] ** t)
-                    v_hat = v / (1 - momentum[1] ** t)
+                    m.mul_(betas[0]).add_(grad, alpha=1 - betas[0])
+                    v.mul_(betas[1]).addcmul_(grad, grad, value=1 - betas[1])
+                    m_hat = m / (1 - betas[0] ** t)
+                    v_hat = v / (1 - betas[1] ** t)
                     p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps))
                 else:
-                    m = momentum[0]*m + (1-momentum[0])*grad
-                    v = momentum[1]*v + (1-momentum[1])*grad**2
-                    m_hat = m/(1-momentum[0]**t)
-                    v_hat = v/(1-momentum[1]**t)
+                    m = betas[0]*m + (1-betas[0])*grad
+                    v = betas[1]*v + (1-betas[1])*grad**2
+                    m_hat = m/(1-betas[0]**t)
+                    v_hat = v/(1-betas[1]**t)
                     update = lr * m_hat / (v_hat.sqrt() + eps)
 
                     p.data = p.data.clone() - update
@@ -61,7 +61,7 @@ class Adam(Optimizer):
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = Adam(model.parameters(), lr=0.01, inplace=True, momentum=(0.9, 0.999), eps=1e-10)
+    optimizer = Adam(model.parameters(), lr=0.01, inplace=False, betas=(0.9, 0.999), eps=1e-10)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)

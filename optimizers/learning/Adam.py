@@ -38,19 +38,19 @@ class Adam(Optimizer):
                 m = state["m"]
                 v = state["v"]
                 if self.inplace:
-                    m.mul_(betas[0]).add_(grad, alpha=1 - betas[0])
-                    v.mul_(betas[1]).addcmul_(grad, grad, value=1 - betas[1])
-                    m_hat = m / (1 - betas[0] ** t)
-                    v_hat = v / (1 - betas[1] ** t)
-                    p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps))
+                    m.mul_(betas[0]).add_(grad, alpha=1 - betas[0]) # m = m * betas[0] + grad * (1 - betas[0])
+                    v.mul_(betas[1]).addcmul_(grad, grad, value=1 - betas[1]) # v = v * betas[1] + grad * grad * (1 - betas[1])
+                    m_hat = m / (1 - betas[0] ** t) # m_hat = m / (1 - betas[0] ** t)
+                    v_hat = v / (1 - betas[1] ** t) # v_hat = v / (1 - betas[1] ** t)
+                    p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps)) # p.data = p.data - lr * m_hat / (v_hat.sqrt() + eps)
                 else:
-                    m = betas[0]*m + (1-betas[0])*grad
-                    v = betas[1]*v + (1-betas[1])*grad**2
-                    m_hat = m/(1-betas[0]**t)
-                    v_hat = v/(1-betas[1]**t)
-                    update = lr * m_hat / (v_hat.sqrt() + eps)
+                    m = betas[0]*m + (1-betas[0])*grad # m = m * betas[0] + grad * (1 - betas[0])
+                    v = betas[1]*v + (1-betas[1])*grad**2 # v = v * betas[1] + grad * grad * (1 - betas[1])
+                    m_hat = m/(1-betas[0]**t) # m_hat = m / (1 - betas[0] ** t)
+                    v_hat = v/(1-betas[1]**t) # v_hat = v / (1 - betas[1] ** t)
+                    update = lr * m_hat / (v_hat.sqrt() + eps) # update = lr * m_hat / (v_hat.sqrt() + eps)
 
-                    p.data = p.data.clone() - update
+                    p.data = p.data.clone() - update # p.data = p.data - update
 
                     state["m"] = m.clone()
                     state["v"] = v.clone()

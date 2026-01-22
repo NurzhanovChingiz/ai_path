@@ -26,16 +26,16 @@ class SGD(Optimizer):
                 if p.grad is None:
                     continue
                 if self.inplace:
-                    p.data.sub_(p.grad*lr)
+                    p.data.sub_(p.grad*lr) # p.data = p.data - grad * lr
                 else:
-                    update = p.grad*lr
-                    p.data = p.data.clone() - update 
+                    update = p.grad*lr # update = grad * lr
+                    p.data = p.data.clone() - update  # p.data = p.data - update
                     
 # testing
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = SGD(model.parameters(), lr=0.01, inplace=False)
+    optimizer = SGD(model.parameters(), lr=0.01, inplace=True)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)

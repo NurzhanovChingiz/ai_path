@@ -38,11 +38,11 @@ class SGD_with_momentum(Optimizer):
                 v = state["v"]
                 if self.inplace:
                     v.mul_(momentum).add_(grad) # v = v * momentum + grad
-                    p.data.sub_(lr * v) # p.data = p.data - lr * v
+                    p.data.sub_(lr * v) # w = w - lr * v
                 else:
                     v = momentum*v + grad # v = momentum * v + grad
                     update = lr * v # update = lr * v
-                    p.data = p.data.clone() - update  # p.data = p.data - update
+                    p.data = p.data.clone() - update  # w = w - update
                     state['v'] = v.clone()
                     state["t"] = t
                 

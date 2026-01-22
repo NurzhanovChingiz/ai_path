@@ -26,10 +26,10 @@ class SGD(Optimizer):
                 if p.grad is None:
                     continue
                 if self.inplace:
-                    p.data.sub_(p.grad*lr) # p.data = p.data - grad * lr
+                    p.data.sub_(p.grad*lr) # w = w - grad * lr
                 else:
                     update = p.grad*lr # update = grad * lr
-                    p.data = p.data.clone() - update  # p.data = p.data - update
+                    p.data = p.data.clone() - update  #w = w - update
                     
 # testing
 if __name__ == "__main__":

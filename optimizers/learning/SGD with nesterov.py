@@ -13,17 +13,19 @@ def set_seed(seed: int = 42):
     random.seed(seed)
     print(f"Random Seed : {seed}")
 
-class SGD_with_momentum(Optimizer):
-    def __init__(self, params, lr, inplace=True, momentum=0.9) -> None:
-        super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
+class SGD_with_nesterov(Optimizer):
+    def __init__(self, params, lr, inplace=True, momentum=0.9, nesterov=True) -> None:
+        super().__init__(params, defaults=dict(lr=lr, momentum=momentum, nesterov=nesterov))
         self.momentum=momentum
         self.inplace=inplace
+        self.nesterov=nesterov
         
     @torch.no_grad()
     def step(self):
         for group in self.param_groups:
             lr = group['lr']
             momentum = group['momentum']
+            nesterov = group['nesterov']
             for p in group['params']:
                 if p.grad is None:
                     continue
@@ -36,20 +38,24 @@ class SGD_with_momentum(Optimizer):
                 v = state["v"]
                 if self.inplace:
                     v.mul_(momentum).add_(grad) # v = v * momentum + grad
+                    state['v'] = v.clone()
+                    if nesterov:
+                        v.mul_(momentum).add_(grad) # v = v * momentum + grad
                     p.data.sub_(lr * v) # w = w - lr * v
                 else:
                     v = momentum*v + grad # v = momentum * v + grad
-                    update = lr * v # update = lr * v
-                    p.data = p.data.clone() - update  # w = w - update
                     state['v'] = v.clone()
-
+                    if nesterov:
+                        v = momentum * v + grad # v = momentum * v + grad
+                    update = lr * v # update = lr * v
+                    p.data = p.data.clone() - update
                 
 # testing
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = SGD_with_momentum(model.parameters(), lr=0.01, inplace=False, momentum=0.9)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    optimizer = SGD_with_nesterov(model.parameters(), lr=0.01, inplace=True, momentum=0.9, nesterov=True)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)

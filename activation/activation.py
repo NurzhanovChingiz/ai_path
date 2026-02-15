@@ -29,7 +29,7 @@ class CustomPReLU(nn.Module):
             # Reshape weight to (1, num_parameters, 1, ..., 1) for broadcasting
             shape = [1] * x.dim()
             shape[1] = self.weight.numel()
-            weight = self.weight.view(shape)
+            weight = self.weight.reshape(shape)
         return torch.where(x >= 0, x, weight * x)
     
 

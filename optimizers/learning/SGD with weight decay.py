@@ -1,11 +1,11 @@
 from torch.optim import Optimizer
-from typing import Any
+from typing import Any, Callable
 from torch import nn
 import torch
 import numpy as np
 import random
 
-def set_seed(seed: int = 42):
+def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -14,13 +14,17 @@ def set_seed(seed: int = 42):
     print(f"Random Seed : {seed}")
 
 class SGD(Optimizer):
-    def __init__(self, params, lr, inplace=True, weight_decay=0) -> None:
+    def __init__(self, params: Any, lr: float, inplace: bool = True, weight_decay: float = 0) -> None:
         super().__init__(params, defaults=dict(lr=lr, weight_decay=weight_decay))
         self.inplace=inplace
         self.weight_decay=weight_decay
     
     @torch.no_grad()
-    def step(self):
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
+        loss = None
+        if closure is not None:
+            with torch.enable_grad():
+                loss = closure()
         for group in self.param_groups:
             lr = group['lr']
             weight_decay = group['weight_decay']
@@ -36,6 +40,7 @@ class SGD(Optimizer):
                         p.grad = p.grad + weight_decay*p.data # grad = grad + weight_decay * p.data
                     update = p.grad*lr # update = grad * lr 
                     p.data = p.data.clone() - update  #w = w - update
+        return loss
                     
 # testing
 if __name__ == "__main__":

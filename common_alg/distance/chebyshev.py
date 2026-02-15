@@ -9,4 +9,4 @@ def chebyshev(d1: np.ndarray, d2: np.ndarray) -> float:
     returns:
         The Chebyshev distance as a float.
     '''
-    return np.max(np.abs(d1 - d2))
+    return float(np.max(np.abs(d1 - d2)))

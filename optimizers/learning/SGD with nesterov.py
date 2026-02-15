@@ -1,11 +1,11 @@
 from torch.optim import Optimizer
-from typing import Any
+from typing import Any, Callable
 from torch import nn
 import torch
 import numpy as np
 import random
 
-def set_seed(seed: int = 42):
+def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -14,14 +14,18 @@ def set_seed(seed: int = 42):
     print(f"Random Seed : {seed}")
 
 class SGD_with_nesterov(Optimizer):
-    def __init__(self, params, lr, inplace=True, momentum=0.9, nesterov=True) -> None:
+    def __init__(self, params: Any, lr: float, inplace: bool = True, momentum: float = 0.9, nesterov: bool = True) -> None:
         super().__init__(params, defaults=dict(lr=lr, momentum=momentum, nesterov=nesterov))
         self.momentum=momentum
         self.inplace=inplace
         self.nesterov=nesterov
         
     @torch.no_grad()
-    def step(self):
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
+        loss = None
+        if closure is not None:
+            with torch.enable_grad():
+                loss = closure()
         for group in self.param_groups:
             lr = group['lr']
             momentum = group['momentum']
@@ -49,6 +53,7 @@ class SGD_with_nesterov(Optimizer):
                         v = momentum * v + grad # v = momentum * v + grad
                     update = lr * v # update = lr * v
                     p.data = p.data.clone() - update
+        return loss
                 
 # testing
 if __name__ == "__main__":

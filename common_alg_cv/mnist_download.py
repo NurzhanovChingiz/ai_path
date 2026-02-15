@@ -1,4 +1,4 @@
-import kagglehub
+import kagglehub  # type: ignore[import-untyped]
 import os
 import concurrent.futures as _cf
 import shutil
@@ -80,7 +80,7 @@ class KaggleDatasetDownloader:
             data_folder_path (Path): Destination folder path.
         '''
         items = list(src_root.iterdir()) if src_root.is_dir() else [src_root]
-        def _move_one(p: Path):
+        def _move_one(p: Path) -> None:
             target = data_folder_path / p.name
             self._overwrite_move(p, target)
         with _cf.ThreadPoolExecutor() as executor:
@@ -136,7 +136,7 @@ class KaggleDatasetDownloader:
 
 
     
-def make_images_from_csv():
+def make_images_from_csv() -> None:
     image_folder = Path(__file__).parent / CFG.DOWNLOAD_PATH
     csv_file = image_folder / "train.csv"
     df = pd.read_csv(csv_file, dtype=np.uint8, engine="c")
@@ -148,7 +148,7 @@ def make_images_from_csv():
     imgs = data[:, 1:].reshape(-1, 28, 28)    # (N, 28, 28), uint8
     paths = [str(images_dir / f"{i}_{int(labels[i])}.png") for i in range(len(labels))]
     imwrite_params = [cv2.IMWRITE_PNG_COMPRESSION, 1]
-    def write_one(i: int):
+    def write_one(i: int) -> None:
         p = paths[i]
         cv2.imwrite(p, imgs[i], imwrite_params)
         

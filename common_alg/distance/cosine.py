@@ -14,4 +14,4 @@ def cosine(d1: np.ndarray, d2: np.ndarray) -> float:
     norm_d2 = np.linalg.norm(d2)
     cosine_similarity = dot_product / (norm_d1 * norm_d2)
     cosine_distance = 1 - cosine_similarity
-    return cosine_distance
+    return float(cosine_distance)

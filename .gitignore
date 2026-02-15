@@ -5,6 +5,8 @@ __pycache__/
 
 */results
 
+# Mypy cache
+.mypy_cache/
 
 # MacOS files
 .DS_Store

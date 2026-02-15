@@ -2,7 +2,7 @@
 import numpy as np
 import json
 
-def rle_encode(mask):
+def rle_encode(mask: np.ndarray | list[list[int]]) -> str:
     """RLE encoding"""
     if not isinstance(mask, np.ndarray):
         mask = np.array(mask)

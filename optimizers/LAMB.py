@@ -1,4 +1,5 @@
 
+from typing import Any, Callable, Optional
 import torch
 from torch.optim.optimizer import Optimizer
 import math 
@@ -29,9 +30,9 @@ class Lamb(Optimizer):
 
     def __init__(
         self,
-        params,
+        params: Any,
         lr: float = 1e-3,
-        betas = (0.9, 0.999),
+        betas: tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-6,
         weight_decay: float = 0,
         clamp_value: float = 10,
@@ -60,7 +61,7 @@ class Lamb(Optimizer):
         
         super().__init__(params, defaults)
 
-    def step(self, closure=None):
+    def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
         """Performs a single optimization step.
 
         Arguments:

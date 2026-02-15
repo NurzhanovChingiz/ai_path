@@ -1,13 +1,13 @@
 # import torch_directml
 from torch import nn
 import torch
-from models.ResNet import ResNet, cfg_resnet, BasicBlock
-from models.VGG import VGG, cfg
-from models.MobileNetv1 import MobileNetV1
-from models.CNNModel import CNNModel
-from alg_cv.set_seed import set_seed
-from alg_cv.clear_gpu import clear_memory
-from alg_cv.summary import summary
+from .models.Resnet import ResNet, cfg_resnet, BasicBlock
+from .models.VGG import VGG, cfg
+from .models.MobileNetv1 import MobileNetV1
+from .models.CNNModel import CNNModel
+from .alg_cv.set_seed import set_seed
+from .alg_cv.clear_gpu import clear_memory
+from .alg_cv.summary import summary
 from torch.backends import cudnn
 
 class CFG: 

@@ -1,8 +1,9 @@
 # Create CNN Model
+import torch
 import torch.nn as nn
 
 class CNNModel(nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         
         # Convolution 1
@@ -22,7 +23,7 @@ class CNNModel(nn.Module):
         # Fully connected 1
         self.fc1 = nn.Linear(32 * 4 * 4, 10) 
     
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Convolution 1
         x = self.relu1(self.cnn1(x))
         # Max pool 1

@@ -54,7 +54,7 @@ class MobileNetV1(nn.Module):
         out = out.flatten(1)
         out = self.classifier(out)
 
-        return out
+        return Tensor(out)
 
     def _initialize_weights(self) -> None:
         for module in self.modules():
@@ -111,6 +111,6 @@ class DepthWiseConv2d(nn.Module):
         )
 
     def forward(self, x: Tensor) -> Tensor:
-        out = self.conv(x)
+        out: Tensor = self.conv(x)
 
         return out

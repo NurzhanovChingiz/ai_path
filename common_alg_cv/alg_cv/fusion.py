@@ -22,7 +22,8 @@ def _can_fuse_pair(a: nn.Module, b: nn.Module) -> bool:
 
 def _fuse_pair(a: nn.Module, b: nn.Module) -> nn.Module:
     if _is_conv(a) and _is_bn(b):
-        return fuse_conv_bn_eval(a, b)
+        assert isinstance(b, nn.modules.batchnorm._BatchNorm)
+        return fuse_conv_bn_eval(a, b)  # type: ignore[arg-type, type-var]
     if isinstance(a, nn.Linear) and isinstance(b, nn.BatchNorm1d):
         return fuse_linear_bn_eval(a, b)
     return a  # shouldn't happen if guarded by _can_fuse_pair
@@ -45,7 +46,7 @@ def fuse_model_inplace(model: nn.Module) -> nn.Module:
         k1, k2 = keys[i], keys[i+1]
         m1, m2 = model._modules[k1], model._modules[k2]
 
-        if _can_fuse_pair(m1, m2):
+        if m1 is not None and m2 is not None and _can_fuse_pair(m1, m2):
             fused = _fuse_pair(m1, m2)
             model._modules[k1] = fused
             model._modules[k2] = nn.Identity()

@@ -10,4 +10,4 @@ def minkowski(d1: np.ndarray, d2: np.ndarray, p: int) -> float:
     returns:
         The Minkowski distance as a float.
     '''
-    return np.sum(np.abs(d1 - d2) ** p) ** (1 / p)
+    return float(np.sum(np.abs(d1 - d2) ** p) ** (1 / p))

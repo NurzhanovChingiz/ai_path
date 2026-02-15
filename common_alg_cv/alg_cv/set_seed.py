@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import random
 
-def set_seed(SEED: int = 42):
+def set_seed(SEED: int = 42) -> None:
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
     torch.cuda.manual_seed_all(SEED)

@@ -5,7 +5,7 @@ from typing import List, Generator
 def quick_sort(a: List[int]) -> Generator[List[int], None, None]:
     arr = a
 
-    def _q(l, r):
+    def _q(l: int, r: int) -> Generator[List[int], None, None]:
         if l >= r:
             return
         pivot = arr[r]

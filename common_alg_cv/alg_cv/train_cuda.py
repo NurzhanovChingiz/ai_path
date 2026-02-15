@@ -1,10 +1,13 @@
 # Train function
+from typing import Any
 import torch
+from torch import nn
+from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 # Dataloader need pin_memory=True, num_workers>0
 # funy i get acceleration without pin_memory on rocm
 # from 19 sec to 15 sec per epoch on mnist with vgg9
-def move_to_device(batch, device, non_blocking=True):
+def move_to_device(batch: Any, device: torch.device, non_blocking: bool = True) -> Any:
     if torch.is_tensor(batch):
         return batch.to(device, non_blocking=non_blocking)
     if isinstance(batch, dict):
@@ -13,7 +16,7 @@ def move_to_device(batch, device, non_blocking=True):
         return type(batch)(move_to_device(v, device, non_blocking) for v in batch)
     return batch  # leave non-tensors as-is
 
-def _record_stream(obj, stream):
+def _record_stream(obj: Any, stream: torch.cuda.Stream) -> None:
     if torch.is_tensor(obj):
         obj.record_stream(stream)
     elif isinstance(obj, dict):
@@ -41,7 +44,7 @@ class CUDAPrefetcher:
         self._exhausted = False
         self._preload()
 
-    def _preload(self):
+    def _preload(self) -> None:
         if self._exhausted:
             self._next = None
             return
@@ -54,10 +57,10 @@ class CUDAPrefetcher:
         with torch.cuda.stream(self.copy_stream):
             self._next = move_to_device(batch, self.device, non_blocking=True)
 
-    def __iter__(self):
+    def __iter__(self) -> "CUDAPrefetcher":
         return self
 
-    def __next__(self):
+    def __next__(self) -> Any:
         if self._next is None:
             raise StopIteration
         current = torch.cuda.current_stream(device=self.device)
@@ -68,14 +71,14 @@ class CUDAPrefetcher:
         return batch
 
     # Backward-compatible alias with the original API
-    def next(self):
+    def next(self) -> Any | None:
         try:
             return self.__next__()
         except StopIteration:
             return None
 
     # ←— make it re-iterable per epoch
-    def reset(self):
+    def reset(self) -> None:
         """Rewind the underlying DataLoader iterator for the next epoch."""
         self.loader = iter(self.base_loader)
         self._exhausted = False
@@ -83,11 +86,13 @@ class CUDAPrefetcher:
         self._preload()
 
 
-def train(model, dataloader, loss_fn, optimizer, device, prefetcher=None):
+def train(model: nn.Module, dataloader: DataLoader[Any], loss_fn: nn.Module, optimizer: Optimizer, device: torch.device, prefetcher: CUDAPrefetcher | None = None) -> None:
 
-    size = len(dataloader.dataset)  
+    assert dataloader.dataset is not None
+    size = len(dataloader.dataset)  # type: ignore[arg-type]
 
-    model.train()  
+    model.train()
+    assert prefetcher is not None, "CUDAPrefetcher is required for train()"
     batch = prefetcher.next()
     loss_train = 0
     count = 0

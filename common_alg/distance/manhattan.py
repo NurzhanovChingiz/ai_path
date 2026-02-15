@@ -9,4 +9,4 @@ def manhattan(d1: np.ndarray, d2: np.ndarray) -> float:
     returns:
         The Manhattan distance as a float.
     '''
-    return np.sum(np.abs(d1 - d2))
+    return float(np.sum(np.abs(d1 - d2)))

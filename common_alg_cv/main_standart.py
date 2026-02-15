@@ -1,17 +1,17 @@
-from config import CFG
+from common_alg_cv.config import CFG
 
-from read_img import read_image
+from .read_img import read_image
 from pathlib import Path
 import glob, os
 import cv2
 import random
 
-from alg_cv.dataset import MNISTImageDataset
-from alg_cv.train_cuda import train, CUDAPrefetcher
-from alg_cv.test import test
+from .alg_cv.dataset import MNISTImageDataset
+from .alg_cv.train_cuda import train, CUDAPrefetcher
+from .alg_cv.test import test
 import torch
 
-from torchvision.transforms import v2
+from torchvision.transforms import v2  # type: ignore[import-untyped]
 from torch.utils.data import DataLoader
 
 import tqdm 

@@ -1,12 +1,16 @@
-
-def summary(model):
+import torch
+from torch import nn
+def summary(model: nn.Module) -> None:
     """
     Print information about the model
     
     Args:
         model: PyTorch model
+
+    Returns:
+        None
+
     """
-    
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     non_trainable_params = sum(p.numel() for p in model.parameters() if not p.requires_grad)
     total_params = trainable_params + non_trainable_params

@@ -6,7 +6,7 @@ def merge_sort(a: List[int]) -> Generator[List[int], None, None]:
     arr = a
     aux = [0]*len(arr)
 
-    def _merge_sort(l, r):
+    def _merge_sort(l: int, r: int) -> Generator[List[int], None, None]:
         if r - l <= 1:
             return
         m = (l + r)//2

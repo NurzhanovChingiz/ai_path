@@ -1,6 +1,4 @@
-
 import torch
-from config import CFG
 from torch import nn
 from torch.nn import functional as F
 from activation import *
@@ -8,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 from config import CFG
 
-def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000, save = True):
+def plot_activation_function(activation_func: type[nn.Module], x_range: tuple[int, int] = (-5, 5), num_points: int = 1000, save: bool = True) -> None:
     """
     Plot the activation function.
     
@@ -27,7 +25,7 @@ def plot_activation_function(activation_func, x_range=(-5, 5), num_points=1000, 
     plt.title(f"Activation Function: {activation_func.__name__}")
     plt.grid()
     if save:
-        save_dir = os.getcwd() + CFG.path_to_save
+        save_dir = os.getcwd() + CFG.PATH_TO_SAVE
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, f"{activation_func.__name__}.png")
         plt.savefig(save_path)
@@ -71,6 +69,6 @@ if __name__ == "__main__":
 
     for func in zip(activatetion_functions_custom, activatetion_functions_original):
         custom_func, original_func = func
-        plot_activation_function(custom_func, save=CFG.is_save)
-        plot_activation_function(original_func, save=CFG.is_save)
+        plot_activation_function(custom_func, save=CFG.IS_SAVE)
+        plot_activation_function(original_func, save=CFG.IS_SAVE)
 

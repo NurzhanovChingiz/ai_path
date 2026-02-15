@@ -1,17 +1,18 @@
+from typing import Any
 from torch.utils.data import Dataset
-from read_img import read_image
-from torch import tensor
+from ..read_img import read_image
+from torch import Tensor, tensor
 
 class MNISTImageDataset(Dataset):
-    def __init__(self, image_paths, labels, transform=None):
+    def __init__(self, image_paths: list[str], labels: list[int], transform: Any = None) -> None:
         self.image_paths = image_paths
         self.labels = labels
         self.transform = transform
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.image_paths)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> tuple[Any, Tensor]:
         img_path = self.image_paths[idx]
         image = read_image(img_path)
         label = self.labels[idx]

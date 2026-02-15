@@ -1,11 +1,11 @@
 from torch.optim import Optimizer
-from typing import Any
+from typing import Any, Callable
 from torch import nn
 import torch
 import numpy as np
 import random
 
-def set_seed(seed: int = 42):
+def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -14,12 +14,16 @@ def set_seed(seed: int = 42):
     print(f"Random Seed : {seed}")
 
 class Adam(Optimizer):
-    def __init__(self, params, lr, inplace=True, betas=(0.9, 0.999), eps=1e-8) -> None:
+    def __init__(self, params: Any, lr: float, inplace: bool = True, betas: tuple[float, float] = (0.9, 0.999), eps: float = 1e-8) -> None:
         super().__init__(params, defaults=dict(lr=lr, betas=betas, eps=eps))
         self.inplace=inplace
         
     @torch.no_grad()
-    def step(self):
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
+        loss = None
+        if closure is not None:
+            with torch.enable_grad():
+                loss = closure()
         for group in self.param_groups:
             lr = group['lr']
             betas = group['betas']
@@ -55,6 +59,7 @@ class Adam(Optimizer):
                     state["m"] = m.clone()
                     state["v"] = v.clone()
                     state["t"] = t
+        return loss
 
         
 # testing

@@ -3,7 +3,7 @@ from common_alg_cv.prepare_mnist_dataset import prepare_mnist_dataset
 from config import CFG
 import time 
 
-def run_data_preparation():
+def run_data_preparation() -> None:
     mnist_downloader = KaggleDatasetDownloader(dataset_id=CFG.DATASET, path_to_save=CFG.IMAGES_PATH)
     mnist_downloader.run()
     make_images_from_csv()

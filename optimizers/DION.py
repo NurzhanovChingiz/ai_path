@@ -5,7 +5,6 @@ import math
 import warnings
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -14,6 +13,13 @@ from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp._common_utils import _FSDPState
 from torch.optim import Optimizer
 from torch.optim.adamw import AdamW
+# Lion optimizer
+try:
+    from torch.optim.lion import Lion  # type: ignore[import-not-found]
+    LION_AVAILABLE = True
+except ImportError:
+    Lion = None  # type: ignore[assignment, misc]
+    LION_AVAILABLE = False
 
 try:
     from torch.distributed.fsdp import FullyShardedDataParallel as FSDP2
@@ -21,7 +27,7 @@ try:
     FSDP2_AVAILABLE = True
 except ImportError:
     FSDP2_AVAILABLE = False
-    FSDP2 = None
+    FSDP2 = None  # type: ignore[assignment, misc]
 
 
 
@@ -65,7 +71,7 @@ class DionOptimizer(Optimizer):
 
     def __init__(
         self,
-        params,
+        params: Any,
         lr: float = 0.01,
         momentum: float = 0.95,
         rank_factor: float = 0.75,
@@ -80,8 +86,8 @@ class DionOptimizer(Optimizer):
         process_group: Optional[dist.ProcessGroup] = None,  # basically auto-detect
         sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,  # FSDP2, this is for state dict only atm
         max_norm: float = 10.0,  # Maximum gradient norm for clipping
-        **scalar_kwargs,
-    ):
+        **scalar_kwargs: Any,
+    ) -> None:
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= momentum < 1.0:
@@ -124,7 +130,7 @@ class DionOptimizer(Optimizer):
         self._classify_parameters()
         self._init_scalar_optimizers()
 
-    def _get_scalar_optimizer_class(self, optimizer_name: str):
+    def _get_scalar_optimizer_class(self, optimizer_name: str) -> type:
         """Get scalar optimizer class by name."""
         optimizer_map = {
             # "adam": Adam,  # no reason to not use AdamW imo
@@ -152,13 +158,13 @@ class DionOptimizer(Optimizer):
             local_param = param
 
         # Must be 2D and both dimensions >= threshold
-        return (
+        return bool(
             local_param.dim() == 2
             and local_param.size(0) >= self.matrix_threshold
             and local_param.size(1) >= self.matrix_threshold
         )
 
-    def _classify_parameters(self):
+    def _classify_parameters(self) -> None:
         """Classify parameters into matrix and scalar types."""
         self.matrix_params = []
         self.scalar_params = []
@@ -170,7 +176,7 @@ class DionOptimizer(Optimizer):
                 else:
                     self.scalar_params.append(p)
 
-    def _init_scalar_optimizers(self):
+    def _init_scalar_optimizers(self) -> None:
         """Initialize scalar optimizers for non-matrix parameters."""
         if not self.scalar_params:
             self.scalar_optimizer = None
@@ -235,12 +241,14 @@ class DionOptimizer(Optimizer):
         }
 
         if info["is_dtensor"]:
+            assert isinstance(param, DTensor)
             info["local_shape"] = param._local_tensor.shape
             info["global_shape"] = param.shape
             placements = param.placements
             for i, placement in enumerate(placements):
                 if isinstance(placement, Shard):
-                    info["shard_dims"].append(placement.dim)
+                    shard_dims: List[int] = info["shard_dims"]  # type: ignore[assignment]
+                    shard_dims.append(placement.dim)
 
         # Check if parameter is part of FSDP module
         if hasattr(param, "_fsdp_wrapped") or hasattr(param, "_is_fsdp"):
@@ -248,9 +256,9 @@ class DionOptimizer(Optimizer):
 
         return info
 
-    def _init_matrix_state(self, param: torch.Tensor, group: Dict) -> Dict:
+    def _init_matrix_state(self, param: torch.Tensor, group: Dict) -> Dict[str, Any]:
         """Initialize state for matrix parameter."""
-        state = {}
+        state: Dict[str, Any] = {}
         param_info = self._get_param_info(param)
 
         # Get the actual tensor to work with (local tensor for DTensor)
@@ -324,12 +332,12 @@ class DionOptimizer(Optimizer):
         """Orthogonalize matrix using QR decomposition."""
         try:
             Q, _ = torch.linalg.qr(matrix)
-            return Q
+            return torch.Tensor(Q)
         except:
             # Fallback for numerical issues
             matrix_stabilized = matrix + 1e-8 * torch.randn_like(matrix)
             Q, _ = torch.linalg.qr(matrix_stabilized)
-            return Q
+            return torch.Tensor(Q)
 
     def _distributed_orthogonalize(self, matrix: torch.Tensor) -> torch.Tensor:
         """Distributed orthogonalization using randomized Cholesky QR (Algorithm 2 in the paper)."""
@@ -365,11 +373,11 @@ class DionOptimizer(Optimizer):
                 if jitter == 1e-1:
                     # Fallback to QR if Cholesky fails
                     Q, _ = torch.linalg.qr(matrix)
-                    return Q
+                    return torch.Tensor(Q)
 
         # Final orthogonalized result
         result = torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t()
-        return result
+        return torch.Tensor(result)
 
     def _distributed_column_normalize(self, matrix: torch.Tensor) -> torch.Tensor:
         """Distributed column normalization."""
@@ -377,8 +385,8 @@ class DionOptimizer(Optimizer):
         return self._normalize_columns(matrix)
 
     def _step_matrix_param(
-        self, param: torch.Tensor, grad: torch.Tensor, group: Dict, state: Dict
-    ):
+        self, param: torch.Tensor, grad: torch.Tensor, group: Dict[str, Any], state: Dict[str, Any]
+    ) -> None:
         """Perform Dion update step for matrix parameter."""
         momentum = group["momentum"]
         lr = group["lr"]
@@ -473,7 +481,7 @@ class DionOptimizer(Optimizer):
         state["step"] += 1
 
     @torch.no_grad()
-    def step(self, closure: Optional[Callable] = None):
+    def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
         """Perform a single optimization step."""
         loss = None
         if closure is not None:
@@ -499,7 +507,7 @@ class DionOptimizer(Optimizer):
 
         return loss
 
-    def zero_grad(self, set_to_none: bool = False):
+    def zero_grad(self, set_to_none: bool = False) -> None:
         """Clear gradients for all parameters."""
         super().zero_grad(set_to_none)
         if self.scalar_optimizer is not None:
@@ -519,7 +527,7 @@ class DionOptimizer(Optimizer):
         }
         return state_dict
 
-    def load_state_dict(self, state_dict: Dict[str, Any]):
+    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
         """Load state dict from checkpoint."""
         scalar_state = state_dict.pop("scalar_optimizer", None)
         distributed_config = state_dict.pop("distributed_config", None)
@@ -537,7 +545,7 @@ class DionOptimizer(Optimizer):
                     f"current has distributed={self.distributed}"
                 )
 
-    def add_param_group(self, param_group: Dict):
+    def add_param_group(self, param_group: Dict[str, Any]) -> None:
         """Add a parameter group to the optimizer."""
         super().add_param_group(param_group)
         # Re-classify parameters and reinitialize scalar optimizers

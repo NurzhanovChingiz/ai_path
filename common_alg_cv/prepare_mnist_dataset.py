@@ -1,10 +1,10 @@
 from pathlib import Path
 import glob, os, shutil
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split  # type: ignore[import-untyped]
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config import CFG
 
-def _link_or_copy(src, dst):
+def _link_or_copy(src: str | Path, dst: Path) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
     try:
         # hardlink (fast; same inode, no data copy)
@@ -15,7 +15,7 @@ def _link_or_copy(src, dst):
         shutil.copy2(src, dst)
         os.remove(src)
 
-def prepare_mnist_dataset(base_path= Path(__file__).parent, test_size=CFG.TEST_SIZE, random_state=CFG.SEED):
+def prepare_mnist_dataset(base_path: Path = Path(__file__).parent, test_size: float = CFG.TEST_SIZE, random_state: int = CFG.SEED) -> None:
     images_dir = Path(base_path) / CFG.IMAGES_PATH
     print("Preparing MNIST dataset in:", images_dir)
     pattern = str(images_dir / "*.png")

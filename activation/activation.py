@@ -21,11 +21,11 @@ class CustomPReLU(nn.Module):
     """
     Custom PReLU activation function.
     """
-    def __init__(self, num_parameters=1, init=0.25):
+    def __init__(self, num_parameters: int = 1, init: float = 0.25) -> None:
         super().__init__()
         self.weight = nn.Parameter(torch.empty(num_parameters).fill_(init))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.where(x >= 0, x, self.weight * x)
 
 class CustomSELU(nn.Module):
@@ -126,23 +126,5 @@ if __name__ == "__main__":
         [3, -5, 5]])
     DDP = torch.nn.DataParallel 
 
-    # Move the model to the correct device
-    # model = model.to(device)
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    CustomReLU6 = DDP(CustomReLU6, device_ids=device)
-    CustomReLU6 = torch.compile(CustomReLU6, mode='max-autotune-no-cudagraphs', dynamic=True, fullgraph=True)
-    print('CustomReLU', CustomReLU6()(x))
-    # print('CustomReLU6', CustomReLU6()(x))
-    # print('CustomPReLU', CustomPReLU()(x))
-    # print('CustomSELU', CustomSELU()(x))
-    # print('CustomCELU', CustomCELU()(x))
-    # print('CustomGELU', CustomGELU()(x))
-    # print('CustomSigmoid', CustomSigmoid()(x))
-    # print('CustomMish', CustomMish()(x))
-    # print('CustomSoftplus', CustomSoftplus()(x))
-    # print('CustomTanh', CustomTanh()(x))
-    # print('CustomSoftmax', CustomSoftmax()(x))
-    # print('CustomLeakyReLU', CustomLeakyReLU()(x))
-    # print('CustomELU', CustomELU()(x))
-    # print('CustomSwiff', CustomSwiff()(x))
+
     

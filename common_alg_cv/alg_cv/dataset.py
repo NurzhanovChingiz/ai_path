@@ -1,6 +1,6 @@
 from typing import Any
 from torch.utils.data import Dataset
-from ..read_img import read_image
+from ..read_img import read_image  # type: ignore[import-not-found]
 from torch import Tensor, tensor
 
 class MNISTImageDataset(Dataset):

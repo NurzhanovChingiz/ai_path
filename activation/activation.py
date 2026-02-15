@@ -23,9 +23,15 @@ class CustomPReLU(nn.Module):
     def __init__(self, num_parameters: int = 1, init: float = 0.25) -> None:
         super().__init__()
         self.weight = nn.Parameter(torch.empty(num_parameters).fill_(init))
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.where(x >= 0, x, self.weight * x)
+        weight = self.weight
+        if x.dim() > 1 and self.weight.numel() > 1:
+            # Reshape weight to (1, num_parameters, 1, ..., 1) for broadcasting
+            shape = [1] * x.dim()
+            shape[1] = self.weight.numel()
+            weight = self.weight.view(shape)
+        return torch.where(x >= 0, x, weight * x)
+    
 
 class CustomSELU(nn.Module):
     """
@@ -82,14 +88,14 @@ class CustomTanh(nn.Module):
     Custom Tanh activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return (torch.exp(x) - torch.exp(-x)) / (torch.exp(x) + torch.exp(-x))
+        return 2.0 / (1.0 + torch.exp(-2.0 * x)) - 1.0
 
 class CustomSoftmax(nn.Module):
     """
     Custom Softmax activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.exp(x) / torch.sum(torch.exp(x), dim=0, keepdim=True)   
+        return torch.exp(x) / torch.sum(torch.exp(x), dim=-1, keepdim=True)   
 class CustomLeakyReLU(nn.Module):
     """
     Custom Leaky ReLU activation function.

@@ -54,7 +54,7 @@ class MobileNetV1(nn.Module):
         out = out.flatten(1)
         out = self.classifier(out)
 
-        return out
+        return out # type: ignore[no-any-return]
 
     def _initialize_weights(self) -> None:
         for module in self.modules():

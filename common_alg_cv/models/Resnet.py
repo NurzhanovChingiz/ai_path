@@ -55,7 +55,7 @@ class BasicBlock(nn.Module):
         out += residual
         out = self.relu(out)
 
-        return out
+        return out # type: ignore[no-any-return]
 
 class ResNet(nn.Module):
     def __init__(self, block: type[BasicBlock], layers: list[int], num_classes: int = 10) -> None:

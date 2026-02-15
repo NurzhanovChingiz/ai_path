@@ -1,5 +1,6 @@
 # Train function
 import torch
+from typing import Sized, cast
 from torch import nn
 from torch.utils.data import DataLoader
 
@@ -19,7 +20,7 @@ def train(model: nn.Module, dataloader: DataLoader, loss_fn: nn.Module, optimize
     """
     model.train()
     batch_idx: int = 0
-    size: int = len(dataloader.dataset)
+    size: int = len(cast(Sized, dataloader.dataset))
     for batch_idx, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
         optimizer.zero_grad()

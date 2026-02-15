@@ -8,6 +8,9 @@ __pycache__/
 # Mypy cache
 .mypy_cache/
 
+# PyTorch cache
+.pytest_cache/
+
 # MacOS files
 .DS_Store
 

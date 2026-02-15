@@ -1,5 +1,5 @@
-from common_alg_cv.mnist_download import KaggleDatasetDownloader, make_images_from_csv
-from common_alg_cv.prepare_mnist_dataset import prepare_mnist_dataset
+from common_alg_cv.mnist_download import KaggleDatasetDownloader, make_images_from_csv  # type: ignore[import-not-found]
+from common_alg_cv.prepare_mnist_dataset import prepare_mnist_dataset  # type: ignore[import-not-found]
 from config import CFG
 import time 
 

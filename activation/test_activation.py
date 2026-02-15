@@ -1,8 +1,8 @@
 import torch
 import pytest
+from typing import Callable
 from torch import nn
 from torch.nn import functional as F
-from torch.testing import assert_close
 import numpy as np
 
 from activation.activation import (
@@ -27,15 +27,8 @@ RTOL: float = 1e-3 # 0.1%
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 @pytest.fixture
-def input_tensor():
+def inputs_tensor() -> list[torch.Tensor]:
     torch.manual_seed(42)
-    return torch.randn(2, 3, 4)
-
-
-@pytest.fixture
-def input_2d():
-    torch.manual_seed(42)
-    
     inputs: list[torch.Tensor] = [
         torch.randn(2, 3, 4),
         torch.randn(8, 16),

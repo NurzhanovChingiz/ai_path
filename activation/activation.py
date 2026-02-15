@@ -22,12 +22,10 @@ class CustomPReLU(nn.Module):
     """
     def __init__(self, num_parameters: int = 1, init: float = 0.25) -> None:
         super().__init__()
-        # Initialize weight with the given initial value
         self.weight = torch.nn.Parameter(torch.full((num_parameters,), init))
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        weight = self.weight
+        weight: torch.Tensor = self.weight
         if x.dim() > 1 and self.weight.numel() > 1:
-            # Reshape weight to (1, num_parameters, 1, ..., 1) for broadcasting
             shape = [1] * x.dim()
             shape[1] = self.weight.numel()
             weight = self.weight.reshape(shape)

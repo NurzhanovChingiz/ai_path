@@ -33,7 +33,6 @@ class CustomPReLU(nn.Module):
             weight = self.weight.reshape(shape)
         return torch.where(x >= 0, x, weight * x)
     
-
 class CustomSELU(nn.Module):
     """
     Custom SELU activation function.
@@ -57,12 +56,17 @@ class CustomCELU(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.where(x > 0, x, self.alpha * (torch.exp(x / self.alpha) - 1))
+    
 class CustomGELU(nn.Module):
     """
     Custom GELU activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return 0.5 * x * (1.0 + torch.erf(x / 1.4142135623730951))
+        inner = x / 1.4142135623730951
+        result = 0.5 * x * (1.0 + torch.erf(inner))
+        result = torch.where(torch.isfinite(x), result, torch.nan)
+        return result
+    
 class CustomSigmoid(nn.Module):
     """
     Custom Sigmoid activation function.
@@ -82,7 +86,6 @@ class CustomSoftplus(nn.Module):
     Custom Softplus activation function.
     """
     def forward(self, x: torch.Tensor, beta: float = 1.0, threshold: float = 20.0) -> torch.Tensor:
-        # For numerical stability: when beta*x > threshold, return x directly
         scaled = beta * x
         return torch.where(
             scaled > threshold,
@@ -105,6 +108,7 @@ class CustomSoftmax(nn.Module):
         x_max = torch.max(x, dim=-1, keepdim=True).values
         e_x = torch.exp(x - x_max)
         return e_x / torch.sum(e_x, dim=-1, keepdim=True)
+    
 class CustomLeakyReLU(nn.Module):
     """
     Custom Leaky ReLU activation function.

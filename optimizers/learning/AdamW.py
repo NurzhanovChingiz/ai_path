@@ -73,6 +73,7 @@ if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
     optimizer = AdamW(model.parameters(), lr=0.01, inplace=False, betas=(0.9, 0.999), eps=1e-10, weight_decay=0.01)
+    # optimizer = torch.optim.AdamW(model.parameters(), lr=0.01, betas=(0.9, 0.999), eps=1e-10, weight_decay=0.01)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)

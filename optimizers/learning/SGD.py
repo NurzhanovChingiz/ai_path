@@ -41,6 +41,7 @@ if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
     optimizer = SGD(model.parameters(), lr=0.01, inplace=True)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
     x = torch.randn(10, 1)

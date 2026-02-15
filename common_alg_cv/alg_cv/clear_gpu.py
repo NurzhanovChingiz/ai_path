@@ -7,9 +7,6 @@ def clear_memory(verbose: bool = True) -> None:
     if torch.cuda.is_available():
         torch.cuda.synchronize()
         torch.cuda.empty_cache()  # https://forums.fast.ai/t/clearing-gpu-memory-pytorch/14637
-    else:
-        torch.cuda.empty_cache()
-
     gc.collect()
 
     if verbose:

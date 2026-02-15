@@ -15,7 +15,6 @@ class CustomReLU6(nn.Module):
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.clip(x, min=0, max=6)
-from torch import nn
 
 class CustomPReLU(nn.Module):
     """
@@ -113,18 +112,13 @@ class CustomELU(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.where(x > 0, x, self.alpha * (torch.exp(x) - 1))
     
-class CustomSwiff(nn.Module):
+class CustomSwish(nn.Module):
     """
     Custom Swish activation function.
     """
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return x * torch.sigmoid(x)
     
-if __name__ == "__main__":
-    x = torch.tensor([[0, 0, 7],
-        [-1, 0, 1],
-        [3, -5, 5]])
-    DDP = torch.nn.DataParallel 
 
 
     

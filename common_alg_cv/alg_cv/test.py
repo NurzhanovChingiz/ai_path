@@ -7,6 +7,7 @@ def test(model: nn.Module, dataloader: DataLoader, loss_fn: nn.Module, device: t
     test_loss: float = 0.0
     correct: float = 0.0
     total: int = 0
+    batch_idx: int = 0
     with torch.no_grad():
         for batch_idx, (X, y) in enumerate(dataloader):
             

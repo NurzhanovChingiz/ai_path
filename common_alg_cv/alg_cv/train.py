@@ -18,25 +18,16 @@ def train(model: nn.Module, dataloader: DataLoader, loss_fn: nn.Module, optimize
         None
     """
     model.train()
-    for batch, (X, y) in enumerate(dataloader):
+    batch_idx: int = 0
+    size: int = len(dataloader.dataset)
+    for batch_idx, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
         optimizer.zero_grad()
         pred = model(X)
         loss = loss_fn(pred, y)
-    assert dataloader.dataset is not None
-    size = len(dataloader.dataset)  # type: ignore[arg-type]
-
-    model.train()  
-    for b, (X, y) in enumerate(dataloader):  
-        X, y = X.to(device), y.to(
-            device)  
-        optimizer.zero_grad()  
-        pred = model(X)  
-
-        loss = loss_fn(pred, y)  
-
-        loss.backward()  
-        optimizer.step()  
-        if (b + 1) % 100 == 0:
-            loss, current = loss.item(), b * len(X)
+        loss.backward()
+        optimizer.step()
+        
+        if (batch_idx + 1) % 100 == 0:
+            loss, current = loss.item(), batch_idx * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")

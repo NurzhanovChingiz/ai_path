@@ -24,8 +24,3 @@ def save_py_files_structure(base_folder: str, output_file: str) -> None:
             for file in py_files:
                 outfile.write(f"{sub_indent}{file}\n")
                 
-if __name__ == "__main__":
-# Example usage:
-    base_folder = 'C:\\code\\cv\\ai_path\\ai_path'
-    output_file = 'structure.txt'
-    save_py_files_structure(base_folder, output_file)

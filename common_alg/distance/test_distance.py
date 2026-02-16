@@ -15,7 +15,7 @@ RTOL: float = 1e-3 # 0.1%
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 @pytest.fixture
-def inputs_ndarray() -> list[np.ndarray]:
+def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
     np.random.seed(42)
     d1_cases = [
         np.array([1, 2, 3]),
@@ -31,8 +31,8 @@ def inputs_ndarray() -> list[np.ndarray]:
             inputs.append((d1, d2))
     return inputs
 
-def run_test(custom_cls, input_ndarray) -> None:
-    return custom_cls(input_ndarray[0], input_ndarray[1])
+def run_test(custom_cls: Callable, input_ndarray: tuple[np.ndarray, np.ndarray]) -> None:
+    custom_cls(input_ndarray[0], input_ndarray[1])
 
 # ── Test Cases ──────────────────────────────────────────────────────────────────
 @pytest.mark.parametrize("custom_cls", [
@@ -44,6 +44,6 @@ def run_test(custom_cls, input_ndarray) -> None:
     chebyshev.chebyshev,
 ])
 class TestDistance:
-    def test_matches_pytorch(self, custom_cls: Callable[[np.ndarray, np.ndarray], float], inputs_ndarray: list[np.ndarray]) -> None:
+    def test_matches_pytorch(self, custom_cls: Callable[[np.ndarray, np.ndarray], float], inputs_ndarray: list[tuple[np.ndarray, np.ndarray]]) -> None:
         for input_ndarray in inputs_ndarray:
             run_test(custom_cls, input_ndarray)

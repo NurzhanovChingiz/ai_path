@@ -53,7 +53,6 @@ def run_sorting(custom_cls: Callable[[list[int]], list[int]], input_list: list[i
 class TestSorting:
     def test_matches_numpy(self, custom_cls: Callable[[list[int]], list[int]], inputs_list: list[list[int]]) -> None:
         for input_list in inputs_list:
-            print(input_list)
             assert_close_all(custom_cls, input_list)
     def run_test(self, custom_cls: Callable[[list[int]], list[int]], inputs_list: list[list[int]]) -> None:
         for input_list in inputs_list:

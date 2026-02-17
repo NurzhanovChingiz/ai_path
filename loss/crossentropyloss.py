@@ -6,7 +6,9 @@ import numpy as np
 
 # numpy implementation of softmax, log_softmax, cross_entropy
 def softmax_np(logits):
-    exp_i = np.exp(logits)
+    m = np.max(logits, axis=1, keepdims=True)
+    shifted_logits = logits - m
+    exp_i = np.exp(shifted_logits)
     exp_j = np.sum(exp_i, axis=1, keepdims=True)
     return exp_i / exp_j
 
@@ -14,18 +16,22 @@ def log_softmax_np(logits):
     return np.log(softmax_np(logits))
 
 def cross_entropy_np(y, y_pred):
-    """Multi-class cross entropy loss.
+    """
+    Numpy implementation of multi-class cross entropy loss.
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N, C)
     """
     log_probs = log_softmax_np(y_pred)
-    ce = -1 * log_probs[np.arange(len(y)), y]
+    row = np.arange(len(y))
+    cols = y
+    ce = -1 * log_probs[row, cols]
     return ce.mean()
 
 # pytorch implementation of softmax, log_softmax, cross_entropy
-
 def softmax_torch(logits):
-    exp_i = torch.exp(logits)
+    m = logits.max(dim=1, keepdim=True).values
+    shifted_logits = logits - m
+    exp_i = torch.exp(shifted_logits)
     exp_j = torch.sum(exp_i, dim=1, keepdim=True)
     return exp_i / exp_j
 
@@ -33,8 +39,15 @@ def log_softmax_torch(logits):
     return torch.log(softmax_torch(logits))
 
 def cross_entropy_torch(y, y_pred):
+    """
+    Pytorch implementation of multi-class cross entropy loss.
+    y: class indices of shape (N,)
+    y_pred: raw logits of shape (N, C)
+    """
     log_probs = log_softmax_torch(y_pred)
-    ce = -1 * log_probs[np.arange(len(y)), y]
+    row = torch.arange(len(y))
+    cols = y
+    ce = -1 * log_probs[row, cols]
     return ce.mean()
 
 # testing

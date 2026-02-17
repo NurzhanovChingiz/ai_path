@@ -10,10 +10,17 @@ def softmax_np(logits):
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
     exp_j = np.sum(exp_i, axis=1, keepdims=True)
-    return exp_i / exp_j
+    return exp_i / exp_j # softmax_i = exp_i / exp_j
+
+def log_softmax_np_1(logits):
+    return np.log(softmax_np(logits)) # log_softmax_i = log(softmax_i)
 
 def log_softmax_np(logits):
-    return np.log(softmax_np(logits))
+    m = np.max(logits, axis=1, keepdims=True)
+    shifted_logits = logits - m
+    exp_i = np.exp(shifted_logits)
+    exp_j = np.sum(exp_i, axis=1, keepdims=True)
+    return shifted_logits - np.log(exp_j) # log_softmax_i = yi - log(exp_j)
 
 def cross_entropy_np(y, y_pred):
     """
@@ -29,14 +36,21 @@ def cross_entropy_np(y, y_pred):
 
 # pytorch implementation of softmax, log_softmax, cross_entropy
 def softmax_torch(logits):
-    m = logits.max(dim=1, keepdim=True).values
-    shifted_logits = logits - m
-    exp_i = torch.exp(shifted_logits)
-    exp_j = torch.sum(exp_i, dim=1, keepdim=True)
-    return exp_i / exp_j
+    m = logits.max(dim=1, keepdim=True).values # m = max(logits_i)
+    shifted_logits = logits - m # shifted_logits_i = logits_i - m
+    exp_i = torch.exp(shifted_logits) # exp_i = exp(shifted_logits_i)
+    exp_j = torch.sum(exp_i, dim=1, keepdim=True) # exp_j = sum(exp_i)
+    return exp_i / exp_j # softmax_i = exp_i / exp_j
+
+def log_softmax_torch_1(logits):
+    return torch.log(softmax_torch(logits)) # log_softmax_i = log(softmax_i)
 
 def log_softmax_torch(logits):
-    return torch.log(softmax_torch(logits))
+    m = logits.max(dim=1, keepdim=True).values # m = max(logits_i)
+    shifted_logits = logits - m # shifted_logits_i = logits_i - m
+    exp_i = torch.exp(shifted_logits) # exp_i = exp(shifted_logits_i)
+    exp_j = torch.sum(exp_i, dim=1, keepdim=True) # exp_j = sum(exp_i)
+    return shifted_logits - torch.log(exp_j) # log_softmax_i = yi - log(exp_j)
 
 def cross_entropy_torch(y, y_pred):
     """

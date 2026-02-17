@@ -19,8 +19,8 @@ def cross_entropy_np(y, y_pred):
     y_pred: raw logits of shape (N, C)
     """
     log_probs = log_softmax_np(y_pred)
-    
-    return -1* np.sum(log_probs[np.arange(len(y)), y]) / y.shape[0]
+    ce = -1 * log_probs[np.arange(len(y)), y]
+    return ce.mean()
 
 # pytorch implementation of softmax, log_softmax, cross_entropy
 
@@ -33,7 +33,9 @@ def log_softmax_torch(logits):
     return torch.log(softmax_torch(logits))
 
 def cross_entropy_torch(y, y_pred):
-    return -1 * torch.sum(log_softmax_torch(y_pred)[np.arange(len(y)), y]) / y.shape[0]
+    log_probs = log_softmax_torch(y_pred)
+    ce = -1 * log_probs[np.arange(len(y)), y]
+    return ce.mean()
 
 # testing
 if __name__ == "__main__":

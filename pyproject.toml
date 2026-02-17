@@ -4,11 +4,3 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 check_untyped_defs = true
-
-[[tool.mypy.overrides]]
-module = [
-    "sklearn.*",
-    "kagglehub.*",
-    "torchvision.*",
-]
-ignore_missing_imports = true

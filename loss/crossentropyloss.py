@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     input = torch.randn(3, 5, requires_grad=True)
     target = torch.randint(5, (3,), dtype=torch.int64)
-    print(input)
-    print(target)
+    print(f"Input: {input}")
+    print(f"Target: {target}")
 
     # PyTorch reference
     torch_loss = F.cross_entropy(input, target)

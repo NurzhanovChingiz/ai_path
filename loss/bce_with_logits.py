@@ -67,8 +67,8 @@ if __name__ == "__main__":
     target = torch.empty(3).random_(2)
     torch_loss = F.binary_cross_entropy_with_logits(input, target)
     torch_loss.backward()
-    print(input)
-    print(target)
+    print(f"Input: {input}")
+    print(f"Target: {target}")
     print(f"PyTorch bce_with_logits: {torch_loss.item():.6f}")
 
     # Our implementation
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     our_torch_loss = bce_with_logits_torch(target, input)
     our_torch_loss.backward()
     print(f"Our torch bce_with_logits:     {our_torch_loss.item():.6f}")
-    
+
     our_torch_loss_stable = bce_with_logits_torch_stable(target, input)
     our_torch_loss_stable.backward()
     print(f"Our torch bce_with_logits stable: {our_torch_loss_stable.item():.6f}")

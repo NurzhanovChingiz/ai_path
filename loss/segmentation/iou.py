@@ -1,7 +1,7 @@
-# dice loss for segmentation
+# IoU for segmentation
 import numpy as np
 import torch
-from karina_dice_loss import dice_loss
+
 
 # numpy implementation
 
@@ -28,27 +28,27 @@ def one_hot_np(labels: np.ndarray, num_classes: int, eps: float = 1e-10) -> np.n
     result: np.ndarray = one_hot * (1.0 - eps) + eps
     return result
 
-def dice_loss_np(pred: np.ndarray, target: np.ndarray, smooth: float = 1) -> float:
+def iou_np(pred: np.ndarray, target: np.ndarray, smooth: float = 1) -> float:
     pred = softmax_np(pred)
     target_one_hot = one_hot_np(target, num_classes=pred.shape[1])
     intersection = np.sum(pred * target_one_hot)
-    union = np.sum(pred) + np.sum(target_one_hot)
-    dice: np.ndarray = 1 - 2 * intersection / (union + smooth)
-    result: float = float(dice.mean())
+    sum_of_cardinalities = np.sum(pred) + np.sum(target_one_hot)
+    iou: np.ndarray = 1 - intersection / (sum_of_cardinalities - intersection + smooth)
+    result: float = float(iou.mean())
     return result
 
 # PyTorch implementation
 def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
-    m = logits.max(dim=1, keepdim=True).values # m = max(logits_i)
-    shifted_logits = logits - m # shifted_logits_i = logits_i - m
-    exp_i = torch.exp(shifted_logits) # exp_i = exp(shifted_logits_i)
-    exp_j = torch.sum(exp_i, dim=1, keepdim=True) # exp_j = sum(exp_i)
-    return exp_i / exp_j # softmax_i = exp_i / exp_j
+    m = logits.max(dim=1, keepdim=True).values
+    shifted_logits = logits - m
+    exp_i = torch.exp(shifted_logits)
+    exp_j = torch.sum(exp_i, dim=1, keepdim=True)
+    return exp_i / exp_j
 
 def one_hot_torch(labels: torch.Tensor, num_classes: int, eps: float = 1e-10) -> torch.Tensor:
     """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
     flat = labels.reshape(-1)
-    one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]  # (N*..., C)
+    one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]
     target_shape = labels.shape + (num_classes,)
     one_hot = one_hot.reshape(target_shape)
     ndim = labels.ndim
@@ -57,13 +57,13 @@ def one_hot_torch(labels: torch.Tensor, num_classes: int, eps: float = 1e-10) ->
     result: torch.Tensor = one_hot * (1.0 - eps) + eps
     return result
 
-def dice_loss_torch(pred: torch.Tensor, target: torch.Tensor, smooth: float = 1) -> torch.Tensor:
+def iou_loss_torch(pred: torch.Tensor, target: torch.Tensor, smooth: float = 1) -> torch.Tensor:
     pred = softmax_torch(pred)
     target_one_hot = one_hot_torch(target, num_classes=pred.shape[1])
     intersection = torch.sum(pred * target_one_hot)
-    union = torch.sum(pred) + torch.sum(target_one_hot)
-    dice: torch.Tensor = 1 - 2 * intersection / (union + smooth)
-    result: torch.Tensor = dice.mean()
+    sum_of_cardinalities = torch.sum(pred) + torch.sum(target_one_hot)
+    iou: torch.Tensor = 1 - intersection / (sum_of_cardinalities - intersection + smooth)
+    result: torch.Tensor = iou.mean()
     return result
 
 if __name__ == "__main__":
@@ -77,10 +77,7 @@ if __name__ == "__main__":
     target_np = target.detach().numpy()
     input_np = input.detach().numpy()
 
-    torch_loss = dice_loss(input, target, eps=smooth, average='micro')
-    torch_loss.backward()
-    print(f"Karina implementation dice loss: {torch_loss.item():.6f}")
-
-   # Our implementation
-    print(f"Our numpy dice loss: {dice_loss_np(input_np, target_np, smooth):.6f}")
-    print(f"Our torch dice loss: {dice_loss_torch(input, target, smooth):.6f}")
+    print(f"Our numpy iou loss: {iou_np(input_np, target_np, smooth):.6f}")
+    torch_iou = iou_loss_torch(input, target, smooth)
+    torch_iou.backward()
+    print(f"Our torch iou loss: {torch_iou.item():.6f}")

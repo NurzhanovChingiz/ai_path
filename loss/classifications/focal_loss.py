@@ -3,9 +3,6 @@ import numpy as np
 import torch
 from karina_focal_loss import focal_loss
 
-def sigmoid_np(x: np.ndarray) -> np.ndarray:
-    result: np.ndarray = 1 / (1 + np.exp(-x))
-    return result
 def softmax_np(logits: np.ndarray) -> np.ndarray:
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
@@ -13,6 +10,7 @@ def softmax_np(logits: np.ndarray) -> np.ndarray:
     exp_j = np.sum(exp_i, axis=1, keepdims=True)
     result: np.ndarray = exp_i / exp_j # softmax_i = exp_i / exp_j
     return result
+    
 def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
     result: np.ndarray = np.log(softmax_np(logits)) # log_softmax_i = log(softmax_i)
     return result
@@ -21,7 +19,7 @@ def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
 def one_hot_np(labels: np.ndarray, num_classes: int, eps: float = 1e-10) -> np.ndarray:
     """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
     flat = labels.reshape(-1)
-    one_hot = np.eye(num_classes, dtype=np.float64)[flat]  # (N*..., C)
+    one_hot = np.eye(num_classes, dtype=np.float32)[flat]  # (N*..., C)
 
     target_shape = labels.shape + (num_classes,)
     one_hot = one_hot.reshape(target_shape)
@@ -77,7 +75,7 @@ def log_softmax_torch_1(logits: torch.Tensor) -> torch.Tensor:
 def one_hot_torch(labels: torch.Tensor, num_classes: int, eps: float = 1e-10) -> torch.Tensor:
     """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
     flat = labels.reshape(-1)
-    one_hot = torch.eye(num_classes, dtype=torch.float64)[flat]  # (N*..., C)
+    one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]  # (N*..., C)
     target_shape = labels.shape + (num_classes,)
     one_hot = one_hot.reshape(target_shape)
     ndim = labels.ndim

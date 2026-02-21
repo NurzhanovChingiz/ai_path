@@ -1,4 +1,17 @@
 # focal loss
+# Where: single class, multi-class, multi-label,
+# any setting with tons of easy negatives.
+# Pros: 
+# good for imbalanced datasets
+# more stabel than cross entropy when class imbalance
+# more stabel than BCE with logits when class imbalance
+# Cons:
+# need tuning of alpha and gamma
+# can be unstable in optimization
+# can hurt probability calibration
+# when use: 
+# detection/segmentation where background dominates
+
 import numpy as np 
 import torch
 from karina_focal_loss import focal_loss

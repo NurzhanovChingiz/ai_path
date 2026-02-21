@@ -1,4 +1,15 @@
 # dice loss for segmentation
+# Where: binary or multi-class segmentation,
+# especially common in medical imaging.
+# Pros:
+# directly optimizes overlap between predicted and target
+# better than cross entropy loss in disbalance datasets
+# # often better than pure CE under area imbalances, but worse than Focal Loss
+# Cons:
+# can be unstable with empty masks
+# can produce weaker boundaries / thin structures unless combined with CE/BCE or boundary-aware losses.
+# when use: 
+# when overlap is the main goal under imbalance
 import numpy as np
 import torch
 from karina_dice_loss import dice_loss

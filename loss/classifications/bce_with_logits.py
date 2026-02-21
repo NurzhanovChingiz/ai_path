@@ -1,4 +1,16 @@
 # binary cross entropy with logits
+# Where: single class, multi-class, multi-label,
+# detection class prediction, binary segmentation
+# Pros: 
+# stable
+# Natural for independent labels (multi-label)
+# more stabel than BCE + sigmoid separate
+# Cons:
+# Does not model class competition
+# sensitive to class imbalance
+# when use: 
+# when you have a lot of classes
+
 import numpy as np 
 import torch
 from torch.nn import functional as F

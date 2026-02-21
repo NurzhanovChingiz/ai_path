@@ -1,4 +1,13 @@
 # IoU for segmentation
+# Where: binary or multi-class segmentation,
+# Pros:
+# easy to understand and interpret
+# directly targets IoU.
+# Cons:
+# sensitive to class imbalance
+# rare classes and empty masks can dominate
+# when use: 
+# when evaluation is IoU and you want to push that specifically
 import numpy as np
 import torch
 

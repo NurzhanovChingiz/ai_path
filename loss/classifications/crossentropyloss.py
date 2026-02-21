@@ -1,4 +1,21 @@
 # cross entropy loss
+# Where: single class, multi-class,
+# multi-label, multi-class per-pixel segmentation,
+# detection class prediction, keypoint presence-as-class,
+# object detection, instance segmentation, semantic segmentation,
+# image classification, text classification, speech classification
+# Pros: 
+# de-facto standard 
+# stable
+# good calibration
+# work with logits
+# dont need softmax in the end
+# Cons: 
+# sensitive to class imbalance
+# with noisy labels, the model can become overconfident and "lock onto" wrong patterns
+#with clean labels, plain CE often yields miscalibrated (overconfident) probabilities
+# when use: 
+# always like beseline model
 
 import torch
 from torch.nn import functional as F

@@ -2,6 +2,7 @@ import torch
 import time
 import gc
 
+
 def clear_memory(verbose: bool = True) -> None:
     stt = time.time()
     if torch.cuda.is_available():

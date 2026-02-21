@@ -4,17 +4,17 @@
 # detection class prediction, keypoint presence-as-class,
 # object detection, instance segmentation, semantic segmentation,
 # image classification, text classification, speech classification
-# Pros: 
-# de-facto standard 
+# Pros:
+# de-facto standard
 # stable
 # good calibration
 # work with logits
 # dont need softmax in the end
-# Cons: 
+# Cons:
 # sensitive to class imbalance
 # with noisy labels, the model can become overconfident and "lock onto" wrong patterns
-#with clean labels, plain CE often yields miscalibrated (overconfident) probabilities
-# when use: 
+# with clean labels, plain CE often yields miscalibrated (overconfident) probabilities
+# when use:
 # always like beseline model
 
 import torch
@@ -22,25 +22,32 @@ from torch.nn import functional as F
 import numpy as np
 
 # numpy implementation of softmax, log_softmax, cross_entropy
+
+
 def softmax_np(logits: np.ndarray) -> np.ndarray:
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
     exp_j = np.sum(exp_i, axis=1, keepdims=True)
-    result: np.ndarray = exp_i / exp_j # softmax_i = exp_i / exp_j
+    result: np.ndarray = exp_i / exp_j  # softmax_i = exp_i / exp_j
     return result
 
+
 def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
-    result: np.ndarray = np.log(softmax_np(logits)) # log_softmax_i = log(softmax_i)
+    # log_softmax_i = log(softmax_i)
+    result: np.ndarray = np.log(softmax_np(logits))
     return result
+
 
 def log_softmax_np(logits: np.ndarray) -> np.ndarray:
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
     exp_j = np.sum(exp_i, axis=1, keepdims=True)
-    result: np.ndarray = shifted_logits - np.log(exp_j) # log_softmax_i = yi - log(exp_j)
+    result: np.ndarray = shifted_logits - \
+        np.log(exp_j)  # log_softmax_i = yi - log(exp_j)
     return result
+
 
 def cross_entropy_np(y: np.ndarray, y_pred: np.ndarray) -> float:
     """
@@ -58,21 +65,24 @@ def cross_entropy_np(y: np.ndarray, y_pred: np.ndarray) -> float:
 
 # pytorch implementation of softmax, log_softmax, cross_entropy
 def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
-    m = logits.max(dim=1, keepdim=True).values # m = max(logits_i)
-    shifted_logits = logits - m # shifted_logits_i = logits_i - m
-    exp_i = torch.exp(shifted_logits) # exp_i = exp(shifted_logits_i)
-    exp_j = torch.sum(exp_i, dim=1, keepdim=True) # exp_j = sum(exp_i)
-    return exp_i / exp_j # softmax_i = exp_i / exp_j
+    m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
+    shifted_logits = logits - m  # shifted_logits_i = logits_i - m
+    exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)
+    exp_j = torch.sum(exp_i, dim=1, keepdim=True)  # exp_j = sum(exp_i)
+    return exp_i / exp_j  # softmax_i = exp_i / exp_j
+
 
 def log_softmax_torch_1(logits: torch.Tensor) -> torch.Tensor:
-    return torch.log(softmax_torch(logits)) # log_softmax_i = log(softmax_i)
+    return torch.log(softmax_torch(logits))  # log_softmax_i = log(softmax_i)
+
 
 def log_softmax_torch(logits: torch.Tensor) -> torch.Tensor:
-    m = logits.max(dim=1, keepdim=True).values # m = max(logits_i)
-    shifted_logits = logits - m # shifted_logits_i = logits_i - m
-    exp_i = torch.exp(shifted_logits) # exp_i = exp(shifted_logits_i)
-    exp_j = torch.sum(exp_i, dim=1, keepdim=True) # exp_j = sum(exp_i)
-    return shifted_logits - torch.log(exp_j) # log_softmax_i = yi - log(exp_j)
+    m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
+    shifted_logits = logits - m  # shifted_logits_i = logits_i - m
+    exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)
+    exp_j = torch.sum(exp_i, dim=1, keepdim=True)  # exp_j = sum(exp_i)
+    return shifted_logits - torch.log(exp_j)  # log_softmax_i = yi - log(exp_j)
+
 
 def cross_entropy_torch(y: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
     """
@@ -85,6 +95,7 @@ def cross_entropy_torch(y: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
     cols = y
     ce = -1 * log_probs[row, cols]
     return ce.mean()
+
 
 # testing
 if __name__ == "__main__":
@@ -108,4 +119,3 @@ if __name__ == "__main__":
     our_torch_loss = cross_entropy_torch(target, input)
     our_torch_loss.backward()
     print(f"Our torch cross_entropy:     {our_torch_loss.item():.6f}")
-   

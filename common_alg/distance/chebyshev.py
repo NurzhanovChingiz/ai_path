@@ -1,6 +1,7 @@
 # Chebyshev distance or L∞ norm
 import numpy as np
 
+
 def chebyshev(d1: np.ndarray, d2: np.ndarray) -> float:
     '''Calculate the Chebyshev distance or L∞ norm between two points.
     args:

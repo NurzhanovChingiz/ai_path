@@ -2,7 +2,8 @@
 from typing import Any, Callable, Optional
 import torch
 from torch.optim.optimizer import Optimizer
-import math 
+import math
+
 
 class Lamb(Optimizer):
     # Reference code: https://github.com/cybertronai/pytorch-lamb
@@ -38,15 +39,19 @@ class Lamb(Optimizer):
         clamp_value: float = 10,
         adam: bool = False,
         debias: bool = False
-        ):
+    ):
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
             raise ValueError("Invalid epsilon value: {}".format(eps))
         if not 0.0 <= betas[0] < 1.0:
-            raise ValueError("Invalid beta parameter at index 0: {}".format(betas[0]))
+            raise ValueError(
+                "Invalid beta parameter at index 0: {}".format(
+                    betas[0]))
         if not 0.0 <= betas[1] < 1.0:
-            raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
+            raise ValueError(
+                "Invalid beta parameter at index 1: {}".format(
+                    betas[1]))
         if weight_decay < 0:
             raise ValueError(
                 'Invalid weight_decay value: {}'.format(weight_decay)
@@ -58,10 +63,12 @@ class Lamb(Optimizer):
         self.clamp_value = clamp_value
         self.adam = adam
         self.debias = debias
-        
+
         super().__init__(params, defaults)
 
-    def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
+    
+    def step(self, closure: Optional[Callable[[], # type: ignore[override]
+             float]] = None) -> Optional[float]:
         """Performs a single optimization step.
 
         Arguments:
@@ -78,7 +85,8 @@ class Lamb(Optimizer):
                     continue
                 grad = p.grad.data
                 if grad.is_sparse:
-                    raise RuntimeError('Lamb does not support sparse gradients, consider SparseAdam instad.')
+                    raise RuntimeError(
+                        'Lamb does not support sparse gradients, consider SparseAdam instad.')
 
                 state = self.state[p]
 
@@ -105,13 +113,15 @@ class Lamb(Optimizer):
                 if self.debias:
                     bias_correction1 = 1 - beta1 ** state['step']
                     bias_correction2 = 1 - beta2 ** state['step']
-                    step_size = group['lr'] * math.sqrt(bias_correction2) / bias_correction1
+                    step_size = group['lr'] * \
+                        math.sqrt(bias_correction2) / bias_correction1
 
                 else:
-                    step_size = group['lr'] 
+                    step_size = group['lr']
 
-                weight_norm = p.data.pow(2).sum().sqrt().clamp(0, self.clamp_value)
-                
+                weight_norm = p.data.pow(
+                    2).sum().sqrt().clamp(0, self.clamp_value)
+
                 adam_step = exp_avg / exp_avg_sq.sqrt().add(group['eps'])
                 if group['weight_decay'] != 0:
                     adam_step.add_(p.data, alpha=group['weight_decay'])

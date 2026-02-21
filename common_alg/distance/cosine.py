@@ -1,6 +1,7 @@
 # Cosine distance or cosine similarity
 import numpy as np
 
+
 def cosine(d1: np.ndarray, d2: np.ndarray) -> float:
     '''Calculate the Cosine distance between two points.
     args:

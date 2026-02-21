@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import random
 
+
 def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -13,11 +14,12 @@ def set_seed(seed: int = 42) -> None:
     random.seed(seed)
     print(f"Random Seed : {seed}")
 
+
 class SGD(Optimizer):
     def __init__(self, params: Any, lr: float, inplace: bool = True) -> None:
         super().__init__(params, defaults=dict(lr=lr))
-        self.inplace=inplace
-    
+        self.inplace = inplace
+
     @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         loss = None
@@ -30,12 +32,13 @@ class SGD(Optimizer):
                 if p.grad is None:
                     continue
                 if self.inplace:
-                    p.data.sub_(p.grad*lr) # w = w - grad * lr
+                    p.data.sub_(p.grad * lr)  # w = w - grad * lr
                 else:
-                    update = p.grad*lr # update = grad * lr
-                    p.data = p.data.clone() - update  #w = w - update
+                    update = p.grad * lr  # update = grad * lr
+                    p.data = p.data.clone() - update  # w = w - update
         return loss
-                    
+
+
 # testing
 if __name__ == "__main__":
     set_seed(42)
@@ -48,15 +51,12 @@ if __name__ == "__main__":
     y = torch.randn(10, 1)
     output = model(x)
     loss = nn.MSELoss()(output, y)
-    
+
     # Compute gradients
     loss.backward()
-    
+
     # Now we can call step()
     optimizer.step()
     print(optimizer.state_dict())
     print(model.state_dict())
     print(model.weight.data.clone())
-    
-    
-    

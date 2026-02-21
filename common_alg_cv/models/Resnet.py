@@ -12,7 +12,13 @@ cfg_resnet = {
     'ResNet152': [3, 8, 36, 3]
 }
 
-def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> nn.Conv2d:
+
+def conv3x3(
+        in_planes: int,
+        out_planes: int,
+        stride: int = 1,
+        groups: int = 1,
+        dilation: int = 1) -> nn.Conv2d:
     """3x3 convolution with padding"""
     return nn.Conv2d(
         in_channels=in_planes,
@@ -29,7 +35,8 @@ def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, d
 class BasicBlock(nn.Module):
     expansion: int = 1
 
-    def __init__(self, inplanes: int, planes: int, stride: int = 1, downsample: nn.Module | None = None) -> None:
+    def __init__(self, inplanes: int, planes: int, stride: int = 1,
+                 downsample: nn.Module | None = None) -> None:
         super().__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -55,13 +62,24 @@ class BasicBlock(nn.Module):
         out += residual
         out = self.relu(out)
 
-        return out # type: ignore[no-any-return]
+        return out  # type: ignore[no-any-return]
+
 
 class ResNet(nn.Module):
-    def __init__(self, block: type[BasicBlock], layers: list[int], num_classes: int = 10) -> None:
+    def __init__(
+            self,
+            block: type[BasicBlock],
+            layers: list[int],
+            num_classes: int = 10) -> None:
         self.inplanes = 64
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(
+            3,
+            64,
+            kernel_size=7,
+            stride=2,
+            padding=3,
+            bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -72,12 +90,12 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         self._initialize_weights()
-    
-    
+
     def _initialize_weights(self) -> None:
         for module in self.modules():
             if isinstance(module, nn.Conv2d):
-                nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+                nn.init.kaiming_normal_(
+                    module.weight, mode="fan_out", nonlinearity="relu")
                 if module.bias is not None:
                     nn.init.zeros_(module.bias)
             elif isinstance(module, (nn.BatchNorm2d, nn.GroupNorm)):
@@ -86,13 +104,26 @@ class ResNet(nn.Module):
             elif isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, 0, 0.01)
                 nn.init.zeros_(module.bias)
-                
-    def _make_layer(self, block: type[BasicBlock], planes: int, blocks: int, stride: int = 1) -> nn.Sequential:
+
+    def _make_layer(
+            self,
+            block: type[BasicBlock],
+            planes: int,
+            blocks: int,
+            stride: int = 1) -> nn.Sequential:
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(planes * block.expansion),
+                nn.Conv2d(
+                    self.inplanes,
+                    planes *
+                    block.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False),
+                nn.BatchNorm2d(
+                    planes *
+                    block.expansion),
             )
 
         layers = []

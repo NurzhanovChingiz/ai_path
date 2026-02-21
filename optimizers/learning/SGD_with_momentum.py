@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import random
 
+
 def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -13,12 +14,18 @@ def set_seed(seed: int = 42) -> None:
     random.seed(seed)
     print(f"Random Seed : {seed}")
 
+
 class SGD_with_momentum(Optimizer):
-    def __init__(self, params: Any, lr: float, inplace: bool = True, momentum: float = 0.9) -> None:
+    def __init__(
+            self,
+            params: Any,
+            lr: float,
+            inplace: bool = True,
+            momentum: float = 0.9) -> None:
         super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
-        self.momentum=momentum
-        self.inplace=inplace
-        
+        self.momentum = momentum
+        self.inplace = inplace
+
     @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         loss = None
@@ -32,28 +39,32 @@ class SGD_with_momentum(Optimizer):
                 if p.grad is None:
                     continue
                 grad = p.grad
-                
+
                 state = self.state[p]
                 if len(state) == 0:
                     state["v"] = torch.zeros_like(p)
 
                 v = state["v"]
                 if self.inplace:
-                    v.mul_(momentum).add_(grad) # v = v * momentum + grad
-                    p.data.sub_(lr * v) # w = w - lr * v
+                    v.mul_(momentum).add_(grad)  # v = v * momentum + grad
+                    p.data.sub_(lr * v)  # w = w - lr * v
                 else:
-                    v = momentum*v + grad # v = momentum * v + grad
-                    update = lr * v # update = lr * v
+                    v = momentum * v + grad  # v = momentum * v + grad
+                    update = lr * v  # update = lr * v
                     p.data = p.data.clone() - update  # w = w - update
                     state['v'] = v.clone()
         return loss
 
-                
+
 # testing
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = SGD_with_momentum(model.parameters(), lr=0.01, inplace=False, momentum=0.9)
+    optimizer = SGD_with_momentum(
+        model.parameters(),
+        lr=0.01,
+        inplace=False,
+        momentum=0.9)
     # optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     optimizer.zero_grad()
     # Create dummy input and compute loss to generate gradients
@@ -61,10 +72,10 @@ if __name__ == "__main__":
     y = torch.randn(10, 1)
     output = model(x)
     loss = nn.MSELoss()(output, y)
-    
+
     # Compute gradients
     loss.backward()
-    
+
     # Now we can call step()
     optimizer.step()
     print(optimizer.state_dict())

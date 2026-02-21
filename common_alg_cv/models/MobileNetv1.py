@@ -10,21 +10,22 @@ class MobileNetV1(nn.Module):
             num_classes: int = 1000,
     ) -> None:
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 32, 3, 2, 1, bias=False) # 224x224x3 -> 112x112x32
-        self.bn1 = nn.BatchNorm2d(32) # 112x112x32
-        self.conv_dw1 = DepthWiseConv2d(32, 64, 1) # 112x112x32 -> 112x112x64
-        self.conv_dw2 = DepthWiseConv2d(64, 128, 2) # 112x112x64 -> 56x56x128
-        self.conv_dw3 = DepthWiseConv2d(128, 128, 1) # 56x56x128 -> 56x56x128
-        self.conv_dw4 = DepthWiseConv2d(128, 256, 2) # 56x56x128 -> 28x28x256
-        self.conv_dw5 = DepthWiseConv2d(256, 256, 1) # 28x28x256 -> 28x28x256
-        self.conv_dw6 = DepthWiseConv2d(256, 512, 2) # 28x28x256 -> 14x14x512
-        self.conv_dw7 = DepthWiseConv2d(512, 512, 1) # 14x14x512 -> 14x14x512
-        self.conv_dw8 = DepthWiseConv2d(512, 512, 1) # 14x14x512 -> 14x14x512
-        self.conv_dw9 = DepthWiseConv2d(512, 512, 1) # 14x14x512 -> 14x14x512
-        self.conv_dw10 = DepthWiseConv2d(512, 512, 1) # 14x14x512 -> 14x14x512
-        self.conv_dw11 = DepthWiseConv2d(512, 512, 1) # 14x14x512 -> 14x14x512
+        # 224x224x3 -> 112x112x32
+        self.conv1 = nn.Conv2d(3, 32, 3, 2, 1, bias=False)
+        self.bn1 = nn.BatchNorm2d(32)  # 112x112x32
+        self.conv_dw1 = DepthWiseConv2d(32, 64, 1)  # 112x112x32 -> 112x112x64
+        self.conv_dw2 = DepthWiseConv2d(64, 128, 2)  # 112x112x64 -> 56x56x128
+        self.conv_dw3 = DepthWiseConv2d(128, 128, 1)  # 56x56x128 -> 56x56x128
+        self.conv_dw4 = DepthWiseConv2d(128, 256, 2)  # 56x56x128 -> 28x28x256
+        self.conv_dw5 = DepthWiseConv2d(256, 256, 1)  # 28x28x256 -> 28x28x256
+        self.conv_dw6 = DepthWiseConv2d(256, 512, 2)  # 28x28x256 -> 14x14x512
+        self.conv_dw7 = DepthWiseConv2d(512, 512, 1)  # 14x14x512 -> 14x14x512
+        self.conv_dw8 = DepthWiseConv2d(512, 512, 1)  # 14x14x512 -> 14x14x512
+        self.conv_dw9 = DepthWiseConv2d(512, 512, 1)  # 14x14x512 -> 14x14x512
+        self.conv_dw10 = DepthWiseConv2d(512, 512, 1)  # 14x14x512 -> 14x14x512
+        self.conv_dw11 = DepthWiseConv2d(512, 512, 1)  # 14x14x512 -> 14x14x512
         self.conv_dw12 = DepthWiseConv2d(512, 1024, 2)  # 14x14x512 -> 7x7x1024
-        self.conv_dw13 = DepthWiseConv2d(1024, 1024, 1) # 7x7x1024 -> 7x7x1024
+        self.conv_dw13 = DepthWiseConv2d(1024, 1024, 1)  # 7x7x1024 -> 7x7x1024
         # Global Average Pooling
         # self.avgpool = nn.AdaptiveAvgPool2d(1) # 7x7x1024 -> 1x1x1024
         self.avgpool = nn.AvgPool2d(7, stride=1)  # 7x7x1024 -> 1x1x1024
@@ -54,12 +55,13 @@ class MobileNetV1(nn.Module):
         out = out.flatten(1)
         out = self.classifier(out)
 
-        return out # type: ignore[no-any-return]
+        return out  # type: ignore[no-any-return]
 
     def _initialize_weights(self) -> None:
         for module in self.modules():
             if isinstance(module, nn.Conv2d):
-                nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+                nn.init.kaiming_normal_(
+                    module.weight, mode="fan_out", nonlinearity="relu")
                 if module.bias is not None:
                     nn.init.zeros_(module.bias)
             elif isinstance(module, (nn.BatchNorm2d, nn.GroupNorm)):

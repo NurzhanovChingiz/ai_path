@@ -1,6 +1,7 @@
 # Minkowski distance or Lp norm
 import numpy as np
 
+
 def minkowski(d1: np.ndarray, d2: np.ndarray, p: int = 2) -> float:
     '''Calculate the Minkowski distance or Lp norm between two points.
     args:

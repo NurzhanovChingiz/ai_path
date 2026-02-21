@@ -4,7 +4,13 @@ from typing import Sized, cast
 from torch import nn
 from torch.utils.data import DataLoader
 
-def train(model: nn.Module, dataloader: DataLoader, loss_fn: nn.Module, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
+
+def train(
+        model: nn.Module,
+        dataloader: DataLoader,
+        loss_fn: nn.Module,
+        optimizer: torch.optim.Optimizer,
+        device: torch.device) -> None:
     """
     Train the model.
 
@@ -28,7 +34,7 @@ def train(model: nn.Module, dataloader: DataLoader, loss_fn: nn.Module, optimize
         loss = loss_fn(pred, y)
         loss.backward()
         optimizer.step()
-        
+
         if (batch_idx + 1) % 100 == 0:
             loss, current = loss.item(), batch_idx * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")

@@ -11,8 +11,8 @@ from optimizers.learning.SGD_with_weight_decay import SGD as SGD_weight_decay
 from optimizers.learning.Adam import Adam
 from optimizers.learning.AdamW import AdamW
 
-ATOL: float = 1e-5 # 0.001%
-RTOL: float = 1e-3 # 0.1%
+ATOL: float = 1e-5  # 0.001%
+RTOL: float = 1e-3  # 0.1%
 SEED: int = 42
 
 
@@ -21,13 +21,20 @@ def set_seed(seed: int = SEED) -> None:
     torch.manual_seed(seed)
     np.random.seed(seed)
 
+
 def make_data(seed: int = SEED) -> tuple[torch.Tensor, torch.Tensor]:
     set_seed(seed)
     x = torch.randn(10, 1)
     y = torch.randn(10, 1)
     return x, y
 
-def run_optimizer(optimizer_cls: type, model: nn.Module, input_tensor: torch.Tensor, output_tensor: torch.Tensor, **optim_kwargs: Any) -> tuple[torch.Tensor, torch.Tensor]:
+
+def run_optimizer(optimizer_cls: type,
+                  model: nn.Module,
+                  input_tensor: torch.Tensor,
+                  output_tensor: torch.Tensor,
+                  **optim_kwargs: Any) -> tuple[torch.Tensor,
+                                                torch.Tensor]:
     optimizer = optimizer_cls(model.parameters(), **optim_kwargs)
     optimizer.zero_grad()
     output = model(input_tensor)
@@ -38,7 +45,14 @@ def run_optimizer(optimizer_cls: type, model: nn.Module, input_tensor: torch.Ten
     bias: torch.Tensor = model.bias.data  # type: ignore[assignment]
     return weight, bias
 
-def run_n_steps(optimizer_cls: type, model: nn.Module, x: torch.Tensor, y: torch.Tensor, n_steps: int, **optim_kwargs: Any) -> tuple[torch.Tensor, torch.Tensor]:
+
+def run_n_steps(optimizer_cls: type,
+                model: nn.Module,
+                x: torch.Tensor,
+                y: torch.Tensor,
+                n_steps: int,
+                **optim_kwargs: Any) -> tuple[torch.Tensor,
+                                              torch.Tensor]:
     optimizer = optimizer_cls(model.parameters(), **optim_kwargs)
     for _ in range(n_steps):
         optimizer.zero_grad()
@@ -50,12 +64,33 @@ def run_n_steps(optimizer_cls: type, model: nn.Module, x: torch.Tensor, y: torch
     bias: torch.Tensor = model.bias.data  # type: ignore[assignment]
     return weight, bias
 
-# ── Assertions ──────────────────────────────────────────────────────────────────
-def assert_close_all(custom_out: torch.Tensor, ref_out: torch.Tensor, atol: float = ATOL, rtol: float = RTOL) -> None:
-    assert np.allclose(custom_out, ref_out, atol=atol, rtol=rtol, equal_nan=True)
+# ── Assertions ──────────────────────────────────────────────────────────
 
-def assert_close_torch(custom_out: torch.Tensor, ref_out: torch.Tensor, atol: float = ATOL, rtol: float = RTOL) -> None:
-    torch.testing.assert_close(custom_out, ref_out, atol=atol, rtol=rtol, equal_nan=True)
+
+def assert_close_all(
+        custom_out: torch.Tensor,
+        ref_out: torch.Tensor,
+        atol: float = ATOL,
+        rtol: float = RTOL) -> None:
+    assert np.allclose(
+        custom_out,
+        ref_out,
+        atol=atol,
+        rtol=rtol,
+        equal_nan=True)
+
+
+def assert_close_torch(
+        custom_out: torch.Tensor,
+        ref_out: torch.Tensor,
+        atol: float = ATOL,
+        rtol: float = RTOL) -> None:
+    torch.testing.assert_close(
+        custom_out,
+        ref_out,
+        atol=atol,
+        rtol=rtol,
+        equal_nan=True)
 
 
 # ── Test SGD ─────────────────────────────────────────────────────────────────
@@ -69,7 +104,8 @@ class TestSGD:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(SGD, model_custom, x, y, lr=0.01, inplace=inplace)
+        w_custom, b_custom = run_optimizer(
+            SGD, model_custom, x, y, lr=0.01, inplace=inplace)
         w_ref, b_ref = run_optimizer(torch.optim.SGD, model_ref, x, y, lr=0.01)
 
         assert_close_all(w_custom, w_ref)
@@ -83,8 +119,10 @@ class TestSGD:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(SGD, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace)
-        w_ref, b_ref = run_n_steps(torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01)
+        w_custom, b_custom = run_n_steps(
+            SGD, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -97,7 +135,8 @@ class TestSGD:
         model_nip = nn.Linear(1, 1)
 
         w_ip, b_ip = run_optimizer(SGD, model_ip, x, y, lr=0.01, inplace=True)
-        w_nip, b_nip = run_optimizer(SGD, model_nip, x, y, lr=0.01, inplace=False)
+        w_nip, b_nip = run_optimizer(
+            SGD, model_nip, x, y, lr=0.01, inplace=False)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -114,8 +153,10 @@ class TestSGDWeightDecay:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(SGD_weight_decay, model_custom, x, y, lr=0.01, inplace=inplace, weight_decay=0.01)
-        w_ref, b_ref = run_optimizer(torch.optim.SGD, model_ref, x, y, lr=0.01, weight_decay=0.01)
+        w_custom, b_custom = run_optimizer(
+            SGD_weight_decay, model_custom, x, y, lr=0.01, inplace=inplace, weight_decay=0.01)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.SGD, model_ref, x, y, lr=0.01, weight_decay=0.01)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -128,8 +169,10 @@ class TestSGDWeightDecay:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(SGD_weight_decay, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, weight_decay=0.01)
-        w_ref, b_ref = run_n_steps(torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, weight_decay=0.01)
+        w_custom, b_custom = run_n_steps(
+            SGD_weight_decay, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, weight_decay=0.01)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, weight_decay=0.01)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -141,8 +184,10 @@ class TestSGDWeightDecay:
         set_seed(SEED)
         model_nip = nn.Linear(1, 1)
 
-        w_ip, b_ip = run_optimizer(SGD_weight_decay, model_ip, x, y, lr=0.01, inplace=True, weight_decay=0.01)
-        w_nip, b_nip = run_optimizer(SGD_weight_decay, model_nip, x, y, lr=0.01, inplace=False, weight_decay=0.01)
+        w_ip, b_ip = run_optimizer(
+            SGD_weight_decay, model_ip, x, y, lr=0.01, inplace=True, weight_decay=0.01)
+        w_nip, b_nip = run_optimizer(
+            SGD_weight_decay, model_nip, x, y, lr=0.01, inplace=False, weight_decay=0.01)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -154,7 +199,8 @@ class TestSGDWeightDecay:
         set_seed(SEED)
         model_plain = nn.Linear(1, 1)
 
-        w_wd, b_wd = run_optimizer(SGD_weight_decay, model_wd, x, y, lr=0.01, weight_decay=0)
+        w_wd, b_wd = run_optimizer(
+            SGD_weight_decay, model_wd, x, y, lr=0.01, weight_decay=0)
         w_plain, b_plain = run_optimizer(SGD, model_plain, x, y, lr=0.01)
 
         assert_close_torch(w_wd, w_plain)
@@ -172,8 +218,10 @@ class TestSGDMomentum:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(SGD_with_momentum, model_custom, x, y, lr=0.01, inplace=inplace, momentum=0.9)
-        w_ref, b_ref = run_optimizer(torch.optim.SGD, model_ref, x, y, lr=0.01, momentum=0.9)
+        w_custom, b_custom = run_optimizer(
+            SGD_with_momentum, model_custom, x, y, lr=0.01, inplace=inplace, momentum=0.9)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.SGD, model_ref, x, y, lr=0.01, momentum=0.9)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -186,8 +234,10 @@ class TestSGDMomentum:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(SGD_with_momentum, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, momentum=0.9)
-        w_ref, b_ref = run_n_steps(torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, momentum=0.9)
+        w_custom, b_custom = run_n_steps(
+            SGD_with_momentum, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, momentum=0.9)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, momentum=0.9)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -199,8 +249,10 @@ class TestSGDMomentum:
         set_seed(SEED)
         model_nip = nn.Linear(1, 1)
 
-        w_ip, b_ip = run_optimizer(SGD_with_momentum, model_ip, x, y, lr=0.01, inplace=True, momentum=0.9)
-        w_nip, b_nip = run_optimizer(SGD_with_momentum, model_nip, x, y, lr=0.01, inplace=False, momentum=0.9)
+        w_ip, b_ip = run_optimizer(
+            SGD_with_momentum, model_ip, x, y, lr=0.01, inplace=True, momentum=0.9)
+        w_nip, b_nip = run_optimizer(
+            SGD_with_momentum, model_nip, x, y, lr=0.01, inplace=False, momentum=0.9)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -217,8 +269,10 @@ class TestSGDNesterov:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(SGD_with_nesterov, model_custom, x, y, lr=0.01, inplace=inplace, momentum=0.9, nesterov=True)
-        w_ref, b_ref = run_optimizer(torch.optim.SGD, model_ref, x, y, lr=0.01, momentum=0.9, nesterov=True)
+        w_custom, b_custom = run_optimizer(
+            SGD_with_nesterov, model_custom, x, y, lr=0.01, inplace=inplace, momentum=0.9, nesterov=True)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.SGD, model_ref, x, y, lr=0.01, momentum=0.9, nesterov=True)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -231,8 +285,10 @@ class TestSGDNesterov:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(SGD_with_nesterov, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, momentum=0.9, nesterov=True)
-        w_ref, b_ref = run_n_steps(torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, momentum=0.9, nesterov=True)
+        w_custom, b_custom = run_n_steps(
+            SGD_with_nesterov, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, momentum=0.9, nesterov=True)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, momentum=0.9, nesterov=True)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -244,8 +300,10 @@ class TestSGDNesterov:
         set_seed(SEED)
         model_nip = nn.Linear(1, 1)
 
-        w_ip, b_ip = run_optimizer(SGD_with_nesterov, model_ip, x, y, lr=0.01, inplace=True, momentum=0.9, nesterov=True)
-        w_nip, b_nip = run_optimizer(SGD_with_nesterov, model_nip, x, y, lr=0.01, inplace=False, momentum=0.9, nesterov=True)
+        w_ip, b_ip = run_optimizer(
+            SGD_with_nesterov, model_ip, x, y, lr=0.01, inplace=True, momentum=0.9, nesterov=True)
+        w_nip, b_nip = run_optimizer(
+            SGD_with_nesterov, model_nip, x, y, lr=0.01, inplace=False, momentum=0.9, nesterov=True)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -262,8 +320,12 @@ class TestAdam:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(Adam, model_custom, x, y, lr=0.01, inplace=inplace, betas=(0.9, 0.999), eps=1e-8)
-        w_ref, b_ref = run_optimizer(torch.optim.Adam, model_ref, x, y, lr=0.01, betas=(0.9, 0.999), eps=1e-8)
+        w_custom, b_custom = run_optimizer(
+            Adam, model_custom, x, y, lr=0.01, inplace=inplace, betas=(
+                0.9, 0.999), eps=1e-8)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.Adam, model_ref, x, y, lr=0.01, betas=(
+                0.9, 0.999), eps=1e-8)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -276,8 +338,12 @@ class TestAdam:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(Adam, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, betas=(0.9, 0.999), eps=1e-8)
-        w_ref, b_ref = run_n_steps(torch.optim.Adam, model_ref, x, y, n_steps=5, lr=0.01, betas=(0.9, 0.999), eps=1e-8)
+        w_custom, b_custom = run_n_steps(
+            Adam, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, betas=(
+                0.9, 0.999), eps=1e-8)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.Adam, model_ref, x, y, n_steps=5, lr=0.01, betas=(
+                0.9, 0.999), eps=1e-8)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -289,8 +355,12 @@ class TestAdam:
         set_seed(SEED)
         model_nip = nn.Linear(1, 1)
 
-        w_ip, b_ip = run_optimizer(Adam, model_ip, x, y, lr=0.01, inplace=True, betas=(0.9, 0.999), eps=1e-8)
-        w_nip, b_nip = run_optimizer(Adam, model_nip, x, y, lr=0.01, inplace=False, betas=(0.9, 0.999), eps=1e-8)
+        w_ip, b_ip = run_optimizer(
+            Adam, model_ip, x, y, lr=0.01, inplace=True, betas=(
+                0.9, 0.999), eps=1e-8)
+        w_nip, b_nip = run_optimizer(
+            Adam, model_nip, x, y, lr=0.01, inplace=False, betas=(
+                0.9, 0.999), eps=1e-8)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -303,8 +373,12 @@ class TestAdam:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(Adam, model_custom, x, y, lr=0.001, inplace=inplace, betas=(0.8, 0.99), eps=1e-10)
-        w_ref, b_ref = run_optimizer(torch.optim.Adam, model_ref, x, y, lr=0.001, betas=(0.8, 0.99), eps=1e-10)
+        w_custom, b_custom = run_optimizer(
+            Adam, model_custom, x, y, lr=0.001, inplace=inplace, betas=(
+                0.8, 0.99), eps=1e-10)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.Adam, model_ref, x, y, lr=0.001, betas=(
+                0.8, 0.99), eps=1e-10)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -321,8 +395,12 @@ class TestAdamW:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_optimizer(AdamW, model_custom, x, y, lr=0.01, inplace=inplace, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
-        w_ref, b_ref = run_optimizer(torch.optim.AdamW, model_ref, x, y, lr=0.01, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_custom, b_custom = run_optimizer(
+            AdamW, model_custom, x, y, lr=0.01, inplace=inplace, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_ref, b_ref = run_optimizer(
+            torch.optim.AdamW, model_ref, x, y, lr=0.01, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -335,8 +413,12 @@ class TestAdamW:
         set_seed(SEED)
         model_ref = nn.Linear(1, 1)
 
-        w_custom, b_custom = run_n_steps(AdamW, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
-        w_ref, b_ref = run_n_steps(torch.optim.AdamW, model_ref, x, y, n_steps=5, lr=0.01, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_custom, b_custom = run_n_steps(
+            AdamW, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_ref, b_ref = run_n_steps(
+            torch.optim.AdamW, model_ref, x, y, n_steps=5, lr=0.01, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
 
         assert_close_all(w_custom, w_ref)
         assert_close_torch(b_custom, b_ref)
@@ -348,8 +430,12 @@ class TestAdamW:
         set_seed(SEED)
         model_nip = nn.Linear(1, 1)
 
-        w_ip, b_ip = run_optimizer(AdamW, model_ip, x, y, lr=0.01, inplace=True, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
-        w_nip, b_nip = run_optimizer(AdamW, model_nip, x, y, lr=0.01, inplace=False, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_ip, b_ip = run_optimizer(
+            AdamW, model_ip, x, y, lr=0.01, inplace=True, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
+        w_nip, b_nip = run_optimizer(
+            AdamW, model_nip, x, y, lr=0.01, inplace=False, betas=(
+                0.9, 0.999), eps=1e-8, weight_decay=0.01)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -361,8 +447,12 @@ class TestAdamW:
         set_seed(SEED)
         model_adam = nn.Linear(1, 1)
 
-        w_adamw, b_adamw = run_optimizer(AdamW, model_adamw, x, y, lr=0.01, weight_decay=0, betas=(0.9, 0.999), eps=1e-8)
-        w_adam, b_adam = run_optimizer(Adam, model_adam, x, y, lr=0.01, betas=(0.9, 0.999), eps=1e-8)
+        w_adamw, b_adamw = run_optimizer(
+            AdamW, model_adamw, x, y, lr=0.01, weight_decay=0, betas=(
+                0.9, 0.999), eps=1e-8)
+        w_adam, b_adam = run_optimizer(
+            Adam, model_adam, x, y, lr=0.01, betas=(
+                0.9, 0.999), eps=1e-8)
 
         assert_close_torch(w_adamw, w_adam)
         assert_close_torch(b_adamw, b_adam)

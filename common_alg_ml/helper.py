@@ -1,5 +1,6 @@
 import os
 
+
 def save_py_files_structure(base_folder: str, output_file: str) -> None:
     """
     Traverse base_folder and its subdirectories, save the directory structure
@@ -10,7 +11,7 @@ def save_py_files_structure(base_folder: str, output_file: str) -> None:
     """
     with open(output_file, 'w', encoding='utf-8') as outfile:
         for root, dirs, files in os.walk(base_folder):
-            if '.git' in root: 
+            if '.git' in root:
                 continue  # Skip .git directories
             level = root.replace(base_folder, '').count(os.sep)
             indent = '│   ' * (level - 1) + ('├── ' if level > 0 else '')
@@ -23,4 +24,3 @@ def save_py_files_structure(base_folder: str, output_file: str) -> None:
             py_files = [file for file in files if file.endswith('.py')]
             for file in py_files:
                 outfile.write(f"{sub_indent}{file}\n")
-                

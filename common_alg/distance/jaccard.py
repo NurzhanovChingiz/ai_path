@@ -1,6 +1,7 @@
 # Jaccard distance or Jaccard similarity
 import numpy as np
 
+
 def jaccard(d1: np.ndarray, d2: np.ndarray) -> float:
     '''Calculate the Jaccard distance between two binary vectors.
     args:

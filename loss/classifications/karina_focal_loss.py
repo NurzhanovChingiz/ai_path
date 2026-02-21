@@ -3,12 +3,16 @@ from torch.nn import functional as F
 from typing import Optional, Any
 
 # Kornia implementation
-# from https://github.com/kornia/kornia/tree/0f8d1972603ed10f549c66c9613669f886046b23
+# from
+# https://github.com/kornia/kornia/tree/0f8d1972603ed10f549c66c9613669f886046b23
 _KORNIA_CHECKS_ENABLED: bool = True
+
+
 class BaseError(Exception):
     """Base exception class for all Kornia errors."""
 
     pass
+
 
 class ShapeError(BaseError):
     """Raised when tensor shape validation fails.
@@ -29,7 +33,12 @@ class ShapeError(BaseError):
         self.actual_shape = actual_shape
         self.expected_shape = expected_shape
 
-def KORNIA_CHECK_SHAPE(x: torch.Tensor, shape: list[str], msg: Optional[str] = None, raises: bool = True) -> bool:
+
+def KORNIA_CHECK_SHAPE(
+        x: torch.Tensor,
+        shape: list[str],
+        msg: Optional[str] = None,
+        raises: bool = True) -> bool:
     """Check whether a tensor has a specified shape.
 
     The shape can be specified with a implicit or explicit list of strings.
@@ -66,7 +75,7 @@ def KORNIA_CHECK_SHAPE(x: torch.Tensor, shape: list[str], msg: Optional[str] = N
 
     if "*" == shape[0]:
         shape_to_check = shape[1:]
-        x_shape_to_check = x.shape[-len(shape) + 1 :]
+        x_shape_to_check = x.shape[-len(shape) + 1:]
     elif "*" == shape[-1]:
         shape_to_check = shape[:-1]
         x_shape_to_check = x.shape[: len(shape) - 1]
@@ -101,7 +110,8 @@ def KORNIA_CHECK_SHAPE(x: torch.Tensor, shape: list[str], msg: Optional[str] = N
         dim = int(dim_)
         if x_shape_to_check[i] != dim:
             if raises:
-                error_msg = f"Shape mismatch at dimension {i}: expected {dim}, got {x_shape_to_check[i]}.\n"
+                error_msg = f"Shape mismatch at dimension {i}: expected {dim}, got {
+                    x_shape_to_check[i]}.\n"
                 error_msg += f"  Expected shape: {shape}\n"
                 x_shape_list = list(x.shape)
                 error_msg += f"  Actual shape: {x_shape_list}"
@@ -116,7 +126,11 @@ def KORNIA_CHECK_SHAPE(x: torch.Tensor, shape: list[str], msg: Optional[str] = N
                 return False
     return True
 
-def KORNIA_CHECK(condition: bool, msg: Optional[str] = None, raises: bool = True) -> bool:
+
+def KORNIA_CHECK(
+        condition: bool,
+        msg: Optional[str] = None,
+        raises: bool = True) -> bool:
     """Check any arbitrary boolean condition.
 
     Args:
@@ -153,6 +167,7 @@ def KORNIA_CHECK(condition: bool, msg: Optional[str] = None, raises: bool = True
         return False
     return True
 
+
 def mask_ignore_pixels(
     target: torch.Tensor, ignore_index: Optional[int]
 ) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
@@ -169,6 +184,7 @@ def mask_ignore_pixels(
     target = target.where(target_mask, target.new_zeros(1))
 
     return target, target_mask
+
 
 class TypeCheckError(BaseError):
     """Raised when type validation fails.
@@ -189,7 +205,11 @@ class TypeCheckError(BaseError):
         self.actual_type = actual_type
         self.expected_type = expected_type
 
-def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = True) -> bool:
+
+def KORNIA_CHECK_IS_TENSOR(
+        x: Any,
+        msg: Optional[str] = None,
+        raises: bool = True) -> bool:
     """Check the input variable is a Tensor.
 
     Args:
@@ -218,7 +238,8 @@ def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = Tru
 
     if not isinstance(x, torch.Tensor):
         if raises:
-            # JIT doesn't support try-except or type introspection, so use simple message
+            # JIT doesn't support try-except or type introspection, so use
+            # simple message
             if torch.jit.is_scripting():
                 error_msg = "Type mismatch: expected Tensor."
                 if msg is not None:
@@ -238,9 +259,13 @@ def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = Tru
         return False
     return True
 
+
 def one_hot(
-    labels: torch.Tensor, num_classes: int, device: torch.device, dtype: torch.dtype, eps: float = 1e-6
-) -> torch.Tensor:
+        labels: torch.Tensor,
+        num_classes: int,
+        device: torch.device,
+        dtype: torch.dtype,
+        eps: float = 1e-6) -> torch.Tensor:
     r"""Convert an integer label x-D torch.Tensor to a one-hot (x+1)-D torch.Tensor.
 
     Args:
@@ -268,8 +293,13 @@ def one_hot(
 
     """
     KORNIA_CHECK_IS_TENSOR(labels, "Input labels must be a torch.Tensor")
-    KORNIA_CHECK(labels.dtype == torch.int64, f"labels must be of dtype torch.int64. Got: {labels.dtype}")
-    KORNIA_CHECK(num_classes >= 1, f"The number of classes must be >= 1. Got: {num_classes}")
+    KORNIA_CHECK(
+        labels.dtype == torch.int64,
+        f"labels must be of dtype torch.int64. Got: {
+            labels.dtype}")
+    KORNIA_CHECK(
+        num_classes >= 1,
+        f"The number of classes must be >= 1. Got: {num_classes}")
 
     # Use PyTorch's built-in one_hot function
     one_hot_tensor = F.one_hot(labels, num_classes=num_classes)
@@ -281,12 +311,14 @@ def one_hot(
     permute_dims = [0] + [ndim] + list(range(1, ndim))
     one_hot_tensor = one_hot_tensor.permute(*permute_dims)
 
-    # Convert to desired dtype and device, then apply eps for numerical stability
+    # Convert to desired dtype and device, then apply eps for numerical
+    # stability
     one_hot_tensor = one_hot_tensor.to(dtype=dtype, device=device)
     # Apply eps: multiply by (1-eps) and add eps to all elements
     one_hot_tensor = one_hot_tensor * (1.0 - eps) + eps
 
     return one_hot_tensor
+
 
 def focal_loss(
     pred: torch.Tensor,
@@ -342,13 +374,19 @@ def focal_loss(
     )
     KORNIA_CHECK(
         pred.device == target.device,
-        f"pred and target must be in the same device. Got: {pred.device} and {target.device}",
+        f"pred and target must be in the same device. Got: {
+            pred.device} and {
+            target.device}",
     )
 
     target, target_mask = mask_ignore_pixels(target, ignore_index)
 
     # create the labels one hot torch.Tensor
-    target_one_hot: torch.Tensor = one_hot(target, num_classes=pred.shape[1], device=pred.device, dtype=pred.dtype)
+    target_one_hot: torch.Tensor = one_hot(
+        target,
+        num_classes=pred.shape[1],
+        device=pred.device,
+        dtype=pred.dtype)
 
     # mask ignore pixels
     if target_mask is not None:
@@ -359,14 +397,17 @@ def focal_loss(
     log_pred_soft: torch.Tensor = pred.log_softmax(1)
 
     # compute the actual focal loss
-    loss_tmp: torch.Tensor = -torch.pow(1.0 - log_pred_soft.exp(), gamma) * log_pred_soft * target_one_hot
+    loss_tmp: torch.Tensor = - \
+        torch.pow(1.0 - log_pred_soft.exp(), gamma) * log_pred_soft * target_one_hot
 
     num_of_classes = pred.shape[1]
     broadcast_dims = [-1] + [1] * len(pred.shape[2:])
     if alpha is not None:
-        alpha_fac = torch.tensor(
-            [1 - alpha] + [alpha] * (num_of_classes - 1), dtype=loss_tmp.dtype, device=loss_tmp.device
-        )
+        alpha_fac = torch.tensor([1 -
+                                  alpha] +
+                                 [alpha] *
+                                 (num_of_classes -
+                                  1), dtype=loss_tmp.dtype, device=loss_tmp.device)
         alpha_fac = alpha_fac.view(broadcast_dims)
         loss_tmp = alpha_fac * loss_tmp
 
@@ -378,7 +419,9 @@ def focal_loss(
         )
         KORNIA_CHECK(
             weight.device == pred.device,
-            f"weight and pred must be in the same device. Got: {weight.device} and {pred.device}",
+            f"weight and pred must be in the same device. Got: {
+                weight.device} and {
+                pred.device}",
         )
 
         weight = weight.view(broadcast_dims)

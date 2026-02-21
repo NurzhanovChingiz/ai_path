@@ -3,8 +3,13 @@ from torch.utils.data import Dataset
 from ..read_img import read_image  # type: ignore[import-not-found]
 from torch import Tensor, tensor
 
+
 class MNISTImageDataset(Dataset):
-    def __init__(self, image_paths: list[str], labels: list[int], transform: Any = None) -> None:
+    def __init__(
+            self,
+            image_paths: list[str],
+            labels: list[int],
+            transform: Any = None) -> None:
         self.image_paths = image_paths
         self.labels = labels
         self.transform = transform

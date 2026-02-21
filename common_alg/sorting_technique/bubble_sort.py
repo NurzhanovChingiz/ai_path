@@ -2,6 +2,7 @@
 
 from typing import List, Generator
 
+
 def bubble_sort(a: List[int]) -> Generator[List[int], None, None]:
     '''
     Bubble Sort Algorithm
@@ -12,6 +13,6 @@ def bubble_sort(a: List[int]) -> Generator[List[int], None, None]:
     n = len(arr)
     for i in range(n):
         for j in range(0, n - 1 - i):
-            if arr[j] > arr[j+1]:
-                arr[j], arr[j+1] = arr[j+1], arr[j]
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
             yield arr

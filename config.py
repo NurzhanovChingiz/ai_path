@@ -3,7 +3,6 @@ class CFG:
     PATH_TO_SAVE = "results"
     IS_SAVE = True
 
-
     DATASET = "animatronbot/mnist-digit-recognizer"
     DATA_PREPARATION = True
     SEED = 42

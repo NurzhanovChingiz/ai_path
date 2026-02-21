@@ -10,10 +10,12 @@ from common_alg.distance import (
     chebyshev,
 )
 
-ATOL: float = 1e-5 # 0.001%
-RTOL: float = 1e-3 # 0.1%
+ATOL: float = 1e-5  # 0.001%
+RTOL: float = 1e-3  # 0.1%
 
-# ── Fixtures ──────────────────────────────────────────────────────────────────
+# ── Fixtures ────────────────────────────────────────────────────────────
+
+
 @pytest.fixture
 def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
     np.random.seed(42)
@@ -31,10 +33,15 @@ def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
             inputs.append((d1, d2))
     return inputs
 
-def run_test(custom_cls: Callable, input_ndarray: tuple[np.ndarray, np.ndarray]) -> None:
+
+def run_test(custom_cls: Callable,
+             input_ndarray: tuple[np.ndarray,
+                                  np.ndarray]) -> None:
     custom_cls(input_ndarray[0], input_ndarray[1])
 
-# ── Test Cases ──────────────────────────────────────────────────────────────────
+# ── Test Cases ──────────────────────────────────────────────────────────
+
+
 @pytest.mark.parametrize("custom_cls", [
     euclidean.euclidean,
     cosine.cosine,
@@ -44,6 +51,11 @@ def run_test(custom_cls: Callable, input_ndarray: tuple[np.ndarray, np.ndarray])
     chebyshev.chebyshev,
 ])
 class TestDistance:
-    def test_matches_pytorch(self, custom_cls: Callable[[np.ndarray, np.ndarray], float], inputs_ndarray: list[tuple[np.ndarray, np.ndarray]]) -> None:
+    def test_matches_pytorch(self,
+                             custom_cls: Callable[[np.ndarray,
+                                                   np.ndarray],
+                                                  float],
+                             inputs_ndarray: list[tuple[np.ndarray,
+                                                        np.ndarray]]) -> None:
         for input_ndarray in inputs_ndarray:
             run_test(custom_cls, input_ndarray)

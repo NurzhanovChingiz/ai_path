@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import random
 
+
 def set_seed(SEED: int = 42) -> None:
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
@@ -10,4 +11,3 @@ def set_seed(SEED: int = 42) -> None:
     random.seed(SEED)
 
     print('Random Seed : {0}'.format(SEED))
-    

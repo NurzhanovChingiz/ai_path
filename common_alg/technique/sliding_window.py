@@ -10,5 +10,5 @@
 #             left += 1
 
 #         # update ans
-    
+
 #     return ans

@@ -1,15 +1,18 @@
 # Karina implementation of dice loss for segmentation
-# from https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/dice.py
+# from
+# https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/dice.py
 import torch
 from torch.nn import functional as F
 from typing import Optional, Any
 
 _KORNIA_CHECKS_ENABLED: bool = True
 
+
 class BaseError(Exception):
     """Base exception class for all Kornia errors."""
 
     pass
+
 
 class TypeCheckError(BaseError):
     """Raised when type validation fails.
@@ -30,7 +33,11 @@ class TypeCheckError(BaseError):
         self.actual_type = actual_type
         self.expected_type = expected_type
 
-def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = True) -> bool:
+
+def KORNIA_CHECK_IS_TENSOR(
+        x: Any,
+        msg: Optional[str] = None,
+        raises: bool = True) -> bool:
     """Check the input variable is a Tensor.
 
     Args:
@@ -59,7 +66,8 @@ def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = Tru
 
     if not isinstance(x, torch.Tensor):
         if raises:
-            # JIT doesn't support try-except or type introspection, so use simple message
+            # JIT doesn't support try-except or type introspection, so use
+            # simple message
             if torch.jit.is_scripting():
                 error_msg = "Type mismatch: expected Tensor."
                 if msg is not None:
@@ -80,7 +88,10 @@ def KORNIA_CHECK_IS_TENSOR(x: Any, msg: Optional[str] = None, raises: bool = Tru
     return True
 
 
-def KORNIA_CHECK(condition: bool, msg: Optional[str] = None, raises: bool = True) -> bool:
+def KORNIA_CHECK(
+        condition: bool,
+        msg: Optional[str] = None,
+        raises: bool = True) -> bool:
     """Check any arbitrary boolean condition.
 
     Args:
@@ -117,6 +128,7 @@ def KORNIA_CHECK(condition: bool, msg: Optional[str] = None, raises: bool = True
         return False
     return True
 
+
 def mask_ignore_pixels(
     target: torch.Tensor, ignore_index: Optional[int]
 ) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
@@ -136,8 +148,11 @@ def mask_ignore_pixels(
 
 
 def one_hot(
-    labels: torch.Tensor, num_classes: int, device: torch.device, dtype: torch.dtype, eps: float = 1e-6
-) -> torch.Tensor:
+        labels: torch.Tensor,
+        num_classes: int,
+        device: torch.device,
+        dtype: torch.dtype,
+        eps: float = 1e-6) -> torch.Tensor:
     r"""Convert an integer label x-D torch.Tensor to a one-hot (x+1)-D torch.Tensor.
 
     Args:
@@ -165,8 +180,13 @@ def one_hot(
 
     """
     KORNIA_CHECK_IS_TENSOR(labels, "Input labels must be a torch.Tensor")
-    KORNIA_CHECK(labels.dtype == torch.int64, f"labels must be of dtype torch.int64. Got: {labels.dtype}")
-    KORNIA_CHECK(num_classes >= 1, f"The number of classes must be >= 1. Got: {num_classes}")
+    KORNIA_CHECK(
+        labels.dtype == torch.int64,
+        f"labels must be of dtype torch.int64. Got: {
+            labels.dtype}")
+    KORNIA_CHECK(
+        num_classes >= 1,
+        f"The number of classes must be >= 1. Got: {num_classes}")
 
     # Use PyTorch's built-in one_hot function
     one_hot_tensor = F.one_hot(labels, num_classes=num_classes)
@@ -178,12 +198,14 @@ def one_hot(
     permute_dims = [0] + [ndim] + list(range(1, ndim))
     one_hot_tensor = one_hot_tensor.permute(*permute_dims)
 
-    # Convert to desired dtype and device, then apply eps for numerical stability
+    # Convert to desired dtype and device, then apply eps for numerical
+    # stability
     one_hot_tensor = one_hot_tensor.to(dtype=dtype, device=device)
     # Apply eps: multiply by (1-eps) and add eps to all elements
     one_hot_tensor = one_hot_tensor * (1.0 - eps) + eps
 
     return one_hot_tensor
+
 
 def dice_loss(
     pred: torch.Tensor,
@@ -240,16 +262,26 @@ def dice_loss(
     KORNIA_CHECK_IS_TENSOR(pred)
 
     if not len(pred.shape) == 4:
-        raise ValueError(f"Invalid pred shape, we expect BxNxHxW. Got: {pred.shape}")
+        raise ValueError(
+            f"Invalid pred shape, we expect BxNxHxW. Got: {
+                pred.shape}")
 
     if not pred.shape[-2:] == target.shape[-2:]:
-        raise ValueError(f"pred and target shapes must be the same. Got: {pred.shape} and {target.shape}")
+        raise ValueError(
+            f"pred and target shapes must be the same. Got: {
+                pred.shape} and {
+                target.shape}")
 
     if not pred.device == target.device:
-        raise ValueError(f"pred and target must be in the same device. Got: {pred.device} and {target.device}")
+        raise ValueError(
+            f"pred and target must be in the same device. Got: {
+                pred.device} and {
+                target.device}")
     num_of_classes = pred.shape[1]
     possible_average = {"micro", "macro"}
-    KORNIA_CHECK(average in possible_average, f"The `average` has to be one of {possible_average}. Got: {average}")
+    KORNIA_CHECK(
+        average in possible_average,
+        f"The `average` has to be one of {possible_average}. Got: {average}")
 
     # compute F.softmax over the classes axis
     pred_soft: torch.Tensor = F.softmax(pred, dim=1)
@@ -257,7 +289,11 @@ def dice_loss(
     target, target_mask = mask_ignore_pixels(target, ignore_index)
 
     # create the labels one hot torch.Tensor
-    target_one_hot: torch.Tensor = one_hot(target, num_classes=pred.shape[1], device=pred.device, dtype=pred.dtype)
+    target_one_hot: torch.Tensor = one_hot(
+        target,
+        num_classes=pred.shape[1],
+        device=pred.device,
+        dtype=pred.dtype)
 
     # mask ignore pixels
     if target_mask is not None:
@@ -274,7 +310,9 @@ def dice_loss(
         )
         KORNIA_CHECK(
             weight.device == pred.device,
-            f"weight and pred must be in the same device. Got: {weight.device} and {pred.device}",
+            f"weight and pred must be in the same device. Got: {
+                weight.device} and {
+                pred.device}",
         )
     else:
         weight = pred.new_ones(pred.shape[1])

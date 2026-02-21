@@ -8,10 +8,12 @@ from common_alg.sorting_technique import (
     quick_sort,
 )
 
-ATOL: float = 1e-5 # 0.001%
-RTOL: float = 1e-3 # 0.1%
+ATOL: float = 1e-5  # 0.001%
+RTOL: float = 1e-3  # 0.1%
 
-# ── Fixtures ──────────────────────────────────────────────────────────────────
+# ── Fixtures ────────────────────────────────────────────────────────────
+
+
 @pytest.fixture
 def inputs_list() -> list[list[int]]:
     np.random.seed(42)
@@ -22,7 +24,9 @@ def inputs_list() -> list[list[int]]:
     ]
     return inputs
 
-def assert_close_all(custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
+
+def assert_close_all(
+        custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
     '''
     Assert that the custom sorting function matches the numpy sorting function
     :param custom_cls: The custom sorting function
@@ -34,7 +38,9 @@ def assert_close_all(custom_cls: Callable[[list[int]], list[int]], input_list: l
         pass
     np.testing.assert_equal(arr, expected)
 
-def run_sorting(custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
+
+def run_sorting(
+        custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
     '''
     Run the custom sorting function (exhausts the generator)
     :param custom_cls: The custom sorting function
@@ -43,7 +49,9 @@ def run_sorting(custom_cls: Callable[[list[int]], list[int]], input_list: list[i
     for _ in custom_cls(input_list):
         pass
 
-# ── Test Cases ──────────────────────────────────────────────────────────────────
+# ── Test Cases ──────────────────────────────────────────────────────────
+
+
 @pytest.mark.parametrize("custom_cls", [
     bubble_sort.bubble_sort,
     insertion_sort.insertion_sort,
@@ -51,9 +59,16 @@ def run_sorting(custom_cls: Callable[[list[int]], list[int]], input_list: list[i
     quick_sort.quick_sort,
 ])
 class TestSorting:
-    def test_matches_numpy(self, custom_cls: Callable[[list[int]], list[int]], inputs_list: list[list[int]]) -> None:
+    def test_matches_numpy(self,
+                           custom_cls: Callable[[list[int]],
+                                                list[int]],
+                           inputs_list: list[list[int]]) -> None:
         for input_list in inputs_list:
             assert_close_all(custom_cls, input_list)
-    def run_test(self, custom_cls: Callable[[list[int]], list[int]], inputs_list: list[list[int]]) -> None:
+
+    def run_test(self,
+                 custom_cls: Callable[[list[int]],
+                                      list[int]],
+                 inputs_list: list[list[int]]) -> None:
         for input_list in inputs_list:
             run_sorting(custom_cls, input_list)

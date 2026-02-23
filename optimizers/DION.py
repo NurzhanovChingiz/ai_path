@@ -11,7 +11,7 @@ import torch.nn as nn
 from torch.distributed._tensor import DTensor, Replicate, Shard
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp._common_utils import _FSDPState
-from torch.optim import Optimizer
+from torch.optim.optimizer import Optimizer, ParamsT
 from torch.optim.adamw import AdamW
 # Lion optimizer
 try:
@@ -69,7 +69,7 @@ class DionOptimizer(Optimizer):
 
     def __init__(
         self,
-        params: Any,
+        params: ParamsT,
         lr: float = 0.01,
         momentum: float = 0.95,
         rank_factor: float = 0.75,

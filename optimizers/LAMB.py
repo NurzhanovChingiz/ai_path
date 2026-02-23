@@ -1,7 +1,7 @@
 
 from typing import Any, Callable, Optional
 import torch
-from torch.optim.optimizer import Optimizer
+from torch.optim.optimizer import Optimizer, ParamsT
 import math
 
 
@@ -31,7 +31,7 @@ class Lamb(Optimizer):
 
     def __init__(
         self,
-        params: Any,
+        params: ParamsT,
         lr: float = 1e-3,
         betas: tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-6,

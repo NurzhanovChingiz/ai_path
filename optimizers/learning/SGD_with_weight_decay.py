@@ -1,4 +1,4 @@
-from torch.optim import Optimizer
+from torch.optim.optimizer import Optimizer, ParamsT
 from typing import Any, Callable
 from torch import nn
 import torch
@@ -18,7 +18,7 @@ def set_seed(seed: int = 42) -> None:
 class SGD(Optimizer):
     def __init__(
             self,
-            params: Any,
+            params: ParamsT,
             lr: float,
             inplace: bool = True,
             weight_decay: float = 0) -> None:
@@ -26,8 +26,8 @@ class SGD(Optimizer):
         self.inplace = inplace
         self.weight_decay = weight_decay
 
-    @torch.no_grad()
-    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
+    @torch.no_grad()    
+    def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]
         loss = None
         if closure is not None:
             with torch.enable_grad():

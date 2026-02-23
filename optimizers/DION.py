@@ -338,12 +338,12 @@ class DionOptimizer(Optimizer):
         """Orthogonalize matrix using QR decomposition."""
         try:
             Q, _ = torch.linalg.qr(matrix)
-            return torch.Tensor(Q)
+            return Q # type: ignore[no-any-return]
         except BaseException:
             # Fallback for numerical issues
             matrix_stabilized = matrix + 1e-8 * torch.randn_like(matrix)
             Q, _ = torch.linalg.qr(matrix_stabilized)
-            return torch.Tensor(Q)
+            return Q # type: ignore[no-any-return]
 
     def _distributed_orthogonalize(self, matrix: torch.Tensor) -> torch.Tensor:
         """Distributed orthogonalization using randomized Cholesky QR (Algorithm 2 in the paper)."""
@@ -383,11 +383,11 @@ class DionOptimizer(Optimizer):
                 if jitter == 1e-1:
                     # Fallback to QR if Cholesky fails
                     Q, _ = torch.linalg.qr(matrix)
-                    return torch.Tensor(Q)
+                    return Q # type: ignore[no-any-return]
 
         # Final orthogonalized result
         result = torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t()
-        return torch.Tensor(result)
+        return result # type: ignore[no-any-return]
 
     def _distributed_column_normalize(
             self, matrix: torch.Tensor) -> torch.Tensor:

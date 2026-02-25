@@ -1,5 +1,6 @@
 # Cosine distance or cosine similarity
 import numpy as np
+import math
 
 
 def cosine(d1: np.ndarray, d2: np.ndarray) -> float:
@@ -16,3 +17,29 @@ def cosine(d1: np.ndarray, d2: np.ndarray) -> float:
     cosine_similarity = dot_product / (norm_d1 * norm_d2)
     cosine_distance = 1 - cosine_similarity
     return float(cosine_distance)
+
+
+# alternative implementation
+class Cosine:
+    def __init__(self) -> None:
+        pass
+    
+    def dot_product(self, d1: np.ndarray, d2: np.ndarray) -> float:
+        if len(d1) != len(d2):
+            raise ValueError("Vectors must have the same dimension")
+        dot_product: float = sum(a * b for a, b in zip(d1, d2))
+        return dot_product
+
+    def magnitude(self, d: np.ndarray) -> float:
+        magnitude: float = math.sqrt(sum(x * x for x in d))
+        return magnitude
+    
+    def cosine_similarity(self, d1: np.ndarray, d2: np.ndarray) -> float:
+        return self.dot_product(d1, d2) / (self.magnitude(d1) * self.magnitude(d2))
+    
+    def cosine_distance(self, d1: np.ndarray, d2: np.ndarray) -> float:
+        cosine_similarity: float = self.cosine_similarity(d1, d2)
+        return 1 - cosine_similarity
+    
+    def __call__(self, d1: np.ndarray, d2: np.ndarray) -> float:
+        return self.cosine_distance(d1, d2)

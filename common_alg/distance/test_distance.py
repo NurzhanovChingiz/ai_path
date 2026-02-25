@@ -45,6 +45,7 @@ def run_test(custom_cls: Callable,
 @pytest.mark.parametrize("custom_cls", [
     euclidean.euclidean,
     cosine.cosine,
+    cosine.Cosine().cosine_distance,
     minkowski.minkowski,
     manhattan.manhattan,
     jaccard.jaccard,

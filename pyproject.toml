@@ -21,24 +21,31 @@ extend-select = [
   "S",    # flake8-bandit
   "RSE",  # flake8-raise
   "BLE",  # flake8-blind-except
-  #"T20", # flake8-print
+  #"T20", # flake8-print # onli in prod
   "T10",  # flake8-debugger
   "SIM",  # flake8-simplify
   "EM",   # flake8-errmsg
+  #"T20", # flake8-print # only in prod
+  #"FBT", # flake8-boolean-trap # only in prod
+  "COM",  # flake8-commas
+  "DTZ",  # flake8-datetimez
+  "FIX",  # flake8-fixme
+  "INT",  # flake8-gettext
+  "FA",   # flake8-future-annotations
+  "ISC",  # flake8-implicit-str-concat
+  "LOG",  # flake8-logging
+  "G",    # flake8-logging-format
+  "INP",  # flake8-no-pep420
+  "PIE",   # flake8-pie
   "PL",   # Pylint
   "RUF",  # Ruff
-  "DTZ",  # flake8-datetimez
   "ERA",  # eradicate
   "PERF", # Perflint
   "FURB", # refurb
   #"PD",  # pandas-vet
-  "FIX",  # flake8-fixme
-  "RUF",  # Ruff
-  #"T20", # flake8-print # only in prod
-  #"FBT", # flake8-boolean-trap # only in prod
-  "COM",  # flake8-commas
-
-
+ 
+  
+  
 
 ]
 

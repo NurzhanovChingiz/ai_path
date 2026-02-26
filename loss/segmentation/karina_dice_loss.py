@@ -13,7 +13,6 @@ _KORNIA_CHECKS_ENABLED: bool = True
 class BaseError(Exception):
     """Base exception class for all Kornia errors."""
 
-    pass
 
 
 class TypeCheckError(BaseError):

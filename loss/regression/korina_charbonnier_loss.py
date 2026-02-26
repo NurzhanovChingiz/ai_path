@@ -13,7 +13,6 @@ _KORNIA_CHECKS_ENABLED = True
 class BaseError(Exception):
     """Base exception class for all Kornia errors."""
 
-    pass
 
 
 class DeviceError(BaseError):

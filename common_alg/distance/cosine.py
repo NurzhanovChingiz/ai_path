@@ -28,7 +28,6 @@ class Cosine:
     """Alternative class-based implementation for computing cosine distance between vectors."""
     def __init__(self) -> None:
         """Initialize Cosine distance calculator."""
-        pass
 
     def dot_product(self, d1: np.ndarray, d2: np.ndarray) -> float:
         """Compute dot product of two vectors."""

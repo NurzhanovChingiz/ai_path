@@ -11,6 +11,15 @@ __pycache__/
 # PyTorch cache
 .pytest_cache/
 
+# ruff
+.ruff_cache/
+
+# uv lock file
+uv.lock
+
+# venv
+.venv/
+
 # MacOS files
 .DS_Store
 

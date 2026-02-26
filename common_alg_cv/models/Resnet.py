@@ -248,7 +248,6 @@ class ResNet(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
-from torchvision.models._api import WeightsEnum  # type: ignore[import-untyped]
 
 
 class ResNet18(ResNet):

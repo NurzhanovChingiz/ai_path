@@ -4,14 +4,12 @@
 import math
 import warnings
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-from torch.distributed._tensor import DTensor, Replicate, Shard
-from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
-from torch.distributed.fsdp._common_utils import _FSDPState
+from torch.distributed._tensor import DTensor, Shard
 from torch.optim.adamw import AdamW
 from torch.optim.optimizer import Optimizer, ParamsT
 
@@ -332,7 +330,8 @@ class DionOptimizer(Optimizer):
         try:
             Q, _ = torch.linalg.qr(matrix)
             return Q  # type: ignore[no-any-return]
-        except:
+        except Exception as e:
+            print(f"QR decomposition failed: {e}")
             # Fallback for numerical issues
             matrix_stabilized = matrix + 1e-8 * torch.randn_like(matrix)
             Q, _ = torch.linalg.qr(matrix_stabilized)
@@ -352,7 +351,8 @@ class DionOptimizer(Optimizer):
         # QR decomposition (only need R)
         try:
             _, R1 = torch.linalg.qr(G)
-        except:
+        except Exception as e:
+            print(f"QR decomposition failed: {e}")
             # Fallback for numerical issues
             _, R1 = torch.linalg.qr(G + 1e-8 * torch.eye(k, r, device=G.device))
 
@@ -368,7 +368,8 @@ class DionOptimizer(Optimizer):
                 H_stable = H + torch.eye(r, device=H.device, dtype=H.dtype) * jitter
                 R2 = torch.linalg.cholesky(H_stable)
                 break
-            except:
+            except Exception as e:
+                print(f"Cholesky decomposition failed: {e}")
                 if jitter == 1e-1:
                     # Fallback to QR if Cholesky fails
                     Q, _ = torch.linalg.qr(matrix)

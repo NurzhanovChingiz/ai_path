@@ -4,9 +4,7 @@
 
 from typing import Any, Optional
 
-import numpy as np
 import torch
-from torch.nn import functional as F
 
 _KORNIA_CHECKS_ENABLED = True
 

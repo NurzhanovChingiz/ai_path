@@ -11,7 +11,6 @@
 import numpy as np
 import torch
 from korina_charbonnier_loss import charbonnier_loss
-from torch.nn import functional as F
 
 # numpy implementation
 

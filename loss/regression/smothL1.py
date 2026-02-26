@@ -10,10 +10,10 @@
 # when use:
 # strong baseline for regression; bbox deltas are often SmoothL1/Huber
 
+
+import numpy as np
 import torch
 from torch.nn import functional as F
-import numpy as np
-from typing import Optional
 
 # numpy implementation
 

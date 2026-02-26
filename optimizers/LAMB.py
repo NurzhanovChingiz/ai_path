@@ -1,8 +1,9 @@
 
-from typing import Any, Callable, Optional
+import math
+from typing import Callable, Optional
+
 import torch
 from torch.optim.optimizer import Optimizer, ParamsT
-import math
 
 
 class Lamb(Optimizer):

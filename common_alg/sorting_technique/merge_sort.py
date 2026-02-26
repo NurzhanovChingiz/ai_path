@@ -1,6 +1,6 @@
 # Merge Sort
 
-from typing import List, Generator
+from typing import Generator, List
 
 
 def merge_sort(a: List[int]) -> Generator[List[int], None, None]:

@@ -1,26 +1,16 @@
-import torch
-import pytest
 from typing import Callable
+
+import numpy as np
+import pytest
+import torch
 from torch import nn
 from torch.nn import functional as F
-import numpy as np
 
-from activation.activation import (
-    CustomReLU,
-    CustomReLU6,
-    CustomPReLU,
-    CustomSELU,
-    CustomCELU,
-    CustomGELU,
-    CustomSigmoid,
-    CustomMish,
-    CustomSoftplus,
-    CustomTanh,
-    CustomSoftmax,
-    CustomLeakyReLU,
-    CustomELU,
-    CustomSwish,
-)
+from activation.activation import (CustomCELU, CustomELU, CustomGELU,
+                                   CustomLeakyReLU, CustomMish, CustomPReLU,
+                                   CustomReLU, CustomReLU6, CustomSELU,
+                                   CustomSigmoid, CustomSoftmax,
+                                   CustomSoftplus, CustomSwish, CustomTanh)
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%

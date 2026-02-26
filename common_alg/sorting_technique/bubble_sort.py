@@ -1,6 +1,6 @@
 # Bubble Sort
 
-from typing import List, Generator
+from typing import Generator, List
 
 
 def bubble_sort(a: List[int]) -> Generator[List[int], None, None]:

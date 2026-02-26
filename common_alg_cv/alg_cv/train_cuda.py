@@ -1,9 +1,11 @@
 # Train function
 from typing import Any
+
 import torch
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
+
 # Dataloader need pin_memory=True, num_workers>0
 # funy i get acceleration without pin_memory on rocm
 # from 19 sec to 15 sec per epoch on mnist with vgg9

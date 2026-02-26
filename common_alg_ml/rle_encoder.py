@@ -1,6 +1,7 @@
 # RLE encoding for img
-import numpy as np
 import json
+
+import numpy as np
 
 
 def rle_encode(mask: np.ndarray | list[list[int]]) -> str:

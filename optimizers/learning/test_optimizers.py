@@ -1,15 +1,16 @@
+from typing import Any
+
+import numpy as np
 import pytest
 import torch
-from typing import Any
 from torch import nn
-import numpy as np
 
+from optimizers.learning.Adam import Adam
+from optimizers.learning.AdamW import AdamW
 from optimizers.learning.SGD import SGD
 from optimizers.learning.SGD_with_momentum import SGD_with_momentum
 from optimizers.learning.SGD_with_nesterov import SGD_with_nesterov
 from optimizers.learning.SGD_with_weight_decay import SGD as SGD_weight_decay
-from optimizers.learning.Adam import Adam
-from optimizers.learning.AdamW import AdamW
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%

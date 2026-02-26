@@ -1,12 +1,13 @@
 # muon optimizer
+import copy
+import math
+import random
+from typing import Callable
+
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.optim.optimizer import Optimizer, ParamsT
-import math
-from typing import Callable
-import numpy as np
-import random
-import copy
 
 
 def set_seed(seed: int = 42) -> None:

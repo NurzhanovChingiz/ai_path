@@ -13,8 +13,8 @@
 
 import numpy as np
 import torch
-from torch.nn import functional as F
 from torch import nn
+from torch.nn import functional as F
 
 
 def sigmoid_np(x: np.ndarray) -> np.ndarray:

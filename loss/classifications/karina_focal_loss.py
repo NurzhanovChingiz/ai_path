@@ -1,6 +1,7 @@
+from typing import Any, Optional
+
 import torch
 from torch.nn import functional as F
-from typing import Optional, Any
 
 # Kornia implementation
 # from

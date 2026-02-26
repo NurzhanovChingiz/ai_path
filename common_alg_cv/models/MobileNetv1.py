@@ -1,6 +1,6 @@
-from torch import Tensor
-from torch import nn
 from typing import Callable, Optional
+
+from torch import Tensor, nn
 
 
 class MobileNetV1(nn.Module):

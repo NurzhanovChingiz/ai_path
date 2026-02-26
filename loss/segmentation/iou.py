@@ -11,7 +11,6 @@
 import numpy as np
 import torch
 
-
 # numpy implementation
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:

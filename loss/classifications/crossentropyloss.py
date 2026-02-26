@@ -17,9 +17,9 @@
 # when use:
 # always like beseline model
 
+import numpy as np
 import torch
 from torch.nn import functional as F
-import numpy as np
 
 # numpy implementation of softmax, log_softmax, cross_entropy
 

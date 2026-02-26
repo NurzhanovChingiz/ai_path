@@ -1,9 +1,10 @@
-from torch.optim.optimizer import Optimizer, ParamsT
-from typing import Any, Callable
-from torch import nn
-import torch
-import numpy as np
 import random
+from typing import Callable
+
+import numpy as np
+import torch
+from torch import nn
+from torch.optim.optimizer import Optimizer, ParamsT
 
 
 def set_seed(seed: int = 42) -> None:

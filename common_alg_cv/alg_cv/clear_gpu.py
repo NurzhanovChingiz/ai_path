@@ -1,6 +1,7 @@
-import torch
-import time
 import gc
+import time
+
+import torch
 
 
 def clear_memory(verbose: bool = True) -> None:

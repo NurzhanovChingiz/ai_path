@@ -9,10 +9,10 @@
 # when use:
 # when noise is close to Gaussian and outliers are rare
 
+
+import numpy as np
 import torch
 from torch.nn import functional as F
-import numpy as np
-from typing import Optional
 
 # numpy implementation
 

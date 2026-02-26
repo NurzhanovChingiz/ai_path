@@ -1,4 +1,5 @@
-# Example Sliding Window Template
+"""Example sliding window template."""
+
 # def fn(arr):
 #     left = ans = curr = 0
 

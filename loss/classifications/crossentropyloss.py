@@ -1,3 +1,4 @@
+"""Cross entropy loss for multi-class classification."""
 # cross entropy loss
 # Where: single class, multi-class,
 # multi-label, multi-class per-pixel segmentation,
@@ -25,6 +26,14 @@ from torch.nn import functional as F
 
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
@@ -34,12 +43,28 @@ def softmax_np(logits: np.ndarray) -> np.ndarray:
 
 
 def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     # log_softmax_i = log(softmax_i)
     result: np.ndarray = np.log(softmax_np(logits))
     return result
 
 
 def log_softmax_np(logits: np.ndarray) -> np.ndarray:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
@@ -54,6 +79,9 @@ def cross_entropy_np(y: np.ndarray, y_pred: np.ndarray) -> float:
 
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N, C)
+
+    Returns:
+        The cross entropy loss.
     """
     log_probs = log_softmax_np(y_pred)
     row = np.arange(len(y))
@@ -65,6 +93,14 @@ def cross_entropy_np(y: np.ndarray, y_pred: np.ndarray) -> float:
 
 # pytorch implementation of softmax, log_softmax, cross_entropy
 def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
     shifted_logits = logits - m  # shifted_logits_i = logits_i - m
     exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)
@@ -73,10 +109,26 @@ def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
 
 
 def log_softmax_torch_1(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     return torch.log(softmax_torch(logits))  # log_softmax_i = log(softmax_i)
 
 
 def log_softmax_torch(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
     shifted_logits = logits - m  # shifted_logits_i = logits_i - m
     exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)

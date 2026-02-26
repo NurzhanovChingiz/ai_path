@@ -1,3 +1,4 @@
+"""Focal loss for imbalanced classification tasks."""
 # focal loss
 # Where: single class, multi-class, multi-label,
 # any setting with tons of easy negatives.
@@ -18,6 +19,14 @@ from karina_focal_loss import focal_loss
 
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = np.max(logits, axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
@@ -27,6 +36,14 @@ def softmax_np(logits: np.ndarray) -> np.ndarray:
 
 
 def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     # log_softmax_i = log(softmax_i)
     result: np.ndarray = np.log(softmax_np(logits))
     return result
@@ -36,7 +53,16 @@ def one_hot_np(
         labels: np.ndarray,
         num_classes: int,
         eps: float = 1e-10) -> np.ndarray:
-    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
+    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing.
+
+    Args:
+        labels: The labels.
+        num_classes: The number of classes.
+        eps: The epsilon parameter.
+
+    Returns:
+        The one-hot encoded labels.
+    """
     flat = labels.reshape(-1)
     one_hot = np.eye(num_classes, dtype=np.float32)[flat]  # (N*..., C)
 
@@ -83,6 +109,14 @@ def focal_loss_np(
 
 
 def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
     shifted_logits = logits - m  # shifted_logits_i = logits_i - m
     exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)
@@ -91,6 +125,14 @@ def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
 
 
 def log_softmax_torch_1(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the log softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The log softmax of the logits.
+    """
     result: torch.Tensor = torch.log(softmax_torch(
         logits))  # log_softmax_i = log(softmax_i)
     return result
@@ -100,7 +142,16 @@ def one_hot_torch(
         labels: torch.Tensor,
         num_classes: int,
         eps: float = 1e-10) -> torch.Tensor:
-    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
+    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing.
+
+    Args:
+        labels: The labels.
+        num_classes: The number of classes.
+        eps: The epsilon parameter.
+
+    Returns:
+        The one-hot encoded labels.
+    """
     flat = labels.reshape(-1)
     one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]  # (N*..., C)
     target_shape = labels.shape + (num_classes,)
@@ -118,7 +169,13 @@ def focal_loss_torch(
     alpha: float,
     gamma: float,
 ) -> torch.Tensor:
-    """PyTorch implementation of focal loss matching Kornia's multi-class version.
+    """Calculate the focal loss.
+
+    Args:
+        pred: The predicted logits.
+        target: The target tensor.
+        alpha: The alpha parameter.
+        gamma: The gamma parameter.
     """
     num_classes = pred.shape[1]
     target_one_hot = one_hot_torch(target, num_classes)

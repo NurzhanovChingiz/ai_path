@@ -1,9 +1,10 @@
-# Quick Sort
+"""Quick sort implementation."""
 
 from collections.abc import Generator
 
 
 def quick_sort(a: list[int]) -> Generator[list[int], None, None]:
+    """Sort a list in-place using quick sort, yielding the array after each partition."""
     arr = a
 
     def _q(left: int, r: int) -> Generator[list[int], None, None]:

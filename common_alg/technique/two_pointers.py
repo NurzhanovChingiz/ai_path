@@ -1,4 +1,5 @@
-# Two Pointers Technique
+"""Two pointers technique."""
+
 # 1. one input, opposite ends
 
 # def fn(arr):

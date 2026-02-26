@@ -1,4 +1,5 @@
-# Manhattan distance or L1 norm
+"""Manhattan distance or L1 norm."""
+
 import numpy as np
 
 

@@ -1,3 +1,4 @@
+"""Binary cross entropy with logits for single/multi-class and multi-label tasks."""
 # binary cross entropy with logits
 # Where: single class, multi-class, multi-label,
 # detection class prediction, binary segmentation
@@ -17,6 +18,14 @@ from torch.nn import functional as F
 
 
 def sigmoid_np(x: np.ndarray) -> np.ndarray:
+    """Calculate the sigmoid of the input.
+
+    Args:
+        x: The input tensor.
+
+    Returns:
+        The sigmoid of the input.
+    """
     result: np.ndarray = 1 / (1 + np.exp(-x))
     return result
 
@@ -51,6 +60,14 @@ def bce_with_logits_np_stable(y: np.ndarray, y_pred: np.ndarray) -> float:
 
 
 def sigmoid_torch(x: torch.Tensor) -> torch.Tensor:
+    """Calculate the sigmoid of the input.
+
+    Args:
+        x: The input tensor.
+
+    Returns:
+        The sigmoid of the input.
+    """
     result: torch.Tensor = 1 / (1 + torch.exp(-x))
     return result
 

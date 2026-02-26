@@ -1,4 +1,4 @@
-# Linked list: fast and slow pointer
+"""Linked list: fast and slow pointer technique."""
 
 # def fn(head):
 #    slow = fast = head

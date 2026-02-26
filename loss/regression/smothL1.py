@@ -1,3 +1,4 @@
+"""Smooth L1 (Huber) loss for robust regression."""
 # SmoothL1 loss
 # Where: bbox/keypoint coordinates, depth, optical flow, general regression
 # Pros:
@@ -48,6 +49,16 @@ def smoothL1_torch(
         pred: torch.Tensor,
         target: torch.Tensor,
         beta: float = 1.0) -> torch.Tensor:
+    """Calculate the Smooth L1 loss.
+
+    Args:
+        pred: The predicted values.
+        target: The target values.
+        beta: The beta value.
+
+    Returns:
+        The Smooth L1 loss.
+    """
     diff = torch.abs(pred - target)
     mask = diff < beta
     result: torch.Tensor = torch.where(

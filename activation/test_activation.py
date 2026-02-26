@@ -1,3 +1,5 @@
+"""Tests for custom activation functions."""
+
 from collections.abc import Callable
 
 import numpy as np
@@ -20,6 +22,7 @@ RTOL: float = 1e-3  # 0.1%
 
 @pytest.fixture
 def inputs_tensor() -> list[torch.Tensor]:
+    """Return a list of tensors for activation function testing."""
     torch.manual_seed(42)
     inputs: list[torch.Tensor] = [
         torch.randn(2, 3, 4),
@@ -42,6 +45,7 @@ def assert_close_all(
         ref_out: torch.Tensor,
         atol: float = ATOL,
         rtol: float = RTOL) -> None:
+    """Assert two tensors are close using np.allclose."""
     assert np.allclose(
         custom_out.detach(),
         ref_out.detach(),
@@ -55,6 +59,7 @@ def assert_close_torch(
         ref_out: torch.Tensor,
         atol: float = ATOL,
         rtol: float = RTOL) -> None:
+    """Assert two tensors are close using torch.testing.assert_close."""
     torch.testing.assert_close(
         custom_out,
         ref_out,
@@ -66,11 +71,13 @@ def assert_close_torch(
 
 
 def prelu_ref(x: torch.Tensor) -> torch.Tensor:
+    """PReLU reference implementation with weight 0.25."""
     weight: torch.Tensor = torch.tensor([0.25])
     return F.prelu(x, weight)
 
 
 def softmax_ref(x: torch.Tensor) -> torch.Tensor:
+    """Softmax reference implementation along last dimension."""
     return F.softmax(x, dim=-1)
 
 # ── Test Cases ──────────────────────────────────────────────────────────
@@ -93,12 +100,14 @@ def softmax_ref(x: torch.Tensor) -> torch.Tensor:
     (CustomSwish, F.silu),
 ])
 class TestSimpleActivations:
+    """Pytest parametrized tests that verify custom activation functions match PyTorch reference implementations."""
 
     def test_matches_pytorch(self,
                              custom_cls: nn.Module,
                              ref_fn: Callable[[torch.Tensor],
                                               torch.Tensor],
                              inputs_tensor: list[torch.Tensor]) -> None:
+        """Verify custom activation output matches PyTorch reference for all parametrized inputs."""
         for input_tensor in inputs_tensor:
             assert_close_all(custom_cls()(input_tensor), ref_fn(input_tensor))
             assert_close_torch(

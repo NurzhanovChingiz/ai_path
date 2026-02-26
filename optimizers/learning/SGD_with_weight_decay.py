@@ -1,3 +1,4 @@
+"""SGD optimizer with weight decay implementation."""
 import random
 from collections.abc import Callable
 
@@ -8,6 +9,11 @@ from torch.optim.optimizer import Optimizer, ParamsT
 
 
 def set_seed(seed: int = 42) -> None:
+    """Set the seed for the random number generators.
+
+    Args:
+        seed: The seed to set.
+    """
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -17,8 +23,7 @@ def set_seed(seed: int = 42) -> None:
 
 
 class SGD_with_weight_decay(Optimizer):
-    """SGD optimizer with weight decay.
-    """
+    """SGD optimizer with weight decay."""
     def __init__(
             self,
             params: ParamsT,

@@ -1,3 +1,5 @@
+"""Tests for distance metric implementations."""
+
 from collections.abc import Callable
 
 import numpy as np
@@ -14,6 +16,7 @@ RTOL: float = 1e-3  # 0.1%
 
 @pytest.fixture
 def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
+    """Return a list of (d1, d2) ndarray pairs for distance metric testing."""
     np.random.seed(42)
     d1_cases = [
         np.array([1, 2, 3]),
@@ -33,6 +36,7 @@ def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
 def run_test(custom_cls: Callable,
              input_ndarray: tuple[np.ndarray,
                                   np.ndarray]) -> None:
+    """Run the custom distance function on the given input pair."""
     custom_cls(input_ndarray[0], input_ndarray[1])
 
 # ── Test Cases ──────────────────────────────────────────────────────────
@@ -48,11 +52,14 @@ def run_test(custom_cls: Callable,
     chebyshev.chebyshev,
 ])
 class TestDistance:
+    """Pytest parametrized tests that verify custom distance implementations match reference implementations."""
+
     def test_matches_pytorch(self,
                              custom_cls: Callable[[np.ndarray,
                                                    np.ndarray],
                                                   float],
                              inputs_ndarray: list[tuple[np.ndarray,
                                                         np.ndarray]]) -> None:
+        """Verify custom distance output matches reference for all parametrized inputs."""
         for input_ndarray in inputs_ndarray:
             run_test(custom_cls, input_ndarray)

@@ -1,3 +1,4 @@
+"""ResNet model implementation."""
 from collections.abc import Callable
 
 import torch
@@ -5,7 +6,7 @@ from torch import Tensor, nn
 
 
 def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> nn.Conv2d:
-    """3x3 convolution with padding"""
+    """3x3 convolution with padding."""
     return nn.Conv2d(
         in_planes,
         out_planes,
@@ -19,10 +20,20 @@ def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, d
 
 
 def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> nn.Conv2d:
-    """1x1 convolution"""
+    """1x1 convolution.
+
+    Args:
+        in_planes: The number of input planes.
+        out_planes: The number of output planes.
+        stride: The stride.
+
+    Returns:
+        The 1x1 convolution.
+    """
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 class BasicBlock(nn.Module):
+    """BasicBlock model implementation."""
     expansion: int = 1
 
     def __init__(
@@ -36,6 +47,7 @@ class BasicBlock(nn.Module):
         dilation: int = 1,
         norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
+        """Initialize BasicBlock with two 3x3 convolutions and optional downsample."""
         super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -53,6 +65,14 @@ class BasicBlock(nn.Module):
         self.stride = stride
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass through the BasicBlock model.
+
+        Args:
+            x: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
         identity = x
 
         out = self.conv1(x)
@@ -71,6 +91,7 @@ class BasicBlock(nn.Module):
         return out  # type: ignore[no-any-return]
     
 class Bottleneck(nn.Module):
+    """Bottleneck block implementation."""
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
     # while original implementation places the stride at the first 1x1 convolution(self.conv1)
     # according to "Deep residual learning for image recognition" https://arxiv.org/abs/1512.03385.
@@ -90,6 +111,7 @@ class Bottleneck(nn.Module):
         dilation: int = 1,
         norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
+        """Initialize Bottleneck block with 1x1, 3x3, 1x1 convolutions."""
         super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -106,6 +128,14 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass through the Bottleneck model.
+
+        Args:
+            x: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
         identity = x
 
         out = self.conv1(x)
@@ -128,6 +158,7 @@ class Bottleneck(nn.Module):
         return out  # type: ignore[no-any-return]
     
 class ResNet(nn.Module):
+    """ResNet model implementation."""
     def __init__(
         self,
         block: type[BasicBlock | Bottleneck],
@@ -139,6 +170,7 @@ class ResNet(nn.Module):
         replace_stride_with_dilation: list[bool] | None = None,
         norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
+        """Initialize ResNet with block type, layer config, and optional groups/dilation."""
         super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -171,6 +203,11 @@ class ResNet(nn.Module):
         self.initialize_weights(zero_init_residual)
         
     def initialize_weights(self, zero_init_residual: bool) -> None:
+        """Initialize the weights of the ResNet model.
+
+        Args:
+            zero_init_residual: Whether to zero-initialize the last BN in each residual branch.
+        """
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
@@ -196,6 +233,15 @@ class ResNet(nn.Module):
         stride: int = 1,
         dilate: bool = False,
     ) -> nn.Sequential:
+        """Make the layers of the ResNet model.
+
+        Args:
+            block: The block type.
+            planes: The number of planes.
+            blocks: The number of blocks.
+            stride: The stride.
+            dilate: Whether to dilate the convolution.
+        """
         norm_layer = self._norm_layer
         downsample = None
         previous_dilation = self.dilation
@@ -230,6 +276,14 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
     # Support torch.script function
     def _forward_impl(self, x: Tensor) -> Tensor:
+        """Forward pass through the ResNet model.
+
+        Args:
+            x: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -247,11 +301,21 @@ class ResNet(nn.Module):
         return x
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass through the ResNet model.
+
+        Args:
+            x: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
         return self._forward_impl(x)
 
 
 class ResNet18(ResNet):
+    """ResNet-18 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:
+        """Initialize ResNet-18 with 18 layers."""
         super().__init__(block=BasicBlock, layers=[2, 2, 2, 2], num_classes=num_classes)
         if pretrained:
             self._pretrained()
@@ -259,6 +323,7 @@ class ResNet18(ResNet):
                 in_features = self.fc.in_features
                 self.fc = nn.Linear(in_features, num_classes)
     def _pretrained(self) -> None:
+        """Load pretrained weights from torchvision."""
         state_dict = nn.Module.state_dict(self)
         pretrained_dict = torch.hub.load_state_dict_from_url(
             "https://download.pytorch.org/models/resnet18-f37072fd.pth",
@@ -272,7 +337,9 @@ class ResNet18(ResNet):
         nn.Module.load_state_dict(self, state_dict)
 
 class ResNet34(ResNet):
+    """ResNet-34 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:
+        """Initialize ResNet-34 with 34 layers."""
         super().__init__(block=BasicBlock, layers=[3, 4, 6, 3], num_classes=num_classes)
         if pretrained:
             self._pretrained()
@@ -280,6 +347,7 @@ class ResNet34(ResNet):
                 in_features = self.fc.in_features
                 self.fc = nn.Linear(in_features, num_classes)
     def _pretrained(self) -> None:
+        """Load pretrained weights from torchvision."""
         state_dict = nn.Module.state_dict(self)
         pretrained_dict = torch.hub.load_state_dict_from_url(
             "https://download.pytorch.org/models/resnet34-b627a593.pth",
@@ -293,7 +361,9 @@ class ResNet34(ResNet):
         nn.Module.load_state_dict(self, state_dict)
 
 class ResNet50(ResNet):
+    """ResNet-50 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:
+        """Initialize ResNet-50 with 50 layers."""
         super().__init__(block=Bottleneck, layers=[3, 4, 6, 3], num_classes=num_classes)
         if pretrained:
             self._pretrained()
@@ -314,7 +384,9 @@ class ResNet50(ResNet):
         nn.Module.load_state_dict(self, state_dict)
         
 class ResNet101(ResNet):
+    """ResNet-101 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:
+        """Initialize ResNet-101 with 101 layers."""
         super().__init__(block=Bottleneck, layers=[3, 4, 23, 3], num_classes=num_classes)
         if pretrained:
             self._pretrained()
@@ -335,7 +407,9 @@ class ResNet101(ResNet):
         nn.Module.load_state_dict(self, state_dict)
 
 class ResNet152(ResNet):
+    """ResNet-152 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:
+        """Initialize ResNet-152 with 152 layers."""
         super().__init__(block=Bottleneck, layers=[3, 8, 36, 3], num_classes=num_classes)
         if pretrained:
             self._pretrained()

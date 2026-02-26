@@ -1,3 +1,4 @@
+"""SGD optimizer with Nesterov momentum implementation."""
 import random
 from collections.abc import Callable
 
@@ -22,8 +23,7 @@ def set_seed(seed: int = 42) -> None:
 
 
 class SGD_with_nesterov(Optimizer):
-    """SGD optimizer with Nesterov momentum.
-    """
+    """SGD optimizer with Nesterov momentum."""
     def __init__(
             self,
             params: ParamsT,

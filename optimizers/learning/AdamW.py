@@ -1,3 +1,4 @@
+"""AdamW optimizer implementation."""
 import random
 from collections.abc import Callable
 
@@ -22,8 +23,8 @@ def set_seed(seed: int = 42) -> None:
 
 
 class AdamW(Optimizer):
-    """AdamW optimizer.
-    """
+    """AdamW optimizer."""
+
     def __init__(self,
                  params: ParamsT,
                  lr: float,
@@ -33,6 +34,7 @@ class AdamW(Optimizer):
                                         0.999),
                  eps: float = 1e-8,
                  weight_decay: float = 0) -> None:
+        """Initialize AdamW optimizer with learning rate, betas, eps, and weight decay."""
         super().__init__(
             params,
             defaults=dict(

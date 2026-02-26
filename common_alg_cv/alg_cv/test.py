@@ -1,3 +1,5 @@
+"""Model evaluation/testing utilities."""
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -9,6 +11,7 @@ def test(
         loss_fn: nn.Module,
         device: torch.device,
         mode: str = "Test") -> None:
+    """Evaluate a model on the given dataloader and report accuracy and loss."""
     model.eval()
     test_loss: float = 0.0
     correct: float = 0.0

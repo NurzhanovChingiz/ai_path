@@ -1,11 +1,18 @@
-# RLE encoding for img
+"""RLE encoding for image masks."""
 import json
 
 import numpy as np
 
 
 def rle_encode(mask: np.ndarray | list[list[int]]) -> str:
-    """RLE encoding"""
+    """RLE encoding.
+
+    Args:
+        mask: The mask to encode.
+
+    Returns:
+        The RLE encoded mask.
+    """
     if not isinstance(mask, np.ndarray):
         mask = np.array(mask)
 

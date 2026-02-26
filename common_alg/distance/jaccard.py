@@ -1,4 +1,5 @@
-# Jaccard distance or Jaccard similarity
+"""Jaccard distance or Jaccard similarity."""
+
 import numpy as np
 
 

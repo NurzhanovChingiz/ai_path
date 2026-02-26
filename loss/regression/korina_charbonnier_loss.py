@@ -1,3 +1,4 @@
+"""Kornia-style Charbonnier loss for regression."""
 # Kornia implementation of charbonnier loss for regression
 # from
 # https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/charbonnier.py
@@ -29,7 +30,8 @@ class DeviceError(BaseError):
         *,
         actual_devices: list | None = None,
         expected_device: Any | None = None,
-    ):
+    ) -> None:
+        """Initialize DeviceError with message and optional device attributes."""
         super().__init__(message)
         self.actual_devices = actual_devices
         self.expected_device = expected_device
@@ -49,7 +51,8 @@ class ShapeError(BaseError):
         *,
         actual_shape: tuple[int, ...] | list[int] | None = None,
         expected_shape: list[str] | list[int] | tuple[int, ...] | None = None,
-    ):
+    ) -> None:
+        """Initialize ShapeError with message and optional shape attributes."""
         super().__init__(message)
         self.actual_shape = actual_shape
         self.expected_shape = expected_shape
@@ -69,7 +72,8 @@ class TypeCheckError(BaseError):
         *,
         actual_type: type | None = None,
         expected_type: type | tuple[type, ...] | None = None,
-    ):
+    ) -> None:
+        """Initialize TypeCheckError with message and optional type attributes."""
         super().__init__(message)
         self.actual_type = actual_type
         self.expected_type = expected_type

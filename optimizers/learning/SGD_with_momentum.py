@@ -1,3 +1,4 @@
+"""SGD optimizer with momentum implementation."""
 import random
 from collections.abc import Callable
 
@@ -22,14 +23,21 @@ def set_seed(seed: int = 42) -> None:
 
 
 class SGD_with_momentum(Optimizer):
-    """SGD optimizer with momentum.
-    """
+    """SGD optimizer with momentum."""
     def __init__(
             self,
             params: ParamsT,
             lr: float,
             inplace: bool = True,
             momentum: float = 0.9) -> None:
+        """Initialize the SGD optimizer with momentum.
+
+        Args:
+            params: The parameters to optimize.
+            lr: The learning rate.
+            inplace: Whether to use inplace operations.
+            momentum: The momentum.
+        """
         super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
         self.momentum = momentum
         self.inplace = inplace

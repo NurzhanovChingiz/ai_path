@@ -1,3 +1,4 @@
+"""MobileNet V2 model implementation."""
 from collections.abc import Callable
 
 from torch import Tensor, nn
@@ -48,6 +49,7 @@ class InvertedResidual(nn.Module):
             expand_ratio: int,
             norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
+        """Initialize InvertedResidual block with expansion and depthwise convolutions."""
         super().__init__()
         if stride not in [1, 2]:
             raise ValueError(f"stride should be 1 or 2 instead of {stride}")
@@ -109,13 +111,14 @@ class InvertedResidual(nn.Module):
         self.conv = nn.Sequential(*layers)
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass with optional residual connection."""
         if self.use_res_connect:
             return x + self.conv(x)  # type: ignore[no-any-return]
         else:
             return self.conv(x)  # type: ignore[no-any-return]
 
 class MobileNetV2(nn.Module):
-    """MobileNet V2 main class
+    """MobileNet V2 main class.
 
     Args:
         num_classes (int): Number of classes
@@ -141,6 +144,7 @@ class MobileNetV2(nn.Module):
         dropout: float = 0.2,
         pretrained: bool = False,
             ) -> None:
+        """Initialize MobileNetV2 with configurable architecture and pretrained weights."""
         super().__init__()
         if block is None:
             block = InvertedResidual
@@ -232,9 +236,10 @@ class MobileNetV2(nn.Module):
         return out  # type: ignore[no-any-return]
     
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass (delegates to _forward_impl for torch.script)."""
         out = self._forward_impl(x)
         return out  # type: ignore[no-any-return]
-    
+
     def _initialize_weights(self, pretrained: bool, num_classes: int) -> None:
         for m in self.modules():
             if isinstance(m, nn.Conv2d) and not pretrained:
@@ -256,7 +261,7 @@ class MobileNetV2(nn.Module):
                 self.classifier[-1] = nn.Linear(in_features, num_classes)  # type: ignore[arg-type]
                 
     def _pretrained(self) -> None:
-        """Load pretrained weights from torchvision"""
+        """Load pretrained weights from torchvision."""
         from torchvision.models import (  # type: ignore[import-untyped]
             MobileNet_V2_Weights, mobilenet_v2)
 

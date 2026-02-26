@@ -1,3 +1,4 @@
+"""Tests for optimizer implementations."""
 from typing import Any
 
 import numpy as np
@@ -10,6 +11,7 @@ from optimizers.learning.AdamW import AdamW
 from optimizers.learning.SGD import SGD
 from optimizers.learning.SGD_with_momentum import SGD_with_momentum
 from optimizers.learning.SGD_with_nesterov import SGD_with_nesterov
+from optimizers.learning.SGD_with_weight_decay import SGD_with_weight_decay
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%
@@ -231,7 +233,7 @@ class TestSGDWeightDecay:
         model_ref = nn.Linear(1, 1)
 
         w_custom, b_custom = run_optimizer(
-            SGD_weight_decay, model_custom, x, y, lr=0.01, inplace=inplace, weight_decay=0.01)
+            SGD_with_weight_decay, model_custom, x, y, lr=0.01, inplace=inplace, weight_decay=0.01)
         w_ref, b_ref = run_optimizer(
             torch.optim.SGD, model_ref, x, y, lr=0.01, weight_decay=0.01)
 
@@ -253,7 +255,7 @@ class TestSGDWeightDecay:
         model_ref = nn.Linear(1, 1)
 
         w_custom, b_custom = run_n_steps(
-            SGD_weight_decay, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, weight_decay=0.01)
+            SGD_with_weight_decay, model_custom, x, y, n_steps=5, lr=0.01, inplace=inplace, weight_decay=0.01)
         w_ref, b_ref = run_n_steps(
             torch.optim.SGD, model_ref, x, y, n_steps=5, lr=0.01, weight_decay=0.01)
 
@@ -273,9 +275,9 @@ class TestSGDWeightDecay:
         model_nip = nn.Linear(1, 1)
 
         w_ip, b_ip = run_optimizer(
-            SGD_weight_decay, model_ip, x, y, lr=0.01, inplace=True, weight_decay=0.01)
+            SGD_with_weight_decay, model_ip, x, y, lr=0.01, inplace=True, weight_decay=0.01)
         w_nip, b_nip = run_optimizer(
-            SGD_weight_decay, model_nip, x, y, lr=0.01, inplace=False, weight_decay=0.01)
+            SGD_with_weight_decay, model_nip, x, y, lr=0.01, inplace=False, weight_decay=0.01)
 
         assert_close_torch(w_ip, w_nip)
         assert_close_torch(b_ip, b_nip)
@@ -293,7 +295,7 @@ class TestSGDWeightDecay:
         model_plain = nn.Linear(1, 1)
 
         w_wd, b_wd = run_optimizer(
-            SGD_weight_decay, model_wd, x, y, lr=0.01, weight_decay=0)
+            SGD_with_weight_decay, model_wd, x, y, lr=0.01, weight_decay=0)
         w_plain, b_plain = run_optimizer(SGD, model_plain, x, y, lr=0.01)
 
         assert_close_torch(w_wd, w_plain)

@@ -1,3 +1,4 @@
+"""VGG model implementation."""
 import torch
 from torch import nn
 
@@ -13,12 +14,14 @@ cfg = {
 
 
 class VGG(nn.Module):
+    """VGG model implementation."""
     def __init__(
             self,
             features: list,
             num_classes: int = 1000,
             p: float = 0.5,
             init_weights: bool = True) -> None:
+        """Initialize VGG with feature config, num_classes, dropout, and weight init."""
         super().__init__()
         self.features = self._make_layers(features)
         self.classifier = nn.Sequential()
@@ -35,6 +38,14 @@ class VGG(nn.Module):
             self._initialize_weights()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass through the VGG model.
+
+        Args:
+            x: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
         device = next(self.parameters()).device
         if device.type != 'cuda':
             self.classifier.dropout1 = nn.Identity()
@@ -45,6 +56,10 @@ class VGG(nn.Module):
         return x
 
     def _initialize_weights(self) -> None:
+        """Initialize the weights of the VGG model.
+
+        This method initializes the weights of the convolutional layers using Kaiming initialization.
+        """
         for module in self.modules():
             if isinstance(module, nn.Conv2d):
                 nn.init.kaiming_normal_(
@@ -62,6 +77,15 @@ class VGG(nn.Module):
             self,
             cfg: list,
             batch_norm: bool = False) -> nn.Sequential:
+        """Make the layers of the VGG model.
+
+        Args:
+            cfg: The configuration list.
+            batch_norm: Whether to use batch normalization.
+
+        Returns:
+            The sequential model.
+        """
         layers: list[nn.Module] = []
         in_channels = 3
         for v in cfg:

@@ -1,4 +1,5 @@
-# Chebyshev distance or L∞ norm
+"""Chebyshev distance or L∞ norm."""
+
 import numpy as np
 
 

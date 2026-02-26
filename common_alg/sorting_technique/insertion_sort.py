@@ -1,9 +1,10 @@
-# Insertion Sort
+"""Insertion sort implementation."""
 
 from collections.abc import Generator
 
 
 def insertion_sort(a: list[int]) -> Generator[list[int], None, None]:
+    """Sort a list in-place using insertion sort, yielding the array after each step."""
     arr = a
     for i in range(1, len(arr)):
         key = arr[i]

@@ -1,14 +1,18 @@
+"""AlexNet model implementation."""
+
 import torch
 import torch.nn as nn
 
 
 class AlexNet(nn.Module):
+    """AlexNet architecture for image classification."""
     def __init__(
         self,
         num_classes: int = 1000,
         dropout: float = 0.5,
         pretrained: bool = False,
         ) -> None:
+        """Initialize AlexNet with configurable num_classes, dropout, and pretrained weights."""
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
@@ -38,16 +42,19 @@ class AlexNet(nn.Module):
         self.init_weights(pretrained, num_classes)
     # Support torch.script function
     def forward_impl(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass implementation (features -> avgpool -> classifier)."""
         x = self.features(x)
         x = self.avgpool(x)
         x = x.flatten(1)
         x = self.classifier(x)
         return x
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass (delegates to forward_impl for torch.script)."""
         x = self.forward_impl(x)
         return x
 
     def init_weights(self, pretrained: bool, num_classes: int) -> None:
+        """Initialize or load pretrained weights for all layers."""
         for m in self.modules():
             if isinstance(m, nn.Conv2d) and not pretrained:
                 nn.init.kaiming_normal_(m.weight, mode="fan_out")
@@ -67,7 +74,7 @@ class AlexNet(nn.Module):
                 self.classifier[-1] = nn.Linear(in_features, num_classes)  # type: ignore[arg-type]
                 
     def _pretrained(self) -> None:
-        """Load pretrained weights from torchvision"""
+        """Load pretrained weights from torchvision."""
         state_dict = torch.hub.load_state_dict_from_url(
             "https://download.pytorch.org/models/alexnet-owt-4df8aa71.pth",
             progress=True,

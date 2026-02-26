@@ -1,3 +1,5 @@
+"""Tests for sorting implementations."""
+
 from collections.abc import Callable
 
 import numpy as np
@@ -14,6 +16,7 @@ RTOL: float = 1e-3  # 0.1%
 
 @pytest.fixture
 def inputs_list() -> list[list[int]]:
+    """Return a list of integer lists for sorting algorithm testing."""
     np.random.seed(42)
     inputs = [
         [3, 2, 1],
@@ -57,10 +60,13 @@ def run_sorting(
     quick_sort.quick_sort,
 ])
 class TestSorting:
+    """Pytest parametrized tests that verify custom sorting implementations match NumPy."""
+
     def test_matches_numpy(self,
                            custom_cls: Callable[[list[int]],
                                                 list[int]],
                            inputs_list: list[list[int]]) -> None:
+        """Verify custom sorting output matches NumPy for all parametrized inputs."""
         for input_list in inputs_list:
             assert_close_all(custom_cls, input_list)
 
@@ -68,5 +74,6 @@ class TestSorting:
                  custom_cls: Callable[[list[int]],
                                       list[int]],
                  inputs_list: list[list[int]]) -> None:
+        """Run sorting test for each parametrized input list."""
         for input_list in inputs_list:
             run_sorting(custom_cls, input_list)

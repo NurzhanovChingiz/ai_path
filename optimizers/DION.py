@@ -1,3 +1,4 @@
+"""Dion (DIstributed OrthoNormalization) optimizer implementation."""
 # https://github.com/lessw2020/pytorch-dion-optimizer/blob/main/src/dion_optimizer.py
 # https://arxiv.org/abs/2504.05295
 # https://doi.org/10.48550/arXiv.2504.05295
@@ -41,7 +42,7 @@ class ShardingStrategy(Enum):
 
 
 class DionOptimizer(Optimizer):
-    """Dion (DIstributed OrthoNormalization) Optimizer
+    """Dion (DIstributed OrthoNormalization) Optimizer.
 
     Unofficial - Implements the Dion optimizer with support for both centralized and distributed training.
     Orthonormalized updates for matrix parameters via low rank decomposition, and configurable scalar optimizers
@@ -86,7 +87,8 @@ class DionOptimizer(Optimizer):
         sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,  # FSDP2, this is for state dict only atm
         max_norm: float = 10.0,  # Maximum gradient norm for clipping
         **scalar_kwargs: Any,
-    ):
+    ) -> None:
+        """Initialize DionOptimizer with matrix and scalar parameter settings."""
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= momentum < 1.0:
@@ -573,6 +575,7 @@ def create_dion_optimizer(
         lr: Learning rate
         rank_factor: Rank fraction for low-rank approximation
         scalar_optimizer: Optimizer for non-matrix parameters
+        sharding_strategy: Sharding strategy for FSDP2
         **kwargs: Additional arguments for DionOptimizer
 
     Returns:

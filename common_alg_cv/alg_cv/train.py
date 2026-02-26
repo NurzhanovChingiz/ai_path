@@ -1,4 +1,5 @@
-# Train function
+"""Training functions for PyTorch models."""
+
 from typing import cast
 from collections.abc import Sized
 

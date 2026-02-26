@@ -1,3 +1,4 @@
+"""Tversky loss for segmentation with adjustable FN/FP trade-off."""
 # Tversky loss for segmentation
 # segmentation where you want to bias toward "don't miss positives" vs "don't add false positives"
 # Pros:

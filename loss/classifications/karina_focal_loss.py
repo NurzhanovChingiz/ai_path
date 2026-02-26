@@ -1,3 +1,4 @@
+"""Kornia-style focal loss implementation."""
 from typing import Any
 
 import torch
@@ -29,7 +30,8 @@ class ShapeError(BaseError):
         *,
         actual_shape: tuple[int, ...] | list[int] | None = None,
         expected_shape: list[str] | tuple[int, ...] | None = None,
-    ):
+    ) -> None:
+        """Initialize ShapeError with message and optional shape attributes."""
         super().__init__(message)
         self.actual_shape = actual_shape
         self.expected_shape = expected_shape
@@ -172,6 +174,15 @@ def KORNIA_CHECK(
 def mask_ignore_pixels(
     target: torch.Tensor, ignore_index: int | None
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
+    """Mask the ignore pixels.
+
+    Args:
+        target: The target tensor.
+        ignore_index: The ignore index.
+
+    Returns:
+        The target tensor and the target mask.
+    """
     if ignore_index is None:
         return target, None
 
@@ -201,7 +212,8 @@ class TypeCheckError(BaseError):
         *,
         actual_type: type | None = None,
         expected_type: type | tuple[type, ...] | None = None,
-    ):
+    ) -> None:
+        """Initialize TypeCheckError with message and optional type attributes."""
         super().__init__(message)
         self.actual_type = actual_type
         self.expected_type = expected_type

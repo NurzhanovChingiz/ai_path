@@ -1,3 +1,4 @@
+"""Charbonnier loss for robust regression."""
 # Charbonnier loss
 # Where: bbox/keypoint coordinates, depth, optical flow, general regression
 # Pros:
@@ -40,6 +41,15 @@ def charbonnier_loss_np(pred: np.ndarray, target: np.ndarray) -> float:
 def charbonnier_loss_torch(
         pred: torch.Tensor,
         target: torch.Tensor) -> torch.Tensor:
+    """Calculate the Charbonnier loss.
+
+    Args:
+        pred: The predicted values.
+        target: The target values.
+
+    Returns:
+        The Charbonnier loss.
+    """
     diff = pred - target
     diff_squared = diff ** 2
     diff_squared_plus_1 = diff_squared + 1.0

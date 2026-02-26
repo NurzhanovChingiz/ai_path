@@ -1,4 +1,6 @@
+"""Configuration settings for the project."""
 class CFG:
+    """Configuration settings for the project."""
     # save results of activation functions
     PATH_TO_SAVE = "results"
     IS_SAVE = True

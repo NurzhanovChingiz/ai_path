@@ -1,4 +1,5 @@
-# Minkowski distance or Lp norm
+"""Minkowski distance or Lp norm."""
+
 import numpy as np
 
 

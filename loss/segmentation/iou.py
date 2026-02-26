@@ -1,3 +1,4 @@
+"""IoU loss for segmentation."""
 # IoU for segmentation
 # Where: binary or multi-class segmentation,
 # Pros:

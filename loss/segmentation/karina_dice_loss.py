@@ -1,3 +1,4 @@
+"""Kornia-style dice loss implementation."""
 # Karina implementation of dice loss for segmentation
 # from
 # https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/dice.py

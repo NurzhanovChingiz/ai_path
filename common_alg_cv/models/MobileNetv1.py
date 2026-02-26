@@ -1,14 +1,18 @@
+"""MobileNetV1 model implementation."""
+
 from collections.abc import Callable
 
 from torch import Tensor, nn
 
 
 class MobileNetV1(nn.Module):
+    """MobileNetV1 architecture using depthwise separable convolutions."""
 
     def __init__(
             self,
             num_classes: int = 1000,
     ) -> None:
+        """Initialize MobileNetV1 with the given number of output classes."""
         super().__init__()
         # 224x224x3 -> 112x112x32
         self.conv1 = nn.Conv2d(3, 32, 3, 2, 1, bias=False)
@@ -33,6 +37,7 @@ class MobileNetV1(nn.Module):
         self._initialize_weights()
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass through depthwise separable convolutions."""
         out = self.conv1(x)
         out = self.bn1(out)
         out = nn.ReLU(inplace=False)(out)
@@ -73,6 +78,7 @@ class MobileNetV1(nn.Module):
 
 
 class DepthWiseConv2d(nn.Module):
+    """Depthwise separable convolution block for MobileNet-style architectures."""
     def __init__(
             self,
             in_channels: int,
@@ -80,6 +86,7 @@ class DepthWiseConv2d(nn.Module):
             stride: int,
             norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
+        """Initialize depthwise separable convolution block."""
         super().__init__()
         self.stride = stride
         if stride not in [1, 2]:
@@ -113,6 +120,7 @@ class DepthWiseConv2d(nn.Module):
         )
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass through depthwise separable convolution block."""
         out: Tensor = self.conv(x)
 
         return out

@@ -1,3 +1,4 @@
+"""SGD optimizer implementation."""
 import random
 from collections.abc import Callable
 
@@ -22,8 +23,7 @@ def set_seed(seed: int = 42) -> None:
 
 
 class SGD(Optimizer):
-    """SGD optimizer.
-    """
+    """SGD optimizer."""
     def __init__(
             self,
             params: ParamsT,

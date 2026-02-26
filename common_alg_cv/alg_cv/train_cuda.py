@@ -1,4 +1,5 @@
-# Train function
+"""CUDA-accelerated training functions."""
+
 from typing import Any
 
 import torch
@@ -15,6 +16,7 @@ def move_to_device(
         batch: Any,
         device: torch.device,
         non_blocking: bool = True) -> Any:
+    """Recursively move tensors in a batch (tensor, dict, list, tuple) to the given device."""
     if torch.is_tensor(batch):
         return batch.to(device, non_blocking=non_blocking)
     if isinstance(batch, dict):
@@ -45,7 +47,8 @@ class CUDAPrefetcher:
       - CUDA device
     """
 
-    def __init__(self, loader: DataLoader, device: torch.device):
+    def __init__(self, loader: DataLoader, device: torch.device) -> None:
+        """Initialize the prefetcher with a DataLoader and CUDA device."""
         if device.type != "cuda":
             raise ValueError("CUDAPrefetcher requires a CUDA device.")
         self.base_loader = loader
@@ -70,9 +73,11 @@ class CUDAPrefetcher:
             self._next = move_to_device(batch, self.device, non_blocking=True)
 
     def __iter__(self) -> "CUDAPrefetcher":
+        """Return self as the iterator."""
         return self
 
     def __next__(self) -> Any:
+        """Return the next prefetched batch."""
         if self._next is None:
             raise StopIteration
         current = torch.cuda.current_stream(device=self.device)
@@ -84,6 +89,7 @@ class CUDAPrefetcher:
 
     # Backward-compatible alias with the original API
     def next(self) -> Any | None:
+        """Return next batch or None when exhausted (alias for __next__)."""
         try:
             return self.__next__()
         except StopIteration:
@@ -105,7 +111,7 @@ def train(
         optimizer: Optimizer,
         device: torch.device,
         prefetcher: CUDAPrefetcher | None = None) -> None:
-
+    """Train a model using CUDA prefetcher for overlapping data transfer and compute."""
     assert dataloader.dataset is not None
     size = len(dataloader.dataset)  # type: ignore[arg-type]
 

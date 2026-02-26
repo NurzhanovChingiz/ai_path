@@ -1,4 +1,4 @@
-# Bubble Sort
+"""Bubble sort implementation."""
 
 from collections.abc import Generator
 

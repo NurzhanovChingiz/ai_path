@@ -1,9 +1,10 @@
-# Merge Sort
+"""Merge sort implementation."""
 
 from collections.abc import Generator
 
 
 def merge_sort(a: list[int]) -> Generator[list[int], None, None]:
+    """Sort a list in-place using merge sort, yielding the array after each merge step."""
     arr = a
     aux = [0] * len(arr)
 

@@ -1,10 +1,13 @@
-# Create CNN Model
+"""CNN model implementation."""
+
 import torch
 import torch.nn as nn
 
 
 class CNNModel(nn.Module):
+    """Simple convolutional neural network for image classification."""
     def __init__(self) -> None:
+        """Initialize the CNN model layers."""
         super().__init__()
 
         # Convolution 1
@@ -35,6 +38,7 @@ class CNNModel(nn.Module):
         self.fc1 = nn.Linear(32 * 4 * 4, 10)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass through conv layers and classifier."""
         # Convolution 1
         x = self.relu1(self.cnn1(x))
         # Max pool 1

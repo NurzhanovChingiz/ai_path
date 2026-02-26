@@ -1,3 +1,5 @@
+"""GPU memory clearing utilities."""
+
 import gc
 import time
 
@@ -5,6 +7,7 @@ import torch
 
 
 def clear_memory(verbose: bool = True) -> None:
+    """Clear GPU cache and run garbage collection."""
     stt = time.time()
     if torch.cuda.is_available():
         torch.cuda.synchronize()

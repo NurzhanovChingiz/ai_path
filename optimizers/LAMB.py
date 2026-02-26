@@ -1,4 +1,4 @@
-
+"""LAMB (Layer-wise Adaptive Moments optimizer for Batching) implementation."""
 import math
 from collections.abc import Callable
 

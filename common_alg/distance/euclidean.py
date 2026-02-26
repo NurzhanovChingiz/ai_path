@@ -1,4 +1,4 @@
-# Euclidean distance or L2 norm
+"""Euclidean distance or L2 norm."""
 
 import numpy as np
 

@@ -1,4 +1,4 @@
-# muon optimizer
+"""Muon optimizer implementation."""
 import copy
 import math
 import random

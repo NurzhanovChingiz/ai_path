@@ -1,3 +1,4 @@
+"""Dice loss for binary and multi-class segmentation."""
 # dice loss for segmentation
 # Where: binary or multi-class segmentation,
 # especially common in medical imaging.
@@ -18,6 +19,14 @@ from karina_dice_loss import dice_loss
 
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = logits.max(axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
@@ -30,7 +39,16 @@ def one_hot_np(
         labels: np.ndarray,
         num_classes: int,
         eps: float = 1e-10) -> np.ndarray:
-    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
+    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing.
+
+    Args:
+        labels: The labels.
+        num_classes: The number of classes.
+        eps: The epsilon parameter.
+
+    Returns:
+        The one-hot encoded labels.
+    """
     flat = labels.reshape(-1)
     one_hot = np.eye(num_classes, dtype=np.float32)[flat]  # (N*..., C)
 
@@ -49,6 +67,13 @@ def dice_loss_np(
         pred: np.ndarray,
         target: np.ndarray,
         smooth: float = 1) -> float:
+    """Calculate the Dice loss.
+
+    Args:
+        pred: The predicted logits.
+        target: The target tensor.
+        smooth: The smooth parameter.
+    """
     pred = softmax_np(pred)
     target_one_hot = one_hot_np(target, num_classes=pred.shape[1])
     intersection = np.sum(pred * target_one_hot)
@@ -61,6 +86,14 @@ def dice_loss_np(
 
 
 def softmax_torch(logits: torch.Tensor) -> torch.Tensor:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = logits.max(dim=1, keepdim=True).values  # m = max(logits_i)
     shifted_logits = logits - m  # shifted_logits_i = logits_i - m
     exp_i = torch.exp(shifted_logits)  # exp_i = exp(shifted_logits_i)
@@ -72,7 +105,16 @@ def one_hot_torch(
         labels: torch.Tensor,
         num_classes: int,
         eps: float = 1e-10) -> torch.Tensor:
-    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing."""
+    """Convert integer labels (N, *) to one-hot (N, C, *) with eps smoothing.
+
+    Args:
+        labels: The labels.
+        num_classes: The number of classes.
+        eps: The epsilon parameter.
+
+    Returns:
+        The one-hot encoded labels.
+    """
     flat = labels.reshape(-1)
     one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]  # (N*..., C)
     target_shape = labels.shape + (num_classes,)
@@ -88,6 +130,13 @@ def dice_loss_torch(
         pred: torch.Tensor,
         target: torch.Tensor,
         smooth: float = 1) -> torch.Tensor:
+    """Calculate the Dice loss.
+
+    Args:
+        pred: The predicted logits.
+        target: The target tensor.
+        smooth: The smooth parameter.
+    """
     pred = softmax_torch(pred)
     target_one_hot = one_hot_torch(target, num_classes=pred.shape[1])
     intersection = torch.sum(pred * target_one_hot)

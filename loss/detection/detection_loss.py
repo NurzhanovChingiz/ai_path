@@ -1,3 +1,4 @@
+"""Detection loss combining classification, bounding box regression, and objectness losses."""
 # Detection loss
 # Detection loss use a composite loss function that combines multiple loss functions.
 # class classification loss, bounding box regression loss, and objectness loss.

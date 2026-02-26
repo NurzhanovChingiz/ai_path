@@ -1,8 +1,10 @@
+"""Model summary utilities."""
+
 from torch import nn
 
 
 def summary(model: nn.Module) -> None:
-    """Print information about the model
+    """Print information about the model.
 
     Args:
         model: PyTorch model

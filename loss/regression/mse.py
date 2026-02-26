@@ -1,3 +1,4 @@
+"""Mean squared error loss for regression."""
 # MSE loss
 # Where: bbox/keypoint coordinates, depth, optical flow, general regression
 # Pros:
@@ -39,6 +40,15 @@ def mse_np(pred: np.ndarray, target: np.ndarray) -> float:
 
 
 def mse_torch(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    """Calculate the MSE loss.
+
+    Args:
+        pred: The predicted values.
+        target: The target values.
+
+    Returns:
+        The MSE loss.
+    """
     diff = pred - target
     diff_squared = diff ** 2
     result: torch.Tensor = torch.mean(diff_squared)

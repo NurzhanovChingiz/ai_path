@@ -10,7 +10,7 @@ def test(
         dataloader: DataLoader,
         loss_fn: nn.Module,
         device: torch.device,
-        mode: str = "Test") -> None:
+        mode: str) -> None:
     """Evaluate a model on the given dataloader and report accuracy and loss."""
     model.eval()
     test_loss: float = 0.0

@@ -94,7 +94,7 @@ def softmax_ref(x: torch.Tensor) -> torch.Tensor:
 # ── Test Cases ──────────────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("custom_cls, ref_fn", [
+@pytest.mark.parametrize(("custom_cls", "ref_fn"), [
     (CustomReLU, F.relu),
     (CustomReLU6, F.relu6),
     (CustomPReLU, prelu_ref),

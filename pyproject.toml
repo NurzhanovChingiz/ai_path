@@ -36,7 +36,9 @@ extend-select = [
   "LOG",  # flake8-logging
   "G",    # flake8-logging-format
   "INP",  # flake8-no-pep420
-  "PIE",   # flake8-pie
+  "PIE",  # flake8-pie
+  "PT",   # flake8-pytest-style
+  "RET",  # flake8-return
   "PL",   # Pylint
   "RUF",  # Ruff
   "ERA",  # eradicate

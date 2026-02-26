@@ -88,9 +88,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.relu(out)
-
-        return out  # type: ignore[no-any-return]
+        return self.relu(out)
 
 class Bottleneck(nn.Module):
     """Bottleneck block implementation."""
@@ -155,9 +153,7 @@ class Bottleneck(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.relu(out)
-
-        return out  # type: ignore[no-any-return]
+        return self.relu(out)  # type: ignore[no-any-return]
 
 class ResNet(nn.Module):
     """ResNet model implementation."""
@@ -299,9 +295,8 @@ class ResNet(nn.Module):
 
         x = self.avgpool(x)
         x = x.flatten(1)
-        x = self.fc(x)
 
-        return x
+        return self.fc(x)
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass through the ResNet model.

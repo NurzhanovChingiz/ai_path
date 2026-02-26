@@ -46,12 +46,11 @@ class AlexNet(nn.Module):
         x = self.features(x)
         x = self.avgpool(x)
         x = x.flatten(1)
-        x = self.classifier(x)
-        return x
+        return self.classifier(x)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass (delegates to forward_impl for torch.script)."""
-        x = self.forward_impl(x)
-        return x
+        return self.forward_impl(x)
 
     def init_weights(self, pretrained: bool, num_classes: int) -> None:
         """Initialize or load pretrained weights for all layers."""

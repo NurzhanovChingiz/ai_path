@@ -17,17 +17,16 @@ def _can_fuse_pair(a: nn.Module, b: nn.Module) -> bool:
     if a.training or b.training:
         return False
     if _is_conv(a) and _is_bn(b):
-        bn_ok = getattr(
+        return getattr(
             b,
             "track_running_stats",
             True) and b.running_mean is not None and b.running_var is not None
-        return bn_ok
+
     if isinstance(a, nn.Linear) and isinstance(b, nn.BatchNorm1d):
-        bn_ok = getattr(
+        return getattr(
             b,
             "track_running_stats",
             True) and b.running_mean is not None and b.running_var is not None
-        return bn_ok
     return False
 
 

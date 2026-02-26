@@ -22,12 +22,11 @@ RTOL: float = 1e-3  # 0.1%
 def inputs_list() -> list[list[int]]:
     """Return a list of integer lists for sorting algorithm testing."""
     np.random.seed(42)
-    inputs = [
+    return [
         [3, 2, 1],
         [1, 2, 3],
         [1, 3, 2],
     ]
-    return inputs
 
 
 def assert_close_all(

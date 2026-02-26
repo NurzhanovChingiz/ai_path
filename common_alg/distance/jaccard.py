@@ -15,5 +15,4 @@ def jaccard(d1: np.ndarray, d2: np.ndarray) -> float:
     intersection = np.sum(np.minimum(d1, d2))
     union = np.sum(np.maximum(d1, d2))
     jaccard_similarity = intersection / union if union != 0 else 0.0
-    jaccard_distance = 1 - jaccard_similarity
-    return jaccard_distance
+    return 1 - jaccard_similarity

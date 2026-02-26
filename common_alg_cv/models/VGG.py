@@ -52,8 +52,7 @@ class VGG(nn.Module):
             self.classifier.dropout2 = nn.Identity()
         x = self.features(x)
         x = x.flatten(1)
-        x = self.classifier(x)
-        return x
+        return self.classifier(x)
 
     def _initialize_weights(self) -> None:
         """Initialize the weights of the VGG model.

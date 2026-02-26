@@ -235,13 +235,11 @@ class MobileNetV2(nn.Module):
         out = self.features(x)
         out = self.avgpool(out)
         out = out.flatten(1)
-        out = self.classifier(out)
-        return out  # type: ignore[no-any-return]
+        return self.classifier(out)
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass (delegates to _forward_impl for torch.script)."""
-        out = self._forward_impl(x)
-        return out  # type: ignore[no-any-return]
+        return self._forward_impl(x)
 
     def _initialize_weights(self, pretrained: bool, num_classes: int) -> None:
         for m in self.modules():

@@ -32,8 +32,7 @@ def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
         np.array([4, 5, 6]),
         np.array([7, 8, 9]) * 100,
     ]
-    inputs = [(d1, d2) for d1 in d1_cases for d2 in d2_cases]
-    return inputs
+    return [(d1, d2) for d1 in d1_cases for d2 in d2_cases]
 
 
 def run_test(custom_cls: Callable,

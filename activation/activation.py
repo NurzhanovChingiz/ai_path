@@ -73,8 +73,7 @@ class CustomGELU(nn.Module):
         """Apply GELU activation (Gaussian Error Linear Unit)."""
         inner = x / 1.4142135623730951
         result = 0.5 * x * (1.0 + torch.erf(inner))
-        result = torch.where(torch.isfinite(x), result, torch.nan)
-        return result
+        return torch.where(torch.isfinite(x), result, torch.nan)
 
 
 class CustomSigmoid(nn.Module):

@@ -57,9 +57,8 @@ class MobileNetV1(nn.Module):
 
         out = self.avgpool(out)
         out = out.flatten(1)
-        out = self.classifier(out)
+        return self.classifier(out)
 
-        return out  # type: ignore[no-any-return]
 
     def _initialize_weights(self) -> None:
         for module in self.modules():

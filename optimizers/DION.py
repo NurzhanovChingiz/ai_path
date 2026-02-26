@@ -369,8 +369,7 @@ class DionOptimizer(Optimizer):
                     return Q  # type: ignore[no-any-return]
 
         # Final orthogonalized result
-        result = torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t()
-        return result  # type: ignore[no-any-return]
+        return torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t()
 
     def _distributed_column_normalize(self, matrix: torch.Tensor) -> torch.Tensor:
         """Distributed column normalization."""

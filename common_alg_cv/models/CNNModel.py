@@ -54,6 +54,4 @@ class CNNModel(nn.Module):
         x = x.flatten(1)
 
         # Linear function (readout)
-        x = self.fc1(x)
-
-        return x
+        return self.fc1(x)

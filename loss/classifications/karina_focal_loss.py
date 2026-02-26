@@ -319,9 +319,7 @@ def one_hot(
     # stability
     one_hot_tensor = one_hot_tensor.to(dtype=dtype, device=device)
     # Apply eps: multiply by (1-eps) and add eps to all elements
-    one_hot_tensor = one_hot_tensor * (1.0 - eps) + eps
-
-    return one_hot_tensor
+    return one_hot_tensor * (1.0 - eps) + eps
 
 
 def focal_loss(

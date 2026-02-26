@@ -204,16 +204,15 @@ class DionOptimizer(Optimizer):
 
         if actual_param.dim() == 0:  # Scalar (normalization)
             return 1.0
-        elif actual_param.dim() == 1:  # Vector (bias, embedding, etc.)
+        if actual_param.dim() == 1:  # Vector (bias, embedding, etc.)
             if actual_param.numel() > 1000:  # Likely unembedding / output
                 return 1.0 / math.sqrt(actual_param.size(0))
-            else:  # Likely bias
-                return 1.0
-        elif actual_param.dim() == 2:  # Matrix (but below threshold)
+            # Likely bias
+            return 1.0
+        if actual_param.dim() == 2:  # Matrix (but below threshold)
             d_out, d_in = actual_param.shape
             return math.sqrt(d_out / d_in)
-        else:
-            return 1.0
+        return 1.0
 
     def _get_weight_decay(self, param: torch.Tensor) -> float:
         """Get weight decay for parameter type."""

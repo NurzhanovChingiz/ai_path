@@ -80,17 +80,16 @@ def KORNIA_CHECK_IS_TENSOR(
                 if msg is not None:
                     error_msg += f"\n  {msg}"
                 raise TypeCheckError(error_msg)
-            else:
-                # In Python mode, we can safely use type introspection
-                type_name = str(type(x))
-                error_msg = f"Type mismatch: expected Tensor, got {type_name}."
-                if msg is not None:
-                    error_msg += f"\n  {msg}"
-                raise TypeCheckError(
-                    error_msg,
-                    actual_type=type(x),
-                    expected_type=torch.Tensor,
-                )
+            # In Python mode, we can safely use type introspection
+            type_name = str(type(x))
+            error_msg = f"Type mismatch: expected Tensor, got {type_name}."
+            if msg is not None:
+                error_msg += f"\n  {msg}"
+            raise TypeCheckError(
+                error_msg,
+                actual_type=type(x),
+                expected_type=torch.Tensor,
+            )
         return False
     return True
 

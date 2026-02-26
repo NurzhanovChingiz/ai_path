@@ -119,8 +119,7 @@ class InvertedResidual(nn.Module):
         """Forward pass with optional residual connection."""
         if self.use_res_connect:
             return x + self.conv(x)  # type: ignore[no-any-return]
-        else:
-            return self.conv(x)  # type: ignore[no-any-return]
+        return self.conv(x)  # type: ignore[no-any-return]
 
 class MobileNetV2(nn.Module):
     """MobileNet V2 main class.

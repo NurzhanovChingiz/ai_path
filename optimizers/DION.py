@@ -4,9 +4,9 @@
 # https://doi.org/10.48550/arXiv.2504.05295
 import math
 import warnings
+from collections.abc import Callable
 from enum import Enum
 from typing import Any
-from collections.abc import Callable
 
 import torch
 import torch.distributed as dist

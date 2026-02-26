@@ -5,8 +5,12 @@ from collections.abc import Callable
 import numpy as np
 import pytest
 
-from common_alg.sorting_technique import (bubble_sort, insertion_sort,
-                                          merge_sort, quick_sort)
+from common_alg.sorting_technique import (
+    bubble_sort,
+    insertion_sort,
+    merge_sort,
+    quick_sort,
+)
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%

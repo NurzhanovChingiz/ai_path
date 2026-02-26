@@ -4,7 +4,7 @@
 # especially common in medical imaging.
 # Pros:
 # directly optimizes overlap between predicted and target
-# better than cross entropy loss in disbalance datasets
+# better than cross entropy loss in imbalance datasets
 # # often better than pure CE under area imbalances, but worse than Focal Loss
 # Cons:
 # can be unstable with empty masks

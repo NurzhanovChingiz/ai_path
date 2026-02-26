@@ -11,7 +11,8 @@ def cosine(d1: np.ndarray, d2: np.ndarray) -> float:
     Args:
         d1: First point as a numpy array.
         d2: Second point as a numpy array.
-    returns:
+
+    Returns:
         The Cosine distance as a float.
     """
     dot_product = np.dot(d1, d2)

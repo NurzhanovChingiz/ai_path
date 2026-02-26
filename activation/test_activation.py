@@ -8,14 +8,25 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from activation.activation import (CustomCELU, CustomELU, CustomGELU,
-                                   CustomLeakyReLU, CustomMish, CustomPReLU,
-                                   CustomReLU, CustomReLU6, CustomSELU,
-                                   CustomSigmoid, CustomSoftmax,
-                                   CustomSoftplus, CustomSwish, CustomTanh)
+from activation.activation import (
+    CustomCELU,
+    CustomELU,
+    CustomGELU,
+    CustomLeakyReLU,
+    CustomMish,
+    CustomPReLU,
+    CustomReLU,
+    CustomReLU6,
+    CustomSELU,
+    CustomSigmoid,
+    CustomSoftmax,
+    CustomSoftplus,
+    CustomSwish,
+    CustomTanh,
+)
 
-ATOL: float = 1e-5  # 0.001%
-RTOL: float = 1e-3  # 0.1%
+ATOL: float = 1e-5  # 0.00001
+RTOL: float = 1e-3  # 0.01
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 

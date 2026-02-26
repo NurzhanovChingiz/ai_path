@@ -35,6 +35,9 @@ def bce_with_logits_np(y: np.ndarray, y_pred: np.ndarray) -> float:
 
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
+
+    Returns:
+        The binary cross entropy with logits loss.
     """
     sigma = sigmoid_np(y_pred)
     bce: np.ndarray = -1 * (y * np.log(sigma) + (1 - y) * np.log(1 - sigma))

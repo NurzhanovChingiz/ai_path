@@ -9,6 +9,8 @@ check_untyped_defs = true
 extend-select = [
   "UP",  # pyupgrade
   "D",   # pydocstyle
+  "I",   # isort
 ]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"

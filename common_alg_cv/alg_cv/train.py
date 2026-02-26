@@ -1,7 +1,7 @@
 """Training functions for PyTorch models."""
 
-from typing import cast
 from collections.abc import Sized
+from typing import cast
 
 import torch
 from torch import nn

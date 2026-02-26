@@ -5,8 +5,14 @@ from collections.abc import Callable
 import numpy as np
 import pytest
 
-from common_alg.distance import (chebyshev, cosine, euclidean, jaccard,
-                                 manhattan, minkowski)
+from common_alg.distance import (
+    chebyshev,
+    cosine,
+    euclidean,
+    jaccard,
+    manhattan,
+    minkowski,
+)
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%

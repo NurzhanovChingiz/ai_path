@@ -148,16 +148,16 @@ def dice_loss_torch(
 
 if __name__ == "__main__":
     N = 5  # num_classes
-    input = torch.randn(1, N, 3, 5, requires_grad=True)
+    x = torch.randn(1, N, 3, 5, requires_grad=True)
     target = torch.empty(1, 3, 5, dtype=torch.long).random_(N)
-    print(f"Input: {input}")
+    print(f"Input: {x}")
     print(f"Target: {target}")
     smooth = 1e-8
 
     target_np = target.detach().numpy()
-    input_np = input.detach().numpy()
+    x_np = x.detach().numpy()
 
-    torch_loss = dice_loss(input, target, eps=smooth, average="micro")
+    torch_loss = dice_loss(x, target, eps=smooth, average="micro")
     torch_loss.backward()
     print(f"Karina implementation dice loss: {torch_loss.item():.6f}")
 
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     print(
         f"Our numpy dice loss: {
             dice_loss_np(
-                input_np,
+                x_np,
                 target_np,
                 smooth):.6f}")
-    print(f"Our torch dice loss: {dice_loss_torch(input, target, smooth):.6f}")
+    print(f"Our torch dice loss: {dice_loss_torch(x, target, smooth):.6f}")

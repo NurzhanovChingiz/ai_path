@@ -141,7 +141,7 @@ class DionOptimizer(Optimizer):
             optimizer_map["lion"] = Lion
         elif optimizer_name == "lion":
             raise ImportError(
-                "Lion optimizer not available. Install torch>=2.0 or use 'adam'/'adamw'"
+                "Lion optimizer not available. Install torch>=2.0 or use 'adam'/'adamw'",
             )
 
         if optimizer_name not in optimizer_map:
@@ -158,7 +158,7 @@ class DionOptimizer(Optimizer):
         return bool(
             local_param.dim() == 2
             and local_param.size(0) >= self.matrix_threshold
-            and local_param.size(1) >= self.matrix_threshold
+            and local_param.size(1) >= self.matrix_threshold,
         )
 
     def _classify_parameters(self) -> None:
@@ -265,7 +265,7 @@ class DionOptimizer(Optimizer):
 
         # Create right factor for warm-starting power iteration
         state["right_factor"] = torch.randn(
-            n, rank, device=actual_param.device, dtype=actual_param.dtype
+            n, rank, device=actual_param.device, dtype=actual_param.dtype,
         )
         state["right_factor"] = self._normalize_columns(state["right_factor"])
 
@@ -285,7 +285,7 @@ class DionOptimizer(Optimizer):
         return matrix / norms
 
     def _power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor
+        self, B: torch.Tensor, Q_prev: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Single step of power iteration for low-rank approximation."""
         # P = BQ (left factor)
@@ -300,7 +300,7 @@ class DionOptimizer(Optimizer):
         return P, R
 
     def _distributed_power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: dict
+        self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: dict,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Distributed power iteration (Algorithm 3, lines 5-6 in the paper)."""
         # P = BQ with local computation
@@ -375,7 +375,7 @@ class DionOptimizer(Optimizer):
         return self._normalize_columns(matrix)
 
     def _step_matrix_param(
-        self, param: torch.Tensor, grad: torch.Tensor, group: dict[str, Any], state: dict[str, Any]
+        self, param: torch.Tensor, grad: torch.Tensor, group: dict[str, Any], state: dict[str, Any],
     ) -> None:
         """Perform Dion update step for matrix parameter."""
         momentum = group["momentum"]
@@ -422,7 +422,7 @@ class DionOptimizer(Optimizer):
         if right_factor.shape[0] != expected_n:
             # Reinitialize right factor with correct shape
             right_factor = torch.randn(
-                expected_n, rank, device=working_grad.device, dtype=working_grad.dtype
+                expected_n, rank, device=working_grad.device, dtype=working_grad.dtype,
             )
             right_factor = self._normalize_columns(right_factor)
             state["right_factor"] = right_factor
@@ -434,7 +434,7 @@ class DionOptimizer(Optimizer):
         try:
             if param_info["is_dtensor"] or param_info["is_fsdp"]:
                 P, R = self._distributed_power_iteration(
-                    buffer, right_factor, param_info
+                    buffer, right_factor, param_info,
                 )
             else:
                 P, R = self._power_iteration(buffer, right_factor)
@@ -616,7 +616,7 @@ def create_dion_optimizer_fsdp2(
 
 
 def get_parameter_info(
-    model: nn.Module, matrix_threshold: int = 32
+    model: nn.Module, matrix_threshold: int = 32,
 ) -> dict[str, Any]:
     """Analyze model parameters for Dion optimization.
 

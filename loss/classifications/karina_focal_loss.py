@@ -167,7 +167,7 @@ def KORNIA_CHECK(
 
 
 def mask_ignore_pixels(
-    target: torch.Tensor, ignore_index: int | None
+    target: torch.Tensor, ignore_index: int | None,
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
     """Mask the ignore pixels.
 
@@ -303,7 +303,7 @@ def one_hot(
     KORNIA_CHECK(
         labels.dtype == torch.int64,
         f"labels must be of dtype torch.int64. Got: {
-            labels.dtype}"
+            labels.dtype}",
     )
     KORNIA_CHECK(
         num_classes >= 1,

@@ -190,19 +190,19 @@ def focal_loss_torch(
 
 if __name__ == "__main__":
     C = 3  # num_classes
-    input = torch.randn(1, C, 3, 5, requires_grad=True)
+    x = torch.randn(1, C, 3, 5, requires_grad=True)
     target = torch.randint(C, (1, 3, 5))
     alpha = 0.5
     gamma = 2.0
-    loss = focal_loss(input, target, alpha, gamma, reduction="mean")
-    print(f"Input: {input}")
+    loss = focal_loss(x, target, alpha, gamma, reduction="mean")
+    print(f"Input: {x}")
     print(f"Target: {target}")
     print(f"Kornia focal loss: {loss.item():.6f}")
 
     target_np = target.detach().numpy()
-    input_np = input.detach().numpy()
-    our_loss = focal_loss_np(input_np, target_np, alpha, gamma)
+    x_np = x.detach().numpy()
+    our_loss = focal_loss_np(x_np, target_np, alpha, gamma)
     print(f"Our numpy focal loss: {our_loss:.6f}")
     # PyTorch implementation
-    our_loss_torch = focal_loss_torch(input, target, alpha, gamma)
+    our_loss_torch = focal_loss_torch(x, target, alpha, gamma)
     print(f"Our torch focal loss: {our_loss_torch.item():.6f}")

@@ -31,7 +31,6 @@ class MobileNetV1(nn.Module):
         self.conv_dw12 = DepthWiseConv2d(512, 1024, 2)  # 14x14x512 -> 7x7x1024
         self.conv_dw13 = DepthWiseConv2d(1024, 1024, 1)  # 7x7x1024 -> 7x7x1024
         # Global Average Pooling
-        self.avgpool = nn.AdaptiveAvgPool2d(1) # 7x7x1024 -> 1x1x1024
         self.avgpool = nn.AvgPool2d(7, stride=1)  # 7x7x1024 -> 1x1x1024
         self.classifier = nn.Linear(1024, num_classes)
         self._initialize_weights()
@@ -84,7 +83,7 @@ class DepthWiseConv2d(nn.Module):
             in_channels: int,
             out_channels: int,
             stride: int,
-            norm_layer: Callable[..., nn.Module] | None = None
+            norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
         """Initialize depthwise separable convolution block."""
         super().__init__()

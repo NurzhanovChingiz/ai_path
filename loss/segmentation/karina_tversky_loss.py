@@ -8,7 +8,7 @@ from torch.nn import functional as F
 
 
 def mask_ignore_pixels(
-    target: torch.Tensor, ignore_index: int | None
+    target: torch.Tensor, ignore_index: int | None,
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
     """Mask the ignore pixels.
 

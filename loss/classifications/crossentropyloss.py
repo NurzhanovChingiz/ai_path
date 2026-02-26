@@ -151,22 +151,22 @@ def cross_entropy_torch(y: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
 # testing
 if __name__ == "__main__":
 
-    input = torch.randn(3, 5, requires_grad=True)
+    x = torch.randn(3, 5, requires_grad=True)
     target = torch.randint(5, (3,), dtype=torch.int64)
-    print(f"Input: {input}")
+    print(f"Input: {x}")
     print(f"Target: {target}")
 
     # PyTorch reference
-    torch_loss = F.cross_entropy(input, target)
+    torch_loss = F.cross_entropy(x, target)
     torch_loss.backward()
     print(f"PyTorch cross_entropy: {torch_loss.item():.6f}")
 
     # Our implementation
     target_np = target.detach().numpy()
-    input_np = input.detach().numpy()
-    our_np_loss = cross_entropy_np(target_np, input_np)
+    x_np = x.detach().numpy()
+    our_np_loss = cross_entropy_np(target_np, x_np)
     print(f"Our numpy cross_entropy:     {our_np_loss:.6f}")
 
-    our_torch_loss = cross_entropy_torch(target, input)
+    our_torch_loss = cross_entropy_torch(target, x)
     our_torch_loss.backward()
     print(f"Our torch cross_entropy:     {our_torch_loss.item():.6f}")

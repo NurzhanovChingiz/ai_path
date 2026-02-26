@@ -50,7 +50,7 @@ class InvertedResidual(nn.Module):
             out_channels: int,
             stride: int,
             expand_ratio: int,
-            norm_layer: Callable[..., nn.Module] | None = None
+            norm_layer: Callable[..., nn.Module] | None = None,
     ) -> None:
         """Initialize InvertedResidual block with expansion and depthwise convolutions."""
         super().__init__()
@@ -81,7 +81,7 @@ class InvertedResidual(nn.Module):
                     activation_layer=nn.ReLU6,
                     inplace=True,
                     bias=False,
-                    )
+                    ),
             )
 
         # Depth-wise + point-wise layer
@@ -106,10 +106,10 @@ class InvertedResidual(nn.Module):
                     kernel_size=1,
                     stride=1,
                     padding=0,
-                    bias=False
+                    bias=False,
                     ),
                 norm_layer(out_channels),
-            ]
+            ],
         )
         self.conv = nn.Sequential(*layers)
 
@@ -175,7 +175,7 @@ class MobileNetV2(nn.Module):
 
         if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
             raise ValueError(
-                f"inverted_residual_setting should be non-empty or a 4-element list, got {inverted_residual_setting}"
+                f"inverted_residual_setting should be non-empty or a 4-element list, got {inverted_residual_setting}",
             )
         # building first layer
         input_channel = _make_divisible(input_channel * width_mult, round_nearest)
@@ -193,7 +193,7 @@ class MobileNetV2(nn.Module):
                                  activation_layer=nn.ReLU6,
                                  inplace=True,
                                  bias=False,
-                                 )
+                                 ),
         ]
 
         # building inverted residual blocks

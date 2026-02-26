@@ -101,29 +101,29 @@ def bce_with_logits_torch_stable(
 
 
 if __name__ == "__main__":
-    input = torch.randn(3, requires_grad=True)
+    x = torch.randn(3, requires_grad=True)
     target = torch.empty(3).random_(2)
-    torch_loss = F.binary_cross_entropy_with_logits(input, target)
+    torch_loss = F.binary_cross_entropy_with_logits(x, target)
     torch_loss.backward()
-    print(f"Input: {input}")
+    print(f"Input: {x}")
     print(f"Target: {target}")
     print(f"PyTorch bce_with_logits: {torch_loss.item():.6f}")
 
     # Our implementation
     target_np = target.detach().numpy()
-    input_np = input.detach().numpy()
-    our_np_loss = bce_with_logits_np(target_np, input_np)
+    x_np = x.detach().numpy()
+    our_np_loss = bce_with_logits_np(target_np, x_np)
     print(f"Our numpy bce_with_logits:     {our_np_loss:.6f}")
 
-    our_np_loss_stable = bce_with_logits_np_stable(target_np, input_np)
+    our_np_loss_stable = bce_with_logits_np_stable(target_np, x_np)
     print(f"Our numpy bce_with_logits stable: {our_np_loss_stable:.6f}")
 
     # PyTorch implementation
-    our_torch_loss = bce_with_logits_torch(target, input)
+    our_torch_loss = bce_with_logits_torch(target, x)
     our_torch_loss.backward()
     print(f"Our torch bce_with_logits:     {our_torch_loss.item():.6f}")
 
-    our_torch_loss_stable = bce_with_logits_torch_stable(target, input)
+    our_torch_loss_stable = bce_with_logits_torch_stable(target, x)
     our_torch_loss_stable.backward()
     print(
         f"Our torch bce_with_logits stable: {

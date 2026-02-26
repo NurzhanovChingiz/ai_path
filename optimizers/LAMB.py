@@ -39,7 +39,7 @@ class Lamb(Optimizer):
         weight_decay: float = 0,
         clamp_value: float = 10,
         adam: bool = False,
-        debias: bool = False
+        debias: bool = False,
     ):
         """Initialize the LAMB optimizer.
 
@@ -65,7 +65,7 @@ class Lamb(Optimizer):
                 f"Invalid beta parameter at index 1: {betas[1]}")
         if weight_decay < 0:
             raise ValueError(
-                f"Invalid weight_decay value: {weight_decay}"
+                f"Invalid weight_decay value: {weight_decay}",
             )
         if clamp_value < 0.0:
             raise ValueError(f"Invalid clamp value: {clamp_value}")

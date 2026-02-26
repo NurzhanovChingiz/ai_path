@@ -103,7 +103,7 @@ class CustomSoftplus(nn.Module):
         return torch.where(
             scaled > threshold,
             x,
-            torch.log(1 + torch.exp(scaled)) / beta
+            torch.log(1 + torch.exp(scaled)) / beta,
         )
 
 

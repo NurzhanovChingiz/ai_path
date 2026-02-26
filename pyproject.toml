@@ -15,6 +15,7 @@ extend-select = [
   "W",   # flake8-warnings
   "Q",   # flake8-quotes
   "F",   # flake8-pyflakes
+  "A",   # flake8-builtins
   "B",   # flake8-bugbear
   "C4",  # flake8-comprehensions
   "S",   # flake8-bandit
@@ -33,6 +34,9 @@ extend-select = [
   "FIX",
   "RUF",  # Ruff
   #"T20",  # flake8-print # only in prod
+  #"FBT",  # flake8-boolean-trap # only in prod
+  "COM",
+
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -43,3 +47,6 @@ convention = "google"
 "common_alg/technique/sliding_window.py" = ["ERA001"]
 "common_alg/technique/linked_list.py" = ["ERA001"]
 "common_alg/statistic/statistic.ipynb" = ["ERA001"]
+
+[lint.flake8-bandit]
+check-typed-exception = true # Проверка типизированных исключений

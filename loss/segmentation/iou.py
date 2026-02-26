@@ -143,16 +143,16 @@ def iou_loss_torch(
 
 if __name__ == "__main__":
     N = 5  # num_classes
-    input = torch.randn(1, N, 3, 5, requires_grad=True)
+    x = torch.randn(1, N, 3, 5, requires_grad=True)
     target = torch.empty(1, 3, 5, dtype=torch.long).random_(N)
-    print(f"Input: {input}")
+    print(f"Input: {x}")
     print(f"Target: {target}")
     smooth = 1e-8
 
     target_np = target.detach().numpy()
-    input_np = input.detach().numpy()
+    x_np = x.detach().numpy()
 
-    print(f"Our numpy iou loss: {iou_np(input_np, target_np, smooth):.6f}")
-    torch_iou = iou_loss_torch(input, target, smooth)
+    print(f"Our numpy iou loss: {iou_np(x_np, target_np, smooth):.6f}")
+    torch_iou = iou_loss_torch(x, target, smooth)
     torch_iou.backward()
     print(f"Our torch iou loss: {torch_iou.item():.6f}")

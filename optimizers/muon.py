@@ -61,7 +61,7 @@ def zero_power_via_newtonschulz5(
     for _ in range(steps):
         gram_matrix = ortho_grad @ ortho_grad.T
         gram_update = torch.addmm(
-            gram_matrix, gram_matrix, gram_matrix, beta=b, alpha=c
+            gram_matrix, gram_matrix, gram_matrix, beta=b, alpha=c,
         )
         ortho_grad = torch.addmm(ortho_grad, gram_update, ortho_grad, beta=a)
     if grad.size(0) > grad.size(1):
@@ -136,7 +136,7 @@ class Muon(Optimizer):
         if adjust_lr_fn is not None and adjust_lr_fn not in [
             "original", "match_rms_adamw"]:
             raise ValueError(
-                'adjust_lr_fn must be None or "original" or "match_rms_adamw"'
+                'adjust_lr_fn must be None or "original" or "match_rms_adamw"',
             )
         if lr == 0 or lr <= 0:
             raise ValueError(f"lr must be positive, got {lr}")

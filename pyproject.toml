@@ -15,6 +15,9 @@ extend-select = [
   "F",   # Pyflakes
   "B",   # flake8-bugbear
   "SIM", # flake8-simplify
+  "BLE", # flake8-blind-except
+  "RSE", # flake8-raise
+  "S",   # flake8-bandit
 ]
 
 [tool.ruff.lint.pydocstyle]

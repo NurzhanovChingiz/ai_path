@@ -48,8 +48,10 @@ def zero_power_via_newtonschulz5(
         -Implementation reference: https://github.com/KellerJordan/Muon/blob/master/muon.py
         -Suggestions by @jxbz, @leloykun, and @YouJiacheng.
     """
-    assert grad.ndim >= 2
-    assert steps <= 100
+    if grad.ndim < 2:
+        raise ValueError(f"grad must have at least 2 dimensions, got ndim={grad.ndim}")
+    if steps > 100:
+        raise ValueError(f"steps must be <= 100, got {steps}")
     a, b, c = (3.4445, -4.7750, 2.0315)
     ortho_grad = grad.bfloat16()
     if grad.size(0) > grad.size(1):
@@ -130,11 +132,17 @@ class Muon(Optimizer):
         self.nesterov = nesterov
         self.adjust_lr_fn = adjust_lr_fn
         self.eps = eps
-        assert adjust_lr_fn is None or adjust_lr_fn in [
-            "original", "match_rms_adamw"]
-        assert lr != 0 and lr > 0
-        assert momentum != 0 and momentum > 0 and momentum < 1
-        assert weight_decay != 0 and weight_decay > 0
+        if adjust_lr_fn is not None and adjust_lr_fn not in [
+            "original", "match_rms_adamw"]:
+            raise ValueError(
+                'adjust_lr_fn must be None or "original" or "match_rms_adamw"'
+            )
+        if lr == 0 or lr <= 0:
+            raise ValueError(f"lr must be positive, got {lr}")
+        if momentum == 0 or momentum <= 0 or momentum >= 1:
+            raise ValueError(f"momentum must be in (0, 1), got {momentum}")
+        if weight_decay == 0 or weight_decay <= 0:
+            raise ValueError(f"weight_decay must be positive, got {weight_decay}")
 
     @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]

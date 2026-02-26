@@ -112,11 +112,13 @@ def train(
         device: torch.device,
         prefetcher: CUDAPrefetcher | None = None) -> None:
     """Train a model using CUDA prefetcher for overlapping data transfer and compute."""
-    assert dataloader.dataset is not None
+    if dataloader.dataset is None:
+        raise ValueError("dataloader.dataset cannot be None")
     size = len(dataloader.dataset)  # type: ignore[arg-type]
 
     model.train()
-    assert prefetcher is not None, "CUDAPrefetcher is required for train()"
+    if prefetcher is None:
+        raise ValueError("CUDAPrefetcher is required for train()")
     batch = prefetcher.next()
     loss_train = 0
     count = 0

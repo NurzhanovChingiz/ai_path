@@ -322,7 +322,7 @@ class DionOptimizer(Optimizer):
         try:
             Q, _ = torch.linalg.qr(matrix)
             return Q  # type: ignore[no-any-return]
-        except Exception as e:
+        except RuntimeError as e:
             print(f"QR decomposition failed: {e}")
             # Fallback for numerical issues
             matrix_stabilized = matrix + 1e-8 * torch.randn_like(matrix)
@@ -343,7 +343,7 @@ class DionOptimizer(Optimizer):
         # QR decomposition (only need R)
         try:
             _, R1 = torch.linalg.qr(G)
-        except Exception as e:
+        except RuntimeError as e:
             print(f"QR decomposition failed: {e}")
             # Fallback for numerical issues
             _, R1 = torch.linalg.qr(G + 1e-8 * torch.eye(k, r, device=G.device))
@@ -360,7 +360,7 @@ class DionOptimizer(Optimizer):
                 H_stable = H + torch.eye(r, device=H.device, dtype=H.dtype) * jitter
                 R2 = torch.linalg.cholesky(H_stable)
                 break
-            except Exception as e:
+            except RuntimeError as e:
                 print(f"Cholesky decomposition failed: {e}")
                 if jitter == 1e-1:
                     # Fallback to QR if Cholesky fails

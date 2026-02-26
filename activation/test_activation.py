@@ -57,7 +57,7 @@ def assert_close_all(
         atol: float = ATOL,
         rtol: float = RTOL) -> None:
     """Assert two tensors are close using np.allclose."""
-    assert np.allclose(
+    np.testing.assert_allclose(
         custom_out.detach(),
         ref_out.detach(),
         atol=atol,

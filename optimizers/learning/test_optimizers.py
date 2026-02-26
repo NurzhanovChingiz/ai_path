@@ -120,7 +120,7 @@ def assert_close_all(
         atol: The absolute tolerance.
         rtol: The relative tolerance.
     """
-    assert np.allclose(
+    np.testing.assert_allclose(
         custom_out,
         ref_out,
         atol=atol,

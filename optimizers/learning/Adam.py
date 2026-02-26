@@ -4,7 +4,6 @@ from collections.abc import Callable
 
 import numpy as np
 import torch
-from torch import nn
 from torch.optim.optimizer import Optimizer, ParamsT
 
 
@@ -69,27 +68,17 @@ class Adam(Optimizer):
                 m = state["m"]
                 v = state["v"]
                 if self.inplace:
-                    # m = m * betas[0] + grad * (1 - betas[0])
-                    m.mul_(betas[0]).add_(grad, alpha=1 - betas[0])
-                    # v = v * betas[1] + grad * grad * (1 - betas[1])
-                    v.mul_(betas[1]).addcmul_(grad, grad, value=1 - betas[1])
-                    # m_hat = m / (1 - betas[0] ** t)
-                    m_hat = m / (1 - betas[0] ** t)
-                    # v_hat = v / (1 - betas[1] ** t)
-                    v_hat = v / (1 - betas[1] ** t)
-                    # w = w - lr * m_hat / (v_hat.sqrt() + eps)
-                    p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps))
+                    m.mul_(betas[0]).add_(grad, alpha=1 - betas[0]) # m = m * betas[0] + grad * (1 - betas[0])
+                    v.mul_(betas[1]).addcmul_(grad, grad, value=1 - betas[1]) # v = v * betas[1] + grad * grad * (1 - betas[1])
+                    m_hat = m / (1 - betas[0] ** t) # m_hat = m / (1 - betas[0] ** t)
+                    v_hat = v / (1 - betas[1] ** t) # v_hat = v / (1 - betas[1] ** t)
+                    p.data.sub_(lr * m_hat / (v_hat.sqrt() + eps)) # w = w - lr * m_hat / (v_hat.sqrt() + eps)
                 else:
-                    # m = m * betas[0] + grad * (1 - betas[0])
-                    m = betas[0] * m + (1 - betas[0]) * grad
-                    # v = v * betas[1] + grad * grad * (1 - betas[1])
-                    v = betas[1] * v + (1 - betas[1]) * grad**2
-                    # m_hat = m / (1 - betas[0] ** t)
-                    m_hat = m / (1 - betas[0]**t)
-                    # v_hat = v / (1 - betas[1] ** t)
-                    v_hat = v / (1 - betas[1]**t)
-                    # update = lr * m_hat / (v_hat.sqrt() + eps)
-                    update = lr * m_hat / (v_hat.sqrt() + eps)
+                    m = betas[0] * m + (1 - betas[0]) * grad # m = m * betas[0] + grad * (1 - betas[0])
+                    v = betas[1] * v + (1 - betas[1]) * grad**2 # v = v * betas[1] + grad * grad * (1 - betas[1])
+                    m_hat = m / (1 - betas[0]**t) # m_hat = m / (1 - betas[0] ** t)
+                    v_hat = v / (1 - betas[1]**t) # v_hat = v / (1 - betas[1] ** t)
+                    update = lr * m_hat / (v_hat.sqrt() + eps) # update = lr * m_hat / (v_hat.sqrt() + eps)
 
                     p.data = p.data.clone() - update  # w = w - update
 
@@ -97,33 +86,3 @@ class Adam(Optimizer):
                     state["v"] = v.clone()
                     state["t"] = t
         return loss
-
-
-# testing
-if __name__ == "__main__":
-    set_seed(42)
-    model = nn.Linear(1, 1)
-    optimizer = Adam(
-        model.parameters(),
-        lr=0.01,
-        inplace=False,
-        betas=(
-            0.9,
-            0.999),
-        eps=1e-10)
-    # optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999), eps=1e-10)
-    optimizer.zero_grad()
-    # Create dummy input and compute loss to generate gradients
-    x = torch.randn(10, 1)
-    y = torch.randn(10, 1)
-    output = model(x)
-    loss = nn.MSELoss()(output, y)
-
-    # Compute gradients
-    loss.backward()
-
-    # Now we can call step()
-    optimizer.step()
-    print(optimizer.state_dict())
-    print(model.state_dict())
-    print(model.weight.data.clone())

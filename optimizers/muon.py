@@ -118,7 +118,7 @@ class Muon(Optimizer):
         """
         super().__init__(
             params,
-              defaults={
+            defaults={
                   "lr": lr,
                   "weight_decay": weight_decay,
                   "momentum": momentum,
@@ -262,4 +262,3 @@ if __name__ == "__main__":
     print("custom_model.weight.data.clone():",
           custom_model.weight.data.clone())
     print("model.weight.data.clone():", model.weight.data.clone())
-    # print(model.weight.data.clone())

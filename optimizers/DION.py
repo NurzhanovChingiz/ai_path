@@ -134,8 +134,7 @@ class DionOptimizer(Optimizer):
     def _get_scalar_optimizer_class(self, optimizer_name: str) -> type:
         """Get scalar optimizer class by name."""
         optimizer_map = {
-            # "adam": Adam,  # no reason to not use AdamW imo
-            "adamw": AdamW,
+            "adamw": AdamW, # "adam": Adam,  # no reason to not use AdamW imo
         }
 
         if LION_AVAILABLE:

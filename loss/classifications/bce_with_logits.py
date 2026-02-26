@@ -51,14 +51,10 @@ def bce_with_logits_np_stable(y: np.ndarray, y_pred: np.ndarray) -> float:
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
     """
-    # max(x, 0)
-    max_val = np.maximum(y_pred, 0)
-
-    # log(1 + exp(-|x|))
-    log_term = np.log1p(np.exp(-np.abs(y_pred)))
-
-    loss = max_val - y_pred * y + log_term
-    result: float = loss.mean()
+    max_val = np.maximum(y_pred, 0) # max(x, 0)
+    log_term = np.log1p(np.exp(-np.abs(y_pred))) # log(1 + exp(-|x|))
+    loss = max_val - y_pred * y + log_term # loss = max(x, 0) - x * y + log(1 + exp(-|x|))
+    result: float = loss.mean() # result = loss.mean()
     return result
 
 

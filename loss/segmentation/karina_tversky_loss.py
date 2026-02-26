@@ -117,9 +117,8 @@ def tversky_loss(
         total = torch.full((B,), H * W, dtype=pred.dtype, device=pred.device)
 
     intersection = p_true.sum((1, 2, 3))
-    # denominator = intersection + (alpha + beta) * (total - intersection) + eps
     # instead of multiple ops, do it in one fused step:
-    denominator = torch.addcmul(
+    denominator = torch.addcmul(  # denominator = intersection + (alpha + beta) * (total - intersection) + eps
         intersection,  # base
         total - intersection,  # tensor1
         torch.full_like(total, alpha + beta),  # tensor2 (scalar as tensor)

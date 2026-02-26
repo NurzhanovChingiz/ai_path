@@ -4,7 +4,6 @@ from collections.abc import Callable
 
 import numpy as np
 import torch
-from torch import nn
 from torch.optim.optimizer import Optimizer, ParamsT
 
 
@@ -64,8 +63,7 @@ class SGD_with_weight_decay(Optimizer):
                     continue
                 if self.inplace:
                     if weight_decay != 0:
-                        # grad = grad + weight_decay * p.data
-                        p.grad.add_(p.data, alpha=weight_decay)
+                        p.grad.add_(p.data, alpha=weight_decay) # grad = grad + weight_decay * p.data
                     p.data.sub_(p.grad * lr)  # w = w - grad * lr
                 else:
                     if weight_decay != 0:
@@ -73,30 +71,3 @@ class SGD_with_weight_decay(Optimizer):
                     update = p.grad * lr  # update = grad * lr
                     p.data = p.data.clone() - update  # w = w - update
         return loss
-
-
-# testing
-if __name__ == "__main__":
-    set_seed(42)
-    model = nn.Linear(1, 1)
-    optimizer = SGD_with_weight_decay(
-        model.parameters(),
-        lr=0.01,
-        inplace=True,
-        weight_decay=0.01)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01, weight_decay=0.01)
-    optimizer.zero_grad()
-    # Create dummy input and compute loss to generate gradients
-    x = torch.randn(10, 1)
-    y = torch.randn(10, 1)
-    output = model(x)
-    loss = nn.MSELoss()(output, y)
-
-    # Compute gradients
-    loss.backward()
-
-    # Now we can call step()
-    optimizer.step()
-    print(optimizer.state_dict())
-    print(model.state_dict())
-    print(model.weight.data.clone())

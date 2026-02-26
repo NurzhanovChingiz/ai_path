@@ -4,7 +4,6 @@ from collections.abc import Callable
 
 import numpy as np
 import torch
-from torch import nn
 from torch.optim.optimizer import Optimizer, ParamsT
 
 
@@ -42,7 +41,7 @@ class SGD_with_nesterov(Optimizer):
         """
         super().__init__(
             params,
-              defaults={"lr": lr, "momentum": momentum, "nesterov": nesterov})
+            defaults={"lr": lr, "momentum": momentum, "nesterov": nesterov})
         self.momentum = momentum
         self.inplace = inplace
         self.nesterov = nesterov
@@ -89,31 +88,3 @@ class SGD_with_nesterov(Optimizer):
                     update = lr * v  # update = lr * v
                     p.data = p.data.clone() - update
         return loss
-
-
-# testing
-if __name__ == "__main__":
-    set_seed(42)
-    model = nn.Linear(1, 1)
-    optimizer = SGD_with_nesterov(
-        model.parameters(),
-        lr=0.01,
-        inplace=True,
-        momentum=0.9,
-        nesterov=True)
-    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True,)
-    optimizer.zero_grad()
-    # Create dummy input and compute loss to generate gradients
-    x = torch.randn(10, 1)
-    y = torch.randn(10, 1)
-    output = model(x)
-    loss = nn.MSELoss()(output, y)
-
-    # Compute gradients
-    loss.backward()
-
-    # Now we can call step()
-    optimizer.step()
-    print(optimizer.state_dict())
-    print(model.state_dict())
-    print(model.weight.data.clone())

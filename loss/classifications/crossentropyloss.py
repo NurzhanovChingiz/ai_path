@@ -51,8 +51,7 @@ def log_softmax_np_1(logits: np.ndarray) -> np.ndarray:
     Returns:
         The log softmax of the logits.
     """
-    # log_softmax_i = log(softmax_i)
-    result: np.ndarray = np.log(softmax_np(logits))
+    result: np.ndarray = np.log(softmax_np(logits)) # log_softmax_i = log(softmax_i)
     return result
 
 

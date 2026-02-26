@@ -252,7 +252,6 @@ class DionOptimizer(Optimizer):
         param_info = self._get_param_info(param)
 
         # Get the actual tensor to work with (local tensor for DTensor)
-        # TODO - check on this...just dumping to local tensor for now
         if isinstance(param, torch.distributed._tensor.DTensor):
             actual_param = param._local_tensor  # type: ignore[attr-defined]
         else:
@@ -391,7 +390,6 @@ class DionOptimizer(Optimizer):
             return
 
         # Clip gradient to prevent extreme values
-        # TODO - check if this is needed given that we have a global clipping norm in toml...
         grad_norm = torch.norm(grad)
         if grad_norm > self.max_norm:
             grad = grad * (self.max_norm / (grad_norm + eps))
@@ -403,7 +401,6 @@ class DionOptimizer(Optimizer):
         param_info = state["param_info"]
 
         # Get the actual working tensors
-        # TODO - check with Wei on this...just dumping to local tensor for now
         if isinstance(param, torch.distributed._tensor.DTensor):
             working_param = param._local_tensor  # type: ignore[attr-defined]
             working_grad = (

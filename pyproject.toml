@@ -23,6 +23,9 @@ extend-select = [
   "W",   # pycodestyle
   "E",   # pycodestyle
   "Q",   # flake8-quotes
+  #"PD",   # pandas-vet
+  "FIX",
+  "RUF",  # Ruff
 ]
 
 [tool.ruff.lint.pydocstyle]

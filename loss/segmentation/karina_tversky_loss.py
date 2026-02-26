@@ -83,24 +83,20 @@ def tversky_loss(
 
     """
     if not isinstance(pred, torch.Tensor):
-        raise TypeError(f"pred type is not a torch.Tensor. Got {type(pred)}")
+        msg = f"pred type is not a torch.Tensor. Got {type(pred)}"
+        raise TypeError(msg)
 
-    if not len(pred.shape) == 4:
-        raise ValueError(
-            f"Invalid pred shape, we expect BxNxHxW. Got: {
-                pred.shape}")
+    if len(pred.shape) != 4:
+        msg = f"Invalid pred shape, we expect BxNxHxW. Got: {pred.shape}"
+        raise ValueError(msg)
 
-    if not pred.shape[-2:] == target.shape[-2:]:
-        raise ValueError(
-            f"pred and target shapes must be the same. Got: {
-                pred.shape} and {
-                target.shape}")
+    if pred.shape[-2:] != target.shape[-2:]:
+        msg = f"pred and target shapes must be the same. Got: {pred.shape} and {target.shape}"
+        raise ValueError(msg)
 
-    if not pred.device == target.device:
-        raise ValueError(
-            f"pred and target must be in the same device. Got: {
-                pred.device} and {
-                target.device}")
+    if pred.device != target.device:
+        msg = f"pred and target must be in the same device. Got: {pred.device} and {target.device}"
+        raise ValueError(msg)
 
     # compute softmax over the classes axis
     pred_soft = F.softmax(pred, dim=1)

@@ -50,7 +50,8 @@ class CUDAPrefetcher:
     def __init__(self, loader: DataLoader, device: torch.device) -> None:
         """Initialize the prefetcher with a DataLoader and CUDA device."""
         if device.type != "cuda":
-            raise ValueError("CUDAPrefetcher requires a CUDA device.")
+            msg = "CUDAPrefetcher requires a CUDA device."
+            raise ValueError(msg)
         self.base_loader = loader
         self.loader = iter(loader)
         self.device = device
@@ -113,12 +114,14 @@ def train(
         prefetcher: CUDAPrefetcher | None = None) -> None:
     """Train a model using CUDA prefetcher for overlapping data transfer and compute."""
     if dataloader.dataset is None:
-        raise ValueError("dataloader.dataset cannot be None")
+        msg = "dataloader.dataset cannot be None"
+        raise ValueError(msg)
     size = len(dataloader.dataset)  # type: ignore[arg-type]
 
     model.train()
     if prefetcher is None:
-        raise ValueError("CUDAPrefetcher is required for train()")
+        msg = "CUDAPrefetcher is required for train()"
+        raise ValueError(msg)
     batch = prefetcher.next()
     loss_train = 0
     count = 0

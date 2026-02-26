@@ -33,7 +33,8 @@ class Cosine:
     def dot_product(self, d1: np.ndarray, d2: np.ndarray) -> float:
         """Compute dot product of two vectors."""
         if len(d1) != len(d2):
-            raise ValueError("Vectors must have the same dimension")
+            msg = "Vectors must have the same dimension"
+            raise ValueError(msg)
         dot_product: float = sum(a * b for a, b in zip(d1, d2, strict=True))
         return dot_product
 

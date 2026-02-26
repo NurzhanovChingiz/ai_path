@@ -34,7 +34,8 @@ def _can_fuse_pair(a: nn.Module, b: nn.Module) -> bool:
 def _fuse_pair(a: nn.Module, b: nn.Module) -> nn.Module:
     if _is_conv(a) and _is_bn(b):
         if not isinstance(b, nn.modules.batchnorm._BatchNorm):
-            raise TypeError("Expected BatchNorm when _is_bn is True")
+            msg = "Expected BatchNorm when _is_bn is True"
+            raise TypeError(msg)
         return fuse_conv_bn_eval(a, b)  # type: ignore[arg-type, type-var]
     if isinstance(a, nn.Linear) and isinstance(b, nn.BatchNorm1d):
         return fuse_linear_bn_eval(a, b)

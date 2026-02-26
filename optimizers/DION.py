@@ -90,13 +90,17 @@ class DionOptimizer(Optimizer):
     ) -> None:
         """Initialize DionOptimizer with matrix and scalar parameter settings."""
         if not lr >= 0.0:
-            raise ValueError(f"Invalid learning rate: {lr}")
+            msg = f"Invalid learning rate: {lr}"
+            raise ValueError(msg)
         if not 0.0 <= momentum < 1.0:
-            raise ValueError(f"Invalid momentum value: {momentum}")
+            msg = f"Invalid momentum value: {momentum}"
+            raise ValueError(msg)
         if not 0.0 < rank_factor <= 1.0:
-            raise ValueError(f"Invalid rank factor: {rank_factor}")
+            msg = f"Invalid rank factor: {rank_factor}"
+            raise ValueError(msg)
         if not weight_decay >= 0.0:
-            raise ValueError(f"Invalid weight decay value: {weight_decay}")
+            msg = f"Invalid weight decay value: {weight_decay}"
+            raise ValueError(msg)
 
         self.rank_factor = rank_factor
         self.oversampling_factor = oversampling_factor
@@ -140,12 +144,12 @@ class DionOptimizer(Optimizer):
         if LION_AVAILABLE:
             optimizer_map["lion"] = Lion
         elif optimizer_name == "lion":
-            raise ImportError(
-                "Lion optimizer not available. Install torch>=2.0 or use 'adam'/'adamw'",
-            )
+            msg = "Lion optimizer not available. Install torch>=2.0 or use 'adam'/'adamw'"
+            raise ImportError(msg)
 
         if optimizer_name not in optimizer_map:
-            raise ValueError(f"Unsupported scalar optimizer: {optimizer_name}")
+            msg = f"Unsupported scalar optimizer: {optimizer_name}"
+            raise ValueError(msg)
 
         return optimizer_map[optimizer_name]
 
@@ -601,7 +605,8 @@ def create_dion_optimizer_fsdp2(
         Configured DionOptimizer instance for FSDP2
     """
     if not FSDP2_AVAILABLE:
-        raise RuntimeError("FSDP2 is not available in this PyTorch version")
+        msg = "FSDP2 is not available in this PyTorch version"
+        raise RuntimeError(msg)
 
     return DionOptimizer(
         model.parameters(),

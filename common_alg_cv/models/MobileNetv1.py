@@ -89,7 +89,8 @@ class DepthWiseConv2d(nn.Module):
         super().__init__()
         self.stride = stride
         if stride not in [1, 2]:
-            raise ValueError(f"stride must be 1 or 2 instead of {stride}")
+            msg = f"stride must be 1 or 2 instead of {stride}"
+            raise ValueError(msg)
 
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d

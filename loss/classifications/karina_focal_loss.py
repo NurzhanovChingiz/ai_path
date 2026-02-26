@@ -442,5 +442,6 @@ def focal_loss(
     elif reduction == "sum":
         loss = torch.sum(loss_tmp)
     else:
-        raise NotImplementedError(f"Invalid reduction mode: {reduction}")
+        msg = f"Invalid reduction mode: {reduction}"
+        raise NotImplementedError(msg)
     return loss

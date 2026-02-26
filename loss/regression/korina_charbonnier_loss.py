@@ -326,6 +326,7 @@ def charbonnier_loss(
     elif reduction == "none" or reduction is None:
         pass
     else:
-        raise NotImplementedError("Invalid reduction option.")
+        msg = "Invalid reduction option."
+        raise NotImplementedError(msg)
 
     return loss

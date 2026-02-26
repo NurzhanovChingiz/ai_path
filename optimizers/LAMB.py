@@ -54,21 +54,23 @@ class Lamb(Optimizer):
             debias: Whether to debias the first moment estimate.
         """
         if not lr >= 0.0:
-            raise ValueError(f"Invalid learning rate: {lr}")
+            msg = f"Invalid learning rate: {lr}"
+            raise ValueError(msg)
         if not eps >= 0.0:
-            raise ValueError(f"Invalid epsilon value: {eps}")
+            msg = f"Invalid epsilon value: {eps}"
+            raise ValueError(msg)
         if not 0.0 <= betas[0] < 1.0:
-            raise ValueError(
-                f"Invalid beta parameter at index 0: {betas[0]}")
+            msg = f"Invalid beta parameter at index 0: {betas[0]}"
+            raise ValueError(msg)
         if not 0.0 <= betas[1] < 1.0:
-            raise ValueError(
-                f"Invalid beta parameter at index 1: {betas[1]}")
+            msg = f"Invalid beta parameter at index 1: {betas[1]}"
+            raise ValueError(msg)
         if weight_decay < 0:
-            raise ValueError(
-                f"Invalid weight_decay value: {weight_decay}",
-            )
+            msg = f"Invalid weight_decay value: {weight_decay}"
+            raise ValueError(msg)
         if clamp_value < 0.0:
-            raise ValueError(f"Invalid clamp value: {clamp_value}")
+            msg = f"Invalid clamp value: {clamp_value}"
+            raise ValueError(msg)
         defaults = {"lr": lr, "betas": betas, "eps": eps, "weight_decay": weight_decay}
         self.clamp_value = clamp_value
         self.adam = adam
@@ -94,8 +96,8 @@ class Lamb(Optimizer):
                     continue
                 grad = p.grad.data
                 if grad.is_sparse:
-                    raise RuntimeError(
-                        "Lamb does not support sparse gradients, consider SparseAdam instad.")
+                    msg = "Lamb does not support sparse gradients, consider SparseAdam instad."
+                    raise RuntimeError(msg)
 
                 state = self.state[p]
 

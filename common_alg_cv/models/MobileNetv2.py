@@ -55,7 +55,8 @@ class InvertedResidual(nn.Module):
         """Initialize InvertedResidual block with expansion and depthwise convolutions."""
         super().__init__()
         if stride not in [1, 2]:
-            raise ValueError(f"stride should be 1 or 2 instead of {stride}")
+            msg = f"stride should be 1 or 2 instead of {stride}"
+            raise ValueError(msg)
 
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -66,7 +67,8 @@ class InvertedResidual(nn.Module):
         hidden_channels = round(in_channels * expand_ratio)
 
         if stride not in [1, 2]:
-            raise ValueError(f"stride should be 1 or 2 instead of {stride}")
+            msg = f"stride should be 1 or 2 instead of {stride}"
+            raise ValueError(msg)
 
         layers: list[nn.Module] = []
 
@@ -174,9 +176,8 @@ class MobileNetV2(nn.Module):
             inverted_residual_setting = mobilenet_v2_inverted_residual_cfg
 
         if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
-            raise ValueError(
-                f"inverted_residual_setting should be non-empty or a 4-element list, got {inverted_residual_setting}",
-            )
+            msg = f"inverted_residual_setting should be non-empty or a 4-element list, got {inverted_residual_setting}"
+            raise ValueError(msg)
         # building first layer
         input_channel = _make_divisible(input_channel * width_mult, round_nearest)
         self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)

@@ -156,7 +156,7 @@ class DionOptimizer(Optimizer):
     def _is_matrix_param(self, param: torch.Tensor) -> bool:
         """Determine if parameter should be treated as a matrix."""
         # Handle DTensor and FSDP wrapped parameters
-        local_param = param._local_tensor if hasattr(param, "_local_tensor") else param
+        local_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
 
         # Must be 2D and both dimensions >= threshold
         return bool(
@@ -200,7 +200,7 @@ class DionOptimizer(Optimizer):
     def _get_lr_scale(self, param: torch.Tensor) -> float:
         """Get learning rate scaling factor based on parameter type and shape."""
         # Get actual tensor for shape calculation
-        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param
+        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
 
         if actual_param.dim() == 0:  # Scalar (normalization)
             return 1.0
@@ -217,7 +217,7 @@ class DionOptimizer(Optimizer):
     def _get_weight_decay(self, param: torch.Tensor) -> float:
         """Get weight decay for parameter type."""
         # Get actual tensor for dimension check
-        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param
+        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
 
         # Only apply weight decay to matrix parameters (not bias/normalization)
         if actual_param.dim() >= 2:
@@ -235,7 +235,7 @@ class DionOptimizer(Optimizer):
         }
 
         if info["is_dtensor"]:
-            info["local_shape"] = param._local_tensor.shape  # type: ignore[attr-defined]
+            info["local_shape"] = param._local_tensor.shape  # type: ignore[attr-defined]  # noqa: SLF001
             info["global_shape"] = param.shape
             placements = param.placements  # type: ignore[attr-defined]
             for _, placement in enumerate(placements):
@@ -254,10 +254,7 @@ class DionOptimizer(Optimizer):
         param_info = self._get_param_info(param)
 
         # Get the actual tensor to work with (local tensor for DTensor)
-        if isinstance(param, torch.distributed._tensor.DTensor):
-            actual_param = param._local_tensor  # type: ignore[attr-defined]
-        else:
-            actual_param = param
+        actual_param = param._local_tensor if isinstance(param, DTensor) else param  # noqa: SLF001
 
         # Use local shape
         m, n = actual_param.shape
@@ -402,11 +399,11 @@ class DionOptimizer(Optimizer):
         param_info = state["param_info"]
 
         # Get the actual working tensors
-        if isinstance(param, torch.distributed._tensor.DTensor):
-            working_param = param._local_tensor  # type: ignore[attr-defined]
+        if isinstance(param, DTensor):
+            working_param = param._local_tensor  # type: ignore[attr-defined]  # noqa: SLF001
             working_grad = (
-                grad._local_tensor  # type: ignore[attr-defined]
-                if isinstance(grad, torch.distributed._tensor.DTensor)
+                grad._local_tensor  # type: ignore[attr-defined]  # noqa: SLF001
+                if isinstance(grad, DTensor)
                 else grad
             )
         else:

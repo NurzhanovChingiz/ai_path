@@ -39,13 +39,15 @@ extend-select = [
   "PIE",  # flake8-pie
   "PT",   # flake8-pytest-style
   "RET",  # flake8-return
+  "SLF",  # flake8-self
+
   "PL",   # Pylint
   "RUF",  # Ruff
   "ERA",  # eradicate
   "PERF", # Perflint
   "FURB", # refurb
   #"PD",  # pandas-vet
- 
+  "FURB", # refurb
   
   
 

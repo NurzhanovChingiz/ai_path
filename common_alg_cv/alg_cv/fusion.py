@@ -32,7 +32,7 @@ def _can_fuse_pair(a: nn.Module, b: nn.Module) -> bool:
 
 def _fuse_pair(a: nn.Module, b: nn.Module) -> nn.Module:
     if _is_conv(a) and _is_bn(b):
-        if not isinstance(b, nn.modules.batchnorm._BatchNorm):
+        if not isinstance(b, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d)):
             msg = "Expected BatchNorm when _is_bn is True"
             raise TypeError(msg)
         return fuse_conv_bn_eval(a, b)  # type: ignore[arg-type, type-var]
@@ -53,16 +53,16 @@ def fuse_model_inplace(model: nn.Module) -> nn.Module:
 
     # Now try to fuse adjacent children in this module
     # We need ordered traversal/edit of _modules
-    keys = list(model._modules.keys())
+    keys = list(model._modules.keys())  # noqa: SLF001
     i = 0
     while i < len(keys) - 1:
         k1, k2 = keys[i], keys[i + 1]
-        m1, m2 = model._modules[k1], model._modules[k2]
+        m1, m2 = model._modules[k1], model._modules[k2]  # noqa: SLF001
 
         if m1 is not None and m2 is not None and _can_fuse_pair(m1, m2):
             fused = _fuse_pair(m1, m2)
-            model._modules[k1] = fused
-            model._modules[k2] = nn.Identity()
+            model._modules[k1] = fused  # noqa: SLF001
+            model._modules[k2] = nn.Identity()  # noqa: SLF001
             # advance by 2 to avoid re-checking the identity just inserted
             i += 2
         else:

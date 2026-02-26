@@ -1,5 +1,6 @@
 # Train function
-from typing import Sized, cast
+from typing import cast
+from collections.abc import Sized
 
 import torch
 from torch import nn

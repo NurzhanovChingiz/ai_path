@@ -1,9 +1,9 @@
 # Insertion Sort
 
-from typing import Generator, List
+from collections.abc import Generator
 
 
-def insertion_sort(a: List[int]) -> Generator[List[int], None, None]:
+def insertion_sort(a: list[int]) -> Generator[list[int], None, None]:
     arr = a
     for i in range(1, len(arr)):
         key = arr[i]

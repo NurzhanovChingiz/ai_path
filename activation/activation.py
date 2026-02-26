@@ -139,7 +139,7 @@ class CustomLeakyReLU(nn.Module):
     """
 
     def __init__(self, negative_slope: float = 0.01):
-        super(CustomLeakyReLU, self).__init__()
+        super().__init__()
         self.negative_slope = negative_slope
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -153,7 +153,7 @@ class CustomELU(nn.Module):
     """
 
     def __init__(self, alpha: float = 1.0):
-        super(CustomELU, self).__init__()
+        super().__init__()
         self.alpha = alpha
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

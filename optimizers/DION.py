@@ -4,7 +4,8 @@
 import math
 import warnings
 from enum import Enum
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any
+from collections.abc import Callable
 
 import torch
 import torch.distributed as dist
@@ -75,14 +76,14 @@ class DionOptimizer(Optimizer):
         momentum: float = 0.95,
         rank_factor: float = 0.75,
         scalar_optimizer: str = "adamw",
-        scalar_lr: Optional[float] = None,
+        scalar_lr: float | None = None,
         weight_decay: float = 0.01,
         scalar_weight_decay: float = 0.0,
         eps: float = 1e-8,
         oversampling_factor: float = 1.25,
-        distributed: Optional[bool] = None,  # None = auto-detect
+        distributed: bool | None = None,  # None = auto-detect
         matrix_threshold: int = 32,  # 32 = default in paper
-        process_group: Optional[dist.ProcessGroup] = None,  # basically auto-detect
+        process_group: dist.ProcessGroup | None = None,  # basically auto-detect
         sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,  # FSDP2, this is for state dict only atm
         max_norm: float = 10.0,  # Maximum gradient norm for clipping
         **scalar_kwargs: Any,
@@ -123,7 +124,7 @@ class DionOptimizer(Optimizer):
         self.scalar_kwargs = scalar_kwargs
 
         defaults = dict(lr=lr, momentum=momentum, weight_decay=weight_decay, eps=eps)
-        super(DionOptimizer, self).__init__(params, defaults)
+        super().__init__(params, defaults)
 
         # Initialize parameter classification and scalar optimizers
         self._classify_parameters()
@@ -229,7 +230,7 @@ class DionOptimizer(Optimizer):
             return self.scalar_weight_decay
         return 0.0
 
-    def _get_param_info(self, param: torch.Tensor) -> Dict[str, Any]:
+    def _get_param_info(self, param: torch.Tensor) -> dict[str, Any]:
         """Get sharding information for a parameter."""
         info = {
             "is_dtensor": isinstance(param, DTensor),
@@ -253,7 +254,7 @@ class DionOptimizer(Optimizer):
 
         return info
 
-    def _init_matrix_state(self, param: torch.Tensor, group: Dict[str, Any]) -> Dict[str, Any]:
+    def _init_matrix_state(self, param: torch.Tensor, group: dict[str, Any]) -> dict[str, Any]:
         """Initialize state for matrix parameter."""
         state = {}
         param_info = self._get_param_info(param)
@@ -295,7 +296,7 @@ class DionOptimizer(Optimizer):
 
     def _power_iteration(
         self, B: torch.Tensor, Q_prev: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Single step of power iteration for low-rank approximation."""
         # P = BQ (left factor)
         P = torch.mm(B, Q_prev)
@@ -309,8 +310,8 @@ class DionOptimizer(Optimizer):
         return P, R
 
     def _distributed_power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: Dict
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: dict
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Distributed power iteration (Algorithm 3, lines 5-6 in the paper)."""
 
         # P = BQ with local computation
@@ -385,7 +386,7 @@ class DionOptimizer(Optimizer):
         return self._normalize_columns(matrix)
 
     def _step_matrix_param(
-        self, param: torch.Tensor, grad: torch.Tensor, group: Dict[str, Any], state: Dict[str, Any]
+        self, param: torch.Tensor, grad: torch.Tensor, group: dict[str, Any], state: dict[str, Any]
     ) -> None:
         """Perform Dion update step for matrix parameter."""
         momentum = group["momentum"]
@@ -481,7 +482,7 @@ class DionOptimizer(Optimizer):
         state["step"] += 1
 
     @torch.no_grad()
-    def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         """Perform a single optimization step."""
         loss = None
         if closure is not None:
@@ -513,7 +514,7 @@ class DionOptimizer(Optimizer):
         if self.scalar_optimizer is not None:
             self.scalar_optimizer.zero_grad(set_to_none)
 
-    def state_dict(self) -> Dict[str, Any]:
+    def state_dict(self) -> dict[str, Any]:
         """Return state dict for checkpointing.
         TODO - this needs more testing..."""
         state_dict = super().state_dict()
@@ -527,7 +528,7 @@ class DionOptimizer(Optimizer):
         }
         return state_dict
 
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
         """Load state dict from checkpoint."""
         scalar_state = state_dict.pop("scalar_optimizer", None)
         distributed_config = state_dict.pop("distributed_config", None)
@@ -545,7 +546,7 @@ class DionOptimizer(Optimizer):
                     f"current has distributed={self.distributed}"
                 )
 
-    def add_param_group(self, param_group: Dict[str, Any]) -> None:
+    def add_param_group(self, param_group: dict[str, Any]) -> None:
         """Add a parameter group to the optimizer."""
         super().add_param_group(param_group)
         # Re-classify parameters and reinitialize scalar optimizers
@@ -593,7 +594,7 @@ def create_dion_optimizer_fsdp2(
     rank_factor: float = 0.25,
     scalar_optimizer: str = "adamw",
     sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,
-    process_group: Optional[dist.ProcessGroup] = None,
+    process_group: dist.ProcessGroup | None = None,
     **kwargs: Any,
 ) -> DionOptimizer:
     """
@@ -628,7 +629,7 @@ def create_dion_optimizer_fsdp2(
 
 def get_parameter_info(
     model: nn.Module, matrix_threshold: int = 32
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Analyze model parameters for Dion optimization.
 

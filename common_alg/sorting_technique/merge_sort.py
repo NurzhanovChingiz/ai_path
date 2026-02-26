@@ -1,13 +1,13 @@
 # Merge Sort
 
-from typing import Generator, List
+from collections.abc import Generator
 
 
-def merge_sort(a: List[int]) -> Generator[List[int], None, None]:
+def merge_sort(a: list[int]) -> Generator[list[int], None, None]:
     arr = a
     aux = [0] * len(arr)
 
-    def _merge_sort(left: int, r: int) -> Generator[List[int], None, None]:
+    def _merge_sort(left: int, r: int) -> Generator[list[int], None, None]:
         if r - left <= 1:
             return
         m = (left + r) // 2

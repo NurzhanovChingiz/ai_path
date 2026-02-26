@@ -1,9 +1,9 @@
 # Bubble Sort
 
-from typing import Generator, List
+from collections.abc import Generator
 
 
-def bubble_sort(a: List[int]) -> Generator[List[int], None, None]:
+def bubble_sort(a: list[int]) -> Generator[list[int], None, None]:
     '''
     Bubble Sort Algorithm
     :param a: List of integers to be sorted

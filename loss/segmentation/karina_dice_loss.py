@@ -1,7 +1,7 @@
 # Karina implementation of dice loss for segmentation
 # from
 # https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/dice.py
-from typing import Any, Optional
+from typing import Any
 
 import torch
 from torch.nn import functional as F
@@ -27,8 +27,8 @@ class TypeCheckError(BaseError):
         self,
         message: str,
         *,
-        actual_type: Optional[type] = None,
-        expected_type: Optional[type | tuple[type, ...]] = None,
+        actual_type: type | None = None,
+        expected_type: type | tuple[type, ...] | None = None,
     ):
         super().__init__(message)
         self.actual_type = actual_type
@@ -37,7 +37,7 @@ class TypeCheckError(BaseError):
 
 def KORNIA_CHECK_IS_TENSOR(
         x: Any,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check the input variable is a Tensor.
 
@@ -91,7 +91,7 @@ def KORNIA_CHECK_IS_TENSOR(
 
 def KORNIA_CHECK(
         condition: bool,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check any arbitrary boolean condition.
 
@@ -131,8 +131,8 @@ def KORNIA_CHECK(
 
 
 def mask_ignore_pixels(
-    target: torch.Tensor, ignore_index: Optional[int]
-) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
+    target: torch.Tensor, ignore_index: int | None
+) -> tuple[torch.Tensor, torch.Tensor | None]:
     if ignore_index is None:
         return target, None
 
@@ -213,8 +213,8 @@ def dice_loss(
     target: torch.Tensor,
     average: str = "micro",
     eps: float = 1e-8,
-    weight: Optional[torch.Tensor] = None,
-    ignore_index: Optional[int] = -100,
+    weight: torch.Tensor | None = None,
+    ignore_index: int | None = -100,
 ) -> torch.Tensor:
     r"""Criterion that computes Sørensen-Dice Coefficient loss.
 

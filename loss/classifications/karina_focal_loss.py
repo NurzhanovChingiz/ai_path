@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import torch
 from torch.nn import functional as F
@@ -27,8 +27,8 @@ class ShapeError(BaseError):
         self,
         message: str,
         *,
-        actual_shape: Optional[tuple[int, ...] | list[int]] = None,
-        expected_shape: Optional[list[str] | tuple[int, ...]] = None,
+        actual_shape: tuple[int, ...] | list[int] | None = None,
+        expected_shape: list[str] | tuple[int, ...] | None = None,
     ):
         super().__init__(message)
         self.actual_shape = actual_shape
@@ -38,7 +38,7 @@ class ShapeError(BaseError):
 def KORNIA_CHECK_SHAPE(
         x: torch.Tensor,
         shape: list[str],
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check whether a tensor has a specified shape.
 
@@ -130,7 +130,7 @@ def KORNIA_CHECK_SHAPE(
 
 def KORNIA_CHECK(
         condition: bool,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check any arbitrary boolean condition.
 
@@ -170,8 +170,8 @@ def KORNIA_CHECK(
 
 
 def mask_ignore_pixels(
-    target: torch.Tensor, ignore_index: Optional[int]
-) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
+    target: torch.Tensor, ignore_index: int | None
+) -> tuple[torch.Tensor, torch.Tensor | None]:
     if ignore_index is None:
         return target, None
 
@@ -199,8 +199,8 @@ class TypeCheckError(BaseError):
         self,
         message: str,
         *,
-        actual_type: Optional[type] = None,
-        expected_type: Optional[type | tuple[type, ...]] = None,
+        actual_type: type | None = None,
+        expected_type: type | tuple[type, ...] | None = None,
     ):
         super().__init__(message)
         self.actual_type = actual_type
@@ -209,7 +209,7 @@ class TypeCheckError(BaseError):
 
 def KORNIA_CHECK_IS_TENSOR(
         x: Any,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check the input variable is a Tensor.
 
@@ -297,7 +297,8 @@ def one_hot(
     KORNIA_CHECK(
         labels.dtype == torch.int64,
         f"labels must be of dtype torch.int64. Got: {
-            labels.dtype}")
+            labels.dtype}"
+    )
     KORNIA_CHECK(
         num_classes >= 1,
         f"The number of classes must be >= 1. Got: {num_classes}")
@@ -324,11 +325,11 @@ def one_hot(
 def focal_loss(
     pred: torch.Tensor,
     target: torch.Tensor,
-    alpha: Optional[float],
+    alpha: float | None,
     gamma: float = 2.0,
     reduction: str = "none",
-    weight: Optional[torch.Tensor] = None,
-    ignore_index: Optional[int] = -100,
+    weight: torch.Tensor | None = None,
+    ignore_index: int | None = -100,
 ) -> torch.Tensor:
     r"""Criterion that computes Focal loss.
 

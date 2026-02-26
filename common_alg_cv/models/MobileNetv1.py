@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from torch import Tensor, nn
 
@@ -78,7 +78,7 @@ class DepthWiseConv2d(nn.Module):
             in_channels: int,
             out_channels: int,
             stride: int,
-            norm_layer: Optional[Callable[..., nn.Module]] = None
+            norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
         super().__init__()
         self.stride = stride

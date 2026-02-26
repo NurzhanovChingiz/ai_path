@@ -1,6 +1,6 @@
 
 import math
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import torch
 from torch.optim.optimizer import Optimizer, ParamsT
@@ -42,23 +42,21 @@ class Lamb(Optimizer):
         debias: bool = False
     ):
         if not 0.0 <= lr:
-            raise ValueError("Invalid learning rate: {}".format(lr))
+            raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= eps:
-            raise ValueError("Invalid epsilon value: {}".format(eps))
+            raise ValueError(f"Invalid epsilon value: {eps}")
         if not 0.0 <= betas[0] < 1.0:
             raise ValueError(
-                "Invalid beta parameter at index 0: {}".format(
-                    betas[0]))
+                f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError(
-                "Invalid beta parameter at index 1: {}".format(
-                    betas[1]))
+                f"Invalid beta parameter at index 1: {betas[1]}")
         if weight_decay < 0:
             raise ValueError(
-                'Invalid weight_decay value: {}'.format(weight_decay)
+                f'Invalid weight_decay value: {weight_decay}'
             )
         if clamp_value < 0.0:
-            raise ValueError('Invalid clamp value: {}'.format(clamp_value))
+            raise ValueError(f'Invalid clamp value: {clamp_value}')
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay)
         self.clamp_value = clamp_value
@@ -68,8 +66,7 @@ class Lamb(Optimizer):
         super().__init__(params, defaults)
 
     
-    def step(self, closure: Optional[Callable[[], # type: ignore[override]
-             float]] = None) -> Optional[float]:
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         """Performs a single optimization step.
 
         Arguments:

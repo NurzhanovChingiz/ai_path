@@ -1,15 +1,14 @@
 # Karina implementation of Tversky loss for segmentation
 # from:
 # https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/tversky.py
-from typing import Optional
 
 import torch
 from torch.nn import functional as F
 
 
 def mask_ignore_pixels(
-    target: torch.Tensor, ignore_index: Optional[int]
-) -> tuple[torch.Tensor, Optional[torch.Tensor]]:
+    target: torch.Tensor, ignore_index: int | None
+) -> tuple[torch.Tensor, torch.Tensor | None]:
     if ignore_index is None:
         return target, None
 
@@ -31,7 +30,7 @@ def tversky_loss(
     alpha: float,
     beta: float,
     eps: float = 1e-8,
-    ignore_index: Optional[int] = -100,
+    ignore_index: int | None = -100,
 ) -> torch.Tensor:
     r"""Criterion that computes Tversky Coefficient loss.
 

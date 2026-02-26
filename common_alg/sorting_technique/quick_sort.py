@@ -1,12 +1,12 @@
 # Quick Sort
 
-from typing import Generator, List
+from collections.abc import Generator
 
 
-def quick_sort(a: List[int]) -> Generator[List[int], None, None]:
+def quick_sort(a: list[int]) -> Generator[list[int], None, None]:
     arr = a
 
-    def _q(left: int, r: int) -> Generator[List[int], None, None]:
+    def _q(left: int, r: int) -> Generator[list[int], None, None]:
         if left >= r:
             return
         pivot = arr[r]

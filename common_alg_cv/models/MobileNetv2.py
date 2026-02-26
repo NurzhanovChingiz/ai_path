@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 from torch import Tensor, nn
 from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-untyped]
@@ -6,7 +6,7 @@ from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-unt
 
 __all__ = ['MobileNetV2',  "InvertedResidual"]
 
-def _make_divisible(v: float, divisor: int, min_value: Optional[int] = None) -> int:
+def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
     """
     This function is taken from the original tf repo.
     It ensures that all layers have a channel number that is divisible by 8
@@ -46,7 +46,7 @@ class InvertedResidual(nn.Module):
             out_channels: int,
             stride: int,
             expand_ratio: int,
-            norm_layer: Optional[Callable[..., nn.Module]] = None
+            norm_layer: Callable[..., nn.Module] | None = None
     ) -> None:
         super().__init__()
         if stride not in [1, 2]:
@@ -135,10 +135,10 @@ class MobileNetV2(nn.Module):
         self,
         num_classes: int = 1000,
         width_mult: float = 1.0,
-        inverted_residual_setting: Optional[list[list[int]]] = None,
+        inverted_residual_setting: list[list[int]] | None = None,
         round_nearest: int = 8,
-        block: Optional[Callable[..., nn.Module]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None,
+        block: Callable[..., nn.Module] | None = None,
+        norm_layer: Callable[..., nn.Module] | None = None,
         dropout: float = 0.2,
         pretrained: bool = False,
             ) -> None:
@@ -152,7 +152,7 @@ class MobileNetV2(nn.Module):
         input_channel = 32
         last_channel = 1280
         
-        mobilenet_v2_inverted_residual_cfg: List[List[int]] = [
+        mobilenet_v2_inverted_residual_cfg: list[list[int]] = [
             # expand_ratio, out_channels, repeated times, stride
             # t, c, n, s
             [1, 16, 1, 1],
@@ -177,7 +177,7 @@ class MobileNetV2(nn.Module):
         classifier_channels = int(self.last_channel * max(1.0, width_mult))
 
         # building first layer
-        features: List[nn.Module] = [
+        features: list[nn.Module] = [
             Conv2dNormActivation(3,
                                  input_channel,
                                  kernel_size=3,

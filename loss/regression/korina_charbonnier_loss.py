@@ -2,7 +2,7 @@
 # from
 # https://github.com/kornia/kornia/blob/0f8d1972603ed10f549c66c9613669f886046b23/kornia/losses/charbonnier.py
 
-from typing import Any, Optional
+from typing import Any
 
 import torch
 
@@ -27,8 +27,8 @@ class DeviceError(BaseError):
         self,
         message: str,
         *,
-        actual_devices: Optional[list] = None,
-        expected_device: Optional[Any] = None,
+        actual_devices: list | None = None,
+        expected_device: Any | None = None,
     ):
         super().__init__(message)
         self.actual_devices = actual_devices
@@ -47,8 +47,8 @@ class ShapeError(BaseError):
         self,
         message: str,
         *,
-        actual_shape: Optional[tuple[int, ...] | list[int]] = None,
-        expected_shape: Optional[list[str] | list[int] | tuple[int, ...]] = None,
+        actual_shape: tuple[int, ...] | list[int] | None = None,
+        expected_shape: list[str] | list[int] | tuple[int, ...] | None = None,
     ):
         super().__init__(message)
         self.actual_shape = actual_shape
@@ -67,8 +67,8 @@ class TypeCheckError(BaseError):
         self,
         message: str,
         *,
-        actual_type: Optional[type] = None,
-        expected_type: Optional[type | tuple[type, ...]] = None,
+        actual_type: type | None = None,
+        expected_type: type | tuple[type, ...] | None = None,
     ):
         super().__init__(message)
         self.actual_type = actual_type
@@ -77,7 +77,7 @@ class TypeCheckError(BaseError):
 
 def KORNIA_CHECK_IS_TENSOR(
         x: Any,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check the input variable is a Tensor.
 
@@ -176,7 +176,7 @@ def KORNIA_CHECK_SAME_DEVICE(
 
 def KORNIA_CHECK(
         condition: bool,
-        msg: Optional[str] = None,
+        msg: str | None = None,
         raises: bool = True) -> bool:
     """Check any arbitrary boolean condition.
 

@@ -3,13 +3,13 @@ import torch
 from torch import nn
 
 cfg = {
-    'VGG9': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M'],
-    'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'VGG16': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-    'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
-    'VGG21': [64, 64, 'M', 128, 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 512, 'M'],
-    'VGG23': [64, 64, 64, 'M', 128, 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 512, 'M', 512, 512, 512, 512, 512, 512, 'M'],
+    "VGG9": [64, "M", 128, "M", 256, 256, "M", 512, 512, "M"],
+    "VGG11": [64, "M", 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
+    "VGG13": [64, 64, "M", 128, 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
+    "VGG16": [64, 64, "M", 128, 128, "M", 256, 256, 256, "M", 512, 512, 512, "M", 512, 512, 512, "M"],
+    "VGG19": [64, 64, "M", 128, 128, "M", 256, 256, 256, 256, "M", 512, 512, 512, 512, "M", 512, 512, 512, 512, "M"],
+    "VGG21": [64, 64, "M", 128, 128, 128, "M", 256, 256, 256, "M", 512, 512, 512, 512, "M", 512, 512, 512, 512, 512, "M"],
+    "VGG23": [64, 64, 64, "M", 128, 128, 128, "M", 256, 256, 256, 256, "M", 512, 512, 512, 512, 512, "M", 512, 512, 512, 512, 512, 512, "M"],
 }
 
 
@@ -26,13 +26,13 @@ class VGG(nn.Module):
         self.features = self._make_layers(features)
         self.classifier = nn.Sequential()
         # adjust for input size, original was 7*7
-        self.classifier.add_module('fc1', nn.Linear(512 * 1 * 1, 4096))
-        self.classifier.add_module('relu1', nn.ReLU(inplace=True))
-        self.classifier.add_module('dropout1', nn.Dropout(p=p))
-        self.classifier.add_module('fc2', nn.Linear(4096, 4096))
-        self.classifier.add_module('relu2', nn.ReLU(inplace=True))
-        self.classifier.add_module('dropout2', nn.Dropout(p=p))
-        self.classifier.add_module('fc3', nn.Linear(4096, num_classes))
+        self.classifier.add_module("fc1", nn.Linear(512 * 1 * 1, 4096))
+        self.classifier.add_module("relu1", nn.ReLU(inplace=True))
+        self.classifier.add_module("dropout1", nn.Dropout(p=p))
+        self.classifier.add_module("fc2", nn.Linear(4096, 4096))
+        self.classifier.add_module("relu2", nn.ReLU(inplace=True))
+        self.classifier.add_module("dropout2", nn.Dropout(p=p))
+        self.classifier.add_module("fc3", nn.Linear(4096, num_classes))
 
         if init_weights:
             self._initialize_weights()
@@ -47,7 +47,7 @@ class VGG(nn.Module):
             The output tensor.
         """
         device = next(self.parameters()).device
-        if device.type != 'cuda':
+        if device.type != "cuda":
             self.classifier.dropout1 = nn.Identity()
             self.classifier.dropout2 = nn.Identity()
         x = self.features(x)
@@ -89,7 +89,7 @@ class VGG(nn.Module):
         layers: list[nn.Module] = []
         in_channels = 3
         for v in cfg:
-            if v == 'M':
+            if v == "M":
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
             else:
                 conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)

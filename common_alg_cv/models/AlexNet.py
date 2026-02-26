@@ -72,7 +72,7 @@ class AlexNet(nn.Module):
             if num_classes != 1000:
                 in_features = self.classifier[-1].in_features  # type: ignore[union-attr]
                 self.classifier[-1] = nn.Linear(in_features, num_classes)  # type: ignore[arg-type]
-                
+
     def _pretrained(self) -> None:
         """Load pretrained weights from torchvision."""
         state_dict = torch.hub.load_state_dict_from_url(

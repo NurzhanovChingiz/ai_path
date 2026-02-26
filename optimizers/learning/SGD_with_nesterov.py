@@ -65,10 +65,10 @@ class SGD_with_nesterov(Optimizer):
             with torch.enable_grad():
                 loss = closure()
         for group in self.param_groups:
-            lr = group['lr']
-            momentum = group['momentum']
-            nesterov = group['nesterov']
-            for p in group['params']:
+            lr = group["lr"]
+            momentum = group["momentum"]
+            nesterov = group["nesterov"]
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 grad = p.grad
@@ -80,13 +80,13 @@ class SGD_with_nesterov(Optimizer):
                 v = state["v"]
                 if self.inplace:
                     v.mul_(momentum).add_(grad)  # v = v * momentum + grad
-                    state['v'] = v.clone()
+                    state["v"] = v.clone()
                     if nesterov:
                         v.mul_(momentum).add_(grad)  # v = v * momentum + grad
                     p.data.sub_(lr * v)  # w = w - lr * v
                 else:
                     v = momentum * v + grad  # v = momentum * v + grad
-                    state['v'] = v.clone()
+                    state["v"] = v.clone()
                     if nesterov:
                         v = momentum * v + grad  # v = momentum * v + grad
                     update = lr * v  # update = lr * v

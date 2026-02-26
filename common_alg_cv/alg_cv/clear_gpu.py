@@ -15,4 +15,4 @@ def clear_memory(verbose: bool = True) -> None:
     gc.collect()
 
     if verbose:
-        print('Cleared memory.  Time taken was %f secs' % (time.time() - stt))
+        print("Cleared memory.  Time taken was %f secs" % (time.time() - stt))

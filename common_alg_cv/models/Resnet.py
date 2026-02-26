@@ -89,7 +89,7 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
 
         return out  # type: ignore[no-any-return]
-    
+
 class Bottleneck(nn.Module):
     """Bottleneck block implementation."""
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
@@ -156,7 +156,7 @@ class Bottleneck(nn.Module):
         out = self.relu(out)
 
         return out  # type: ignore[no-any-return]
-    
+
 class ResNet(nn.Module):
     """ResNet model implementation."""
     def __init__(
@@ -201,7 +201,7 @@ class ResNet(nn.Module):
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         self.initialize_weights(zero_init_residual)
-        
+
     def initialize_weights(self, zero_init_residual: bool) -> None:
         """Initialize the weights of the ResNet model.
 
@@ -224,7 +224,7 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn3.weight, 0)  # type: ignore[arg-type]
                 elif isinstance(m, BasicBlock) and m.bn2.weight is not None:
                     nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
-        
+
     def _make_layer(
         self,
         block: type[BasicBlock | Bottleneck],
@@ -382,7 +382,7 @@ class ResNet50(ResNet):
         state_dict.update(pretrained_dict)
         # Load the new state dict
         nn.Module.load_state_dict(self, state_dict)
-        
+
 class ResNet101(ResNet):
     """ResNet-101 model implementation."""
     def __init__(self, num_classes: int = 1000, pretrained: bool = False) -> None:

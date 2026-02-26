@@ -8,7 +8,7 @@ from torchvision.models import (  # type: ignore[import-untyped]
 )
 from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-untyped]
 
-__all__ = ['MobileNetV2',  "InvertedResidual"]
+__all__ = ["MobileNetV2",  "InvertedResidual"]
 
 def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
     """This function is taken from the original tf repo.
@@ -56,10 +56,10 @@ class InvertedResidual(nn.Module):
         super().__init__()
         if stride not in [1, 2]:
             raise ValueError(f"stride should be 1 or 2 instead of {stride}")
-        
+
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
-            
+
         self.stride = stride
         self.use_res_connect = self.stride == 1 and in_channels == out_channels
 
@@ -83,7 +83,7 @@ class InvertedResidual(nn.Module):
                     bias=False,
                     )
             )
-            
+
         # Depth-wise + point-wise layer
         layers.extend(
             [
@@ -154,10 +154,10 @@ class MobileNetV2(nn.Module):
 
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
-            
+
         input_channel = 32
         last_channel = 1280
-        
+
         mobilenet_v2_inverted_residual_cfg: list[list[int]] = [
             # expand_ratio, out_channels, repeated times, stride
             # t, c, n, s
@@ -169,10 +169,10 @@ class MobileNetV2(nn.Module):
             [6, 160, 3, 2],
             [6, 320, 1, 1],
         ]
-        
+
         if inverted_residual_setting is None:
             inverted_residual_setting = mobilenet_v2_inverted_residual_cfg
-            
+
         if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
             raise ValueError(
                 f"inverted_residual_setting should be non-empty or a 4-element list, got {inverted_residual_setting}"
@@ -202,9 +202,9 @@ class MobileNetV2(nn.Module):
             for i in range(n):
                 stride = s if i == 0 else 1
                 features.append(block(input_channel, output_channel, stride, expand_ratio=t, norm_layer=norm_layer))
-                input_channel = output_channel        
-                
-        # building last several layers       
+                input_channel = output_channel
+
+        # building last several layers
         features.append(
             Conv2dNormActivation(input_channel,
                                  classifier_channels,
@@ -228,8 +228,8 @@ class MobileNetV2(nn.Module):
 
         # Initialize neural network weights
         self._initialize_weights(pretrained, num_classes)
-        
-                
+
+
     # Support torch.script function
     def _forward_impl(self, x: Tensor) -> Tensor:
         out = self.features(x)
@@ -237,7 +237,7 @@ class MobileNetV2(nn.Module):
         out = out.flatten(1)
         out = self.classifier(out)
         return out  # type: ignore[no-any-return]
-    
+
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass (delegates to _forward_impl for torch.script)."""
         out = self._forward_impl(x)
@@ -262,7 +262,7 @@ class MobileNetV2(nn.Module):
             if num_classes != 1000:
                 in_features = self.classifier[-1].in_features  # type: ignore[union-attr]
                 self.classifier[-1] = nn.Linear(in_features, num_classes)  # type: ignore[arg-type]
-                
+
     def _pretrained(self) -> None:
         """Load pretrained weights from torchvision."""
         pretrained_model = mobilenet_v2(weights=MobileNet_V2_Weights.IMAGENET1K_V2)

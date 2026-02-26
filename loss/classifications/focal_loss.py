@@ -195,7 +195,7 @@ if __name__ == "__main__":
     target = torch.randint(C, (1, 3, 5))
     alpha = 0.5
     gamma = 2.0
-    loss = focal_loss(input, target, alpha, gamma, reduction='mean')
+    loss = focal_loss(input, target, alpha, gamma, reduction="mean")
     print(f"Input: {input}")
     print(f"Target: {target}")
     print(f"Kornia focal loss: {loss.item():.6f}")

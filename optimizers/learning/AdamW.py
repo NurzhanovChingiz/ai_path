@@ -59,11 +59,11 @@ class AdamW(Optimizer):
             with torch.enable_grad():
                 loss = closure()
         for group in self.param_groups:
-            lr = group['lr']
-            betas = group['betas']
-            eps = group['eps']
-            weight_decay = group['weight_decay']
-            for p in group['params']:
+            lr = group["lr"]
+            betas = group["betas"]
+            eps = group["eps"]
+            weight_decay = group["weight_decay"]
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 grad = p.grad.clone()

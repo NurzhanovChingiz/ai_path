@@ -43,9 +43,9 @@ def inputs_tensor() -> list[torch.Tensor]:
         torch.randn(1, 1, 1),
         torch.randn(1, 1) * -1,
         torch.randn(1, 1, 1) * 0,
-        torch.randn(10, 10) * float('inf'),
-        torch.randn(10, 10, 10) * float('-inf'),
-        torch.randn(10, 10) * float('nan')
+        torch.randn(10, 10) * float("inf"),
+        torch.randn(10, 10, 10) * float("-inf"),
+        torch.randn(10, 10) * float("nan")
     ]
     return inputs
 # ── Assertions ──────────────────────────────────────────────────────────

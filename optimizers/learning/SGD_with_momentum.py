@@ -57,9 +57,9 @@ class SGD_with_momentum(Optimizer):
             with torch.enable_grad():
                 loss = closure()
         for group in self.param_groups:
-            lr = group['lr']
-            momentum = group['momentum']
-            for p in group['params']:
+            lr = group["lr"]
+            momentum = group["momentum"]
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 grad = p.grad
@@ -76,7 +76,7 @@ class SGD_with_momentum(Optimizer):
                     v = momentum * v + grad  # v = momentum * v + grad
                     update = lr * v  # update = lr * v
                     p.data = p.data.clone() - update  # w = w - update
-                    state['v'] = v.clone()
+                    state["v"] = v.clone()
         return loss
 
 

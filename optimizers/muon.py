@@ -254,11 +254,11 @@ if __name__ == "__main__":
     # Now we can call step()
     optimizer.step()
     custom_optimizer.step()
-    print('custom_model.state_dict():', custom_model.state_dict())
-    print('model.state_dict():', model.state_dict())
-    print('custom_optimizer.state_dict():', custom_optimizer.state_dict())
-    print('optimizer.state_dict():', optimizer.state_dict())
-    print('custom_model.weight.data.clone():',
+    print("custom_model.state_dict():", custom_model.state_dict())
+    print("model.state_dict():", model.state_dict())
+    print("custom_optimizer.state_dict():", custom_optimizer.state_dict())
+    print("optimizer.state_dict():", optimizer.state_dict())
+    print("custom_model.weight.data.clone():",
           custom_model.weight.data.clone())
-    print('model.weight.data.clone():', model.weight.data.clone())
+    print("model.weight.data.clone():", model.weight.data.clone())
     # print(model.weight.data.clone())

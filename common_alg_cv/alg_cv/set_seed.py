@@ -14,4 +14,4 @@ def set_seed(SEED: int = 42) -> None:
     np.random.seed(SEED)
     random.seed(SEED)
 
-    print(f'Random Seed : {SEED}')
+    print(f"Random Seed : {SEED}")

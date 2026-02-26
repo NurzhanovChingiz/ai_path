@@ -42,7 +42,7 @@ class SGD_with_weight_decay(Optimizer):
         self.inplace = inplace
         self.weight_decay = weight_decay
 
-    @torch.no_grad()    
+    @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]
         """Perform a single optimization step.
 
@@ -57,9 +57,9 @@ class SGD_with_weight_decay(Optimizer):
             with torch.enable_grad():
                 loss = closure()
         for group in self.param_groups:
-            lr = group['lr']
-            weight_decay = group['weight_decay']
-            for p in group['params']:
+            lr = group["lr"]
+            weight_decay = group["weight_decay"]
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 if self.inplace:

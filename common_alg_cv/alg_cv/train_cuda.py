@@ -126,8 +126,8 @@ def train(
         count += 1
         # unpack according to your dataset
         if isinstance(batch, dict):
-            inputs = batch['inputs']
-            targets = batch['targets']
+            inputs = batch["inputs"]
+            targets = batch["targets"]
         else:
             inputs, targets = batch  # (inputs, targets) tuple
         optimizer.zero_grad()

@@ -54,8 +54,8 @@ class SGD(Optimizer):
             with torch.enable_grad():
                 loss = closure()
         for group in self.param_groups:
-            lr = group['lr']
-            for p in group['params']:
+            lr = group["lr"]
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 if self.inplace:

@@ -65,10 +65,10 @@ class Lamb(Optimizer):
                 f"Invalid beta parameter at index 1: {betas[1]}")
         if weight_decay < 0:
             raise ValueError(
-                f'Invalid weight_decay value: {weight_decay}'
+                f"Invalid weight_decay value: {weight_decay}"
             )
         if clamp_value < 0.0:
-            raise ValueError(f'Invalid clamp value: {clamp_value}')
+            raise ValueError(f"Invalid clamp value: {clamp_value}")
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay)
         self.clamp_value = clamp_value
@@ -77,7 +77,7 @@ class Lamb(Optimizer):
 
         super().__init__(params, defaults)
 
-    
+
     def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         """Performs a single optimization step.
 
@@ -90,28 +90,28 @@ class Lamb(Optimizer):
             loss = closure()
 
         for group in self.param_groups:
-            for p in group['params']:
+            for p in group["params"]:
                 if p.grad is None:
                     continue
                 grad = p.grad.data
                 if grad.is_sparse:
                     raise RuntimeError(
-                        'Lamb does not support sparse gradients, consider SparseAdam instad.')
+                        "Lamb does not support sparse gradients, consider SparseAdam instad.")
 
                 state = self.state[p]
 
                 # State initialization
                 if len(state) == 0:
-                    state['step'] = 0
+                    state["step"] = 0
                     # Exponential moving average of gradient values
-                    state['exp_avg'] = torch.zeros_like(p.data)
+                    state["exp_avg"] = torch.zeros_like(p.data)
                     # Exponential moving average of squared gradient values
-                    state['exp_avg_sq'] = torch.zeros_like(p.data)
+                    state["exp_avg_sq"] = torch.zeros_like(p.data)
 
-                exp_avg, exp_avg_sq = state['exp_avg'], state['exp_avg_sq']
-                beta1, beta2 = group['betas']
+                exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
+                beta1, beta2 = group["betas"]
 
-                state['step'] += 1
+                state["step"] += 1
 
                 # Decay the first and second moment running average coefficient
                 # m_t
@@ -121,29 +121,29 @@ class Lamb(Optimizer):
 
                 # Paper v3 does not use debiasing.
                 if self.debias:
-                    bias_correction1 = 1 - beta1 ** state['step']
-                    bias_correction2 = 1 - beta2 ** state['step']
-                    step_size = group['lr'] * \
+                    bias_correction1 = 1 - beta1 ** state["step"]
+                    bias_correction2 = 1 - beta2 ** state["step"]
+                    step_size = group["lr"] * \
                         math.sqrt(bias_correction2) / bias_correction1
 
                 else:
-                    step_size = group['lr']
+                    step_size = group["lr"]
 
                 weight_norm = p.data.pow(
                     2).sum().sqrt().clamp(0, self.clamp_value)
 
-                adam_step = exp_avg / exp_avg_sq.sqrt().add(group['eps'])
-                if group['weight_decay'] != 0:
-                    adam_step.add_(p.data, alpha=group['weight_decay'])
+                adam_step = exp_avg / exp_avg_sq.sqrt().add(group["eps"])
+                if group["weight_decay"] != 0:
+                    adam_step.add_(p.data, alpha=group["weight_decay"])
 
                 adam_norm = adam_step.pow(2).sum().sqrt()
                 if weight_norm == 0 or adam_norm == 0:
                     trust_ratio = 1
                 else:
                     trust_ratio = weight_norm / adam_norm
-                state['weight_norm'] = weight_norm
-                state['adam_norm'] = adam_norm
-                state['trust_ratio'] = trust_ratio
+                state["weight_norm"] = weight_norm
+                state["adam_norm"] = adam_norm
+                state["trust_ratio"] = trust_ratio
                 if self.adam:
                     trust_ratio = 1
 

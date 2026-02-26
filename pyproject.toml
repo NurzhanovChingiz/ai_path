@@ -15,11 +15,14 @@ extend-select = [
   "F",   # Pyflakes
   "B",   # flake8-bugbear
   "SIM", # flake8-simplify
-  "PL",   # Pylint
+  "PL",  # Pylint
   "BLE", # flake8-blind-except
   "RSE", # flake8-raise
   "S",   # flake8-bandit
-  "PERF", # Perflint
+  "PERF",# Perflint
+  "W",   # pycodestyle
+  "E",   # pycodestyle
+  "Q",   # flake8-quotes
 ]
 
 [tool.ruff.lint.pydocstyle]

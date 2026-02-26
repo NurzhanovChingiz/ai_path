@@ -157,7 +157,7 @@ if __name__ == "__main__":
     target_np = target.detach().numpy()
     input_np = input.detach().numpy()
 
-    torch_loss = dice_loss(input, target, eps=smooth, average='micro')
+    torch_loss = dice_loss(input, target, eps=smooth, average="micro")
     torch_loss.backward()
     print(f"Karina implementation dice loss: {torch_loss.item():.6f}")
 

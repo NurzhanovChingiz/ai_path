@@ -4,11 +4,11 @@ from collections.abc import Generator
 
 
 def bubble_sort(a: list[int]) -> Generator[list[int], None, None]:
-    '''
-    Bubble Sort Algorithm
+    """Bubble Sort Algorithm.
+
     :param a: List of integers to be sorted
     :yield: The list after each swap operation
-    '''
+    """
     arr = a
     n = len(arr)
     for i in range(n):

@@ -39,8 +39,8 @@ def _fuse_pair(a: nn.Module, b: nn.Module) -> nn.Module:
 
 
 def fuse_model_inplace(model: nn.Module) -> nn.Module:
-    """
-    Recursively fuses Conv/Linear + BN pairs in-place.
+    """Recursively fuses Conv/Linear + BN pairs in-place.
+
     Replaces the BN with nn.Identity().
     Only eval-mode pairs are fused; others are left unchanged.
     """

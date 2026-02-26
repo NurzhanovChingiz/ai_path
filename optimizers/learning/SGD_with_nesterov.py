@@ -8,6 +8,11 @@ from torch.optim.optimizer import Optimizer, ParamsT
 
 
 def set_seed(seed: int = 42) -> None:
+    """Set the seed for the random number generators.
+
+    Args:
+        seed: The seed to set.
+    """
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -17,6 +22,8 @@ def set_seed(seed: int = 42) -> None:
 
 
 class SGD_with_nesterov(Optimizer):
+    """SGD optimizer with Nesterov momentum.
+    """
     def __init__(
             self,
             params: ParamsT,
@@ -24,6 +31,15 @@ class SGD_with_nesterov(Optimizer):
             inplace: bool = True,
             momentum: float = 0.9,
             nesterov: bool = True) -> None:
+        """Initialize the SGD optimizer with Nesterov momentum.
+
+        Args:
+            params: The parameters to optimize.
+            lr: The learning rate.
+            inplace: Whether to use inplace operations.
+            momentum: The momentum.
+            nesterov: Whether to use Nesterov momentum.
+        """
         super().__init__(
             params,
             defaults=dict(
@@ -36,6 +52,14 @@ class SGD_with_nesterov(Optimizer):
 
     @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]
+        """Perform a single optimization step.
+
+        Args:
+            closure: A closure that evaluates the loss.
+
+        Returns:
+            The loss.
+        """
         loss = None
         if closure is not None:
             with torch.enable_grad():

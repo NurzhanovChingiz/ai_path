@@ -50,8 +50,8 @@ def log_softmax_np(logits: np.ndarray) -> np.ndarray:
 
 
 def cross_entropy_np(y: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Numpy implementation of multi-class cross entropy loss.
+    """Numpy implementation of multi-class cross entropy loss.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N, C)
     """
@@ -85,8 +85,8 @@ def log_softmax_torch(logits: torch.Tensor) -> torch.Tensor:
 
 
 def cross_entropy_torch(y: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
-    """
-    Pytorch implementation of multi-class cross entropy loss.
+    """Pytorch implementation of multi-class cross entropy loss.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N, C)
     """

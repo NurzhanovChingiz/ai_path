@@ -2,10 +2,9 @@ import os
 
 
 def save_py_files_structure(base_folder: str, output_file: str) -> None:
-    """
-    Traverse base_folder and its subdirectories, save the directory structure
-    of all .py files into a single file, indicating the file name as comments.
-    args:
+    """Traverse base_folder and its subdirectories, save the directory structure of all .py files into a single file, indicating the file name as comments.
+
+    Args:
         base_folder (str): The root directory to start the search.
         output_file (str): The file to save the structure to.
     """

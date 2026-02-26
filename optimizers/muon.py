@@ -11,6 +11,11 @@ from torch.optim.optimizer import Optimizer, ParamsT
 
 
 def set_seed(seed: int = 42) -> None:
+    """Set the seed for the random number generators.
+
+    Args:
+        seed: The seed to set.
+    """
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -23,24 +28,26 @@ def zero_power_via_newtonschulz5(
         grad: torch.Tensor,
         steps: int = 5,
         eps: float = 1e-7) -> torch.Tensor:
-    '''
-    Newton-Schulz iteration to compute the zeroth power / orthogonalization of G. We opt to use a
-    quintic iteration whose coefficients are selected to maximize the slope at zero. For the purpose
-    of minimizing steps, it turns out to be empirically effective to keep increasing the slope at
+    """Newton-Schulz iteration to compute the zeroth power / orthogonalization of G. We opt to use a quintic iteration whose coefficients are selected to maximize the slope at zero.
+
+    For the purpose of minimizing steps, it turns out to be empirically effective to keep increasing the slope at
     zero even beyond the point where the iteration no longer converges all the way to one everywhere
     on the interval. This iteration therefore does not produce UV^T but rather something like US'V^T
     where S' is diagonal with S_{ii}' ~ Uniform(0.5, 1.5), which turns out not to hurt model
     performance at all relative to UV^T, where USV^T = G is the SVD.
+
     Args:
         grad: The gradient tensor.
         steps: The number of steps to run the iteration.
         eps: The epsilon value to prevent division by zero.
+
     Returns:
         The zero power of the gradient tensor.
+
     References:
         -Implementation reference: https://github.com/KellerJordan/Muon/blob/master/muon.py
         -Suggestions by @jxbz, @leloykun, and @YouJiacheng.
-    '''
+    """
     assert grad.ndim >= 2
     assert steps <= 100
     a, b, c = (3.4445, -4.7750, 2.0315)
@@ -75,6 +82,16 @@ def _adjust_lr(lr: float, adjust_lr_fn: str | None,
 
 
 class Muon(Optimizer):
+    """Muon is a variant of the Adam optimizer that uses orthogonalization to improve training stability.
+
+    It is based on the idea that the gradient of the loss function is a linear combination of the parameters.
+    By orthogonalizing the gradient, we can improve the training stability and convergence rate.
+
+    References:
+        - Implementation reference: https://github.com/KellerJordan/Muon/blob/master/muon.py
+        - Suggestions by @jxbz, @leloykun, and @YouJiacheng.
+    """
+
     def __init__(
             self,
             params: ParamsT,
@@ -85,7 +102,18 @@ class Muon(Optimizer):
             steps: int = 5,
             eps: float = 1e-7,
             adjust_lr_fn: str | None = None) -> None:
+        """Initialize the Muon optimizer.
 
+        Args:
+            params: The parameters to optimize.
+            lr: The learning rate.
+            weight_decay: The weight decay.
+            momentum: The momentum.
+            nesterov: Whether to use Nesterov momentum.
+            steps: The number of steps to run the iteration.
+            eps: The epsilon value to prevent division by zero.
+            adjust_lr_fn: The learning rate adjustment function.
+        """
         super().__init__(
             params,
             defaults=dict(
@@ -110,6 +138,14 @@ class Muon(Optimizer):
 
     @torch.no_grad()
     def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]
+        """Perform a single optimization step.
+
+        Args:
+            closure: A closure that evaluates the loss.
+
+        Returns:
+            The loss.
+        """
         loss = None
         if closure is not None:
             with torch.enable_grad():

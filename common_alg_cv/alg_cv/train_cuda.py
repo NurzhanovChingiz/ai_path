@@ -38,8 +38,8 @@ def _record_stream(obj: Any, stream: torch.cuda.Stream) -> None:
 
 
 class CUDAPrefetcher:
-    """
-    Overlaps CPU→GPU copy of the *next* batch with GPU compute on the *current* batch.
+    """Overlaps CPU→GPU copy of the *next* batch with GPU compute on the *current* batch.
+
     Requires:
       - DataLoader(..., pin_memory=True)
       - CUDA device

@@ -10,7 +10,6 @@ from optimizers.learning.AdamW import AdamW
 from optimizers.learning.SGD import SGD
 from optimizers.learning.SGD_with_momentum import SGD_with_momentum
 from optimizers.learning.SGD_with_nesterov import SGD_with_nesterov
-from optimizers.learning.SGD_with_weight_decay import SGD as SGD_weight_decay
 
 ATOL: float = 1e-5  # 0.001%
 RTOL: float = 1e-3  # 0.1%
@@ -19,11 +18,24 @@ SEED: int = 42
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 def set_seed(seed: int = SEED) -> None:
+    """Set the seed for the random number generators.
+
+    Args:
+        seed: The seed to set.
+    """
     torch.manual_seed(seed)
     np.random.seed(seed)
 
 
 def make_data(seed: int = SEED) -> tuple[torch.Tensor, torch.Tensor]:
+    """Make the data for the optimizer.
+
+    Args:
+        seed: The seed to set.
+
+    Returns:
+        The input and output tensors.
+    """
     set_seed(seed)
     x = torch.randn(10, 1)
     y = torch.randn(10, 1)
@@ -36,6 +48,18 @@ def run_optimizer(optimizer_cls: type,
                   output_tensor: torch.Tensor,
                   **optim_kwargs: Any) -> tuple[torch.Tensor,
                                                 torch.Tensor]:
+    """Run the optimizer for a single step.
+
+    Args:
+        optimizer_cls: The optimizer class.
+        model: The model.
+        input_tensor: The input tensor.
+        output_tensor: The output tensor.
+        **optim_kwargs: The optimizer kwargs.
+
+    Returns:
+        The weight and bias tensors.
+    """
     optimizer = optimizer_cls(model.parameters(), **optim_kwargs)
     optimizer.zero_grad()
     output = model(input_tensor)
@@ -54,6 +78,19 @@ def run_n_steps(optimizer_cls: type,
                 n_steps: int,
                 **optim_kwargs: Any) -> tuple[torch.Tensor,
                                               torch.Tensor]:
+    """Run the optimizer for multiple steps.
+
+    Args:
+        optimizer_cls: The optimizer class.
+        model: The model.
+        x: The input tensor.
+        y: The output tensor.
+        n_steps: The number of steps to run.
+        **optim_kwargs: The optimizer kwargs.
+
+    Returns:
+        The weight and bias tensors.
+    """
     optimizer = optimizer_cls(model.parameters(), **optim_kwargs)
     for _ in range(n_steps):
         optimizer.zero_grad()
@@ -73,6 +110,14 @@ def assert_close_all(
         ref_out: torch.Tensor,
         atol: float = ATOL,
         rtol: float = RTOL) -> None:
+    """Assert that the custom output is close to the reference output.
+
+    Args:
+        custom_out: The custom output.
+        ref_out: The reference output.
+        atol: The absolute tolerance.
+        rtol: The relative tolerance.
+    """
     assert np.allclose(
         custom_out,
         ref_out,
@@ -86,6 +131,14 @@ def assert_close_torch(
         ref_out: torch.Tensor,
         atol: float = ATOL,
         rtol: float = RTOL) -> None:
+    """Assert that the custom output is close to the reference output.
+
+    Args:
+        custom_out: The custom output.
+        ref_out: The reference output.
+        atol: The absolute tolerance.
+        rtol: The relative tolerance.
+    """
     torch.testing.assert_close(
         custom_out,
         ref_out,
@@ -96,9 +149,15 @@ def assert_close_torch(
 
 # ── Test SGD ─────────────────────────────────────────────────────────────────
 class TestSGD:
-
+    """Test the SGD optimizer."""
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD optimizer with single step matches the PyTorch SGD optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -114,6 +173,12 @@ class TestSGD:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD optimizer with multiple steps matches the PyTorch SGD optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -129,6 +194,11 @@ class TestSGD:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the SGD optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -145,9 +215,15 @@ class TestSGD:
 
 # ── Test SGD with Weight Decay ───────────────────────────────────────────────
 class TestSGDWeightDecay:
-
+    """Test the SGD with Weight Decay optimizer."""
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Weight Decay optimizer with single step matches the PyTorch SGD with Weight Decay optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -164,6 +240,12 @@ class TestSGDWeightDecay:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Weight Decay optimizer with multiple steps matches the PyTorch SGD with Weight Decay optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -179,6 +261,11 @@ class TestSGDWeightDecay:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the SGD with Weight Decay optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -194,6 +281,11 @@ class TestSGDWeightDecay:
         assert_close_torch(b_ip, b_nip)
 
     def test_zero_weight_decay_matches_plain_sgd(self) -> None:
+        """Test that the SGD with Weight Decay optimizer with zero weight decay matches the plain SGD optimizer.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_wd = nn.Linear(1, 1)
@@ -210,9 +302,15 @@ class TestSGDWeightDecay:
 
 # ── Test SGD with Momentum ───────────────────────────────────────────────────
 class TestSGDMomentum:
-
+    """Test the SGD with Momentum optimizer."""
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Momentum optimizer with single step matches the PyTorch SGD with Momentum optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -229,6 +327,12 @@ class TestSGDMomentum:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Momentum optimizer with multiple steps matches the PyTorch SGD with Momentum optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -244,6 +348,11 @@ class TestSGDMomentum:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the SGD with Momentum optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -261,9 +370,16 @@ class TestSGDMomentum:
 
 # ── Test SGD with Nesterov ───────────────────────────────────────────────────
 class TestSGDNesterov:
+    """Test the SGD with Nesterov optimizer."""
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Nesterov optimizer with single step matches the PyTorch SGD with Nesterov optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -280,6 +396,12 @@ class TestSGDNesterov:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the SGD with Nesterov optimizer with multiple steps matches the PyTorch SGD with Nesterov optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -295,6 +417,11 @@ class TestSGDNesterov:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the SGD with Nesterov optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -312,9 +439,16 @@ class TestSGDNesterov:
 
 # ── Test Adam ────────────────────────────────────────────────────────────────
 class TestAdam:
+    """Test the Adam optimizer."""
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the Adam optimizer with single step matches the PyTorch Adam optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -333,6 +467,12 @@ class TestAdam:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the Adam optimizer with multiple steps matches the PyTorch Adam optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -350,6 +490,11 @@ class TestAdam:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the Adam optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -368,6 +513,12 @@ class TestAdam:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_custom_betas(self, inplace: bool) -> None:
+        """Test that the Adam optimizer with custom betas matches the PyTorch Adam optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -387,9 +538,16 @@ class TestAdam:
 
 # ── Test AdamW ───────────────────────────────────────────────────────────────
 class TestAdamW:
+    """Test the AdamW optimizer."""
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_single_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the AdamW optimizer with single step matches the PyTorch AdamW optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -408,6 +566,12 @@ class TestAdamW:
 
     @pytest.mark.parametrize("inplace", [True, False])
     def test_multi_step_matches_pytorch(self, inplace: bool) -> None:
+        """Test that the AdamW optimizer with multiple steps matches the PyTorch AdamW optimizer.
+
+        Args:
+            self: The test case.
+            inplace: Whether to use inplace operations.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_custom = nn.Linear(1, 1)
@@ -425,6 +589,11 @@ class TestAdamW:
         assert_close_torch(b_custom, b_ref)
 
     def test_inplace_and_non_inplace_agree(self) -> None:
+        """Test that the AdamW optimizer with inplace and non-inplace agree.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_ip = nn.Linear(1, 1)
@@ -442,6 +611,11 @@ class TestAdamW:
         assert_close_torch(b_ip, b_nip)
 
     def test_zero_weight_decay_matches_adam(self) -> None:
+        """Test that the AdamW optimizer with zero weight decay matches the Adam optimizer.
+
+        Args:
+            self: The test case.
+        """
         x, y = make_data()
         set_seed(SEED)
         model_adamw = nn.Linear(1, 1)

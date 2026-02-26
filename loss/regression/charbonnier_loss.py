@@ -16,8 +16,8 @@ from korina_charbonnier_loss import charbonnier_loss
 
 
 def charbonnier_loss_np(pred: np.ndarray, target: np.ndarray) -> float:
-    '''
-    Charbonnier loss:
+    """Charbonnier loss.
+
     Formula:
         Charbonnier(x) = ((pred - target) ** 2 + 1.0).sqrt() - 1.0
     Args:
@@ -26,7 +26,7 @@ def charbonnier_loss_np(pred: np.ndarray, target: np.ndarray) -> float:
 
     Returns:
         Charbonnier loss as a float
-    '''
+    """
     diff = pred - target
     diff_squared = diff ** 2
     diff_squared_plus_1 = diff_squared + 1.0

@@ -13,8 +13,7 @@ def train(
         loss_fn: nn.Module,
         optimizer: torch.optim.Optimizer,
         device: torch.device) -> None:
-    """
-    Train the model.
+    """Train the model.
 
     Args:
         model: The model to train.

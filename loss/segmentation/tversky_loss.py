@@ -16,6 +16,14 @@ from karina_tversky_loss import tversky_loss
 
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:
+    """Calculate the softmax of the logits.
+
+    Args:
+        logits: The logits.
+
+    Returns:
+        The softmax of the logits.
+    """
     m = logits.max(axis=1, keepdims=True)
     shifted_logits = logits - m
     exp_i = np.exp(shifted_logits)
@@ -31,6 +39,15 @@ def tversky_loss_np(
     beta: float,
     eps: float,
 ) -> np.ndarray:
+    """Calculate the Tversky loss.
+
+    Args:
+        pred: The predicted logits.
+        target: The target tensor.
+        alpha: The alpha parameter.
+        beta: The beta parameter.
+        eps: The epsilon parameter.
+    """
     pred_soft = softmax_np(pred)
     p_true = np.take_along_axis(
         pred_soft, target[:, None, :, :], axis=1).squeeze(1)  # (B, H, W)
@@ -51,6 +68,15 @@ def tversky_loss_torch(
     beta: float,
     eps: float,
 ) -> torch.Tensor:
+    """Calculate the Tversky loss.
+
+    Args:
+        pred: The predicted logits.
+        target: The target tensor.
+        alpha: The alpha parameter.
+        beta: The beta parameter.
+        eps: The epsilon parameter.
+    """
     pred_soft = torch.nn.functional.softmax(pred, dim=1)
     p_true = torch.gather(
         pred_soft, 1, target[:, None, :, :]).squeeze(1)  # (B, H, W)

@@ -9,6 +9,15 @@ from torch.nn import functional as F
 def mask_ignore_pixels(
     target: torch.Tensor, ignore_index: int | None
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
+    """Mask the ignore pixels.
+
+    Args:
+        target: The target tensor.
+        ignore_index: The ignore index.
+
+    Returns:
+        The target tensor and the target mask.
+    """
     if ignore_index is None:
         return target, None
 

@@ -22,8 +22,8 @@ def smoothL1_np(
         pred: np.ndarray,
         target: np.ndarray,
         beta: float = 1.0) -> float:
-    '''
-    L1 (Huber) loss:
+    """L1 (Huber) loss.
+
     Formula:
         smoothL1(x) = 0.5 * x^2 / beta, if |x| < beta
         smoothL1(x) = |x| - 0.5 * beta, otherwise
@@ -34,7 +34,7 @@ def smoothL1_np(
 
     Returns:
         smoothL1 loss as a float
-    '''
+    """
     diff = np.abs(pred - target)
     mask = diff < beta
     result = np.where(

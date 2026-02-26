@@ -57,8 +57,8 @@ def focal_loss_np(
     alpha: float,
     gamma: float,
 ) -> float:
-    """
-    Numpy implementation of focal loss matching Kornia's multi-class version.
+    """Numpy implementation of focal loss matching Kornia's multi-class version.
+
     pred:   raw logits of shape (N, C, *)
     target: class indices of shape (N, *)
     alpha:  weight for classes 1..C-1 (class 0 gets weight 1-alpha)
@@ -118,8 +118,7 @@ def focal_loss_torch(
     alpha: float,
     gamma: float,
 ) -> torch.Tensor:
-    """
-    PyTorch implementation of focal loss matching Kornia's multi-class version.
+    """PyTorch implementation of focal loss matching Kornia's multi-class version.
     """
     num_classes = pred.shape[1]
     target_one_hot = one_hot_torch(target, num_classes)

@@ -16,19 +16,37 @@ def set_seed(seed: int = 42) -> None:
     print(f"Random Seed : {seed}")
 
 
-class SGD(Optimizer):
+class SGD_with_weight_decay(Optimizer):
+    """SGD optimizer with weight decay.
+    """
     def __init__(
             self,
             params: ParamsT,
             lr: float,
             inplace: bool = True,
             weight_decay: float = 0) -> None:
+        """Initialize the SGD optimizer with weight decay.
+
+        Args:
+            params: The parameters to optimize.
+            lr: The learning rate.
+            inplace: Whether to use inplace operations.
+            weight_decay: The weight decay.
+        """
         super().__init__(params, defaults=dict(lr=lr, weight_decay=weight_decay))
         self.inplace = inplace
         self.weight_decay = weight_decay
 
     @torch.no_grad()    
     def step(self, closure: Callable[[], float] | None = None) -> float | None: # type: ignore[override]
+        """Perform a single optimization step.
+
+        Args:
+            closure: A closure that evaluates the loss.
+
+        Returns:
+            The loss.
+        """
         loss = None
         if closure is not None:
             with torch.enable_grad():
@@ -56,7 +74,7 @@ class SGD(Optimizer):
 if __name__ == "__main__":
     set_seed(42)
     model = nn.Linear(1, 1)
-    optimizer = SGD(
+    optimizer = SGD_with_weight_decay(
         model.parameters(),
         lr=0.01,
         inplace=True,

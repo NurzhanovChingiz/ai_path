@@ -41,8 +41,7 @@ class ShardingStrategy(Enum):
 
 
 class DionOptimizer(Optimizer):
-    """
-    Dion (DIstributed OrthoNormalization) Optimizer
+    """Dion (DIstributed OrthoNormalization) Optimizer
 
     Unofficial - Implements the Dion optimizer with support for both centralized and distributed training.
     Orthonormalized updates for matrix parameters via low rank decomposition, and configurable scalar optimizers
@@ -313,7 +312,6 @@ class DionOptimizer(Optimizer):
         self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: dict
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Distributed power iteration (Algorithm 3, lines 5-6 in the paper)."""
-
         # P = BQ with local computation
         P_local = torch.mm(B, Q_prev)
 
@@ -516,7 +514,9 @@ class DionOptimizer(Optimizer):
 
     def state_dict(self) -> dict[str, Any]:
         """Return state dict for checkpointing.
-        TODO - this needs more testing..."""
+
+        TODO - this needs more testing...
+        """
         state_dict = super().state_dict()
         if self.scalar_optimizer is not None:
             state_dict["scalar_optimizer"] = self.scalar_optimizer.state_dict()
@@ -566,8 +566,7 @@ def create_dion_optimizer(
     sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,
     **kwargs: Any,
 ) -> DionOptimizer:
-    """
-    Create a Dion optimizer with recommended settings.
+    """Create a Dion optimizer with recommended settings.
 
     Args:
         model: PyTorch model
@@ -597,8 +596,7 @@ def create_dion_optimizer_fsdp2(
     process_group: dist.ProcessGroup | None = None,
     **kwargs: Any,
 ) -> DionOptimizer:
-    """
-    Create a Dion optimizer configured for FSDP2 training.
+    """Create a Dion optimizer configured for FSDP2 training.
 
     Args:
         model: PyTorch model (should be wrapped with FSDP2)
@@ -630,8 +628,7 @@ def create_dion_optimizer_fsdp2(
 def get_parameter_info(
     model: nn.Module, matrix_threshold: int = 32
 ) -> dict[str, Any]:
-    """
-    Analyze model parameters for Dion optimization.
+    """Analyze model parameters for Dion optimization.
 
     Args:
         model: PyTorch model

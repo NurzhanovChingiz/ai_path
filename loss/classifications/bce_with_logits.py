@@ -22,8 +22,8 @@ def sigmoid_np(x: np.ndarray) -> np.ndarray:
 
 
 def bce_with_logits_np(y: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Numpy implementation of binary cross entropy with logits.
+    """Numpy implementation of binary cross entropy with logits.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
     """
@@ -34,8 +34,8 @@ def bce_with_logits_np(y: np.ndarray, y_pred: np.ndarray) -> float:
 
 
 def bce_with_logits_np_stable(y: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Numpy implementation of binary cross entropy with logits.
+    """Numpy implementation of binary cross entropy with logits.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
     """
@@ -58,8 +58,8 @@ def sigmoid_torch(x: torch.Tensor) -> torch.Tensor:
 def bce_with_logits_torch(
         y: torch.Tensor,
         y_pred: torch.Tensor) -> torch.Tensor:
-    """
-    PyTorch implementation of binary cross entropy with logits.
+    """PyTorch implementation of binary cross entropy with logits.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
     """
@@ -72,8 +72,8 @@ def bce_with_logits_torch(
 def bce_with_logits_torch_stable(
         y: torch.Tensor,
         y_pred: torch.Tensor) -> torch.Tensor:
-    """
-    PyTorch implementation of binary cross entropy with logits.
+    """PyTorch implementation of binary cross entropy with logits.
+
     y: class indices of shape (N,)
     y_pred: raw logits of shape (N,)
     """

@@ -7,8 +7,8 @@ from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-unt
 __all__ = ['MobileNetV2',  "InvertedResidual"]
 
 def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
-    """
-    This function is taken from the original tf repo.
+    """This function is taken from the original tf repo.
+
     It ensures that all layers have a channel number that is divisible by 8
     It can be seen here:
     https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
@@ -29,8 +29,8 @@ def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int
 
 
 class InvertedResidual(nn.Module):
-    """
-    Inverted Residual Block
+    """Inverted Residual Block.
+
     Args:
         in_channels: Number of input channels
         out_channels: Number of output channels
@@ -115,22 +115,21 @@ class InvertedResidual(nn.Module):
             return self.conv(x)  # type: ignore[no-any-return]
 
 class MobileNetV2(nn.Module):
-    """
-        MobileNet V2 main class
+    """MobileNet V2 main class
 
-        Args:
-            num_classes (int): Number of classes
-            width_mult (float): Width multiplier - adjusts number of channels in each layer by this amount
-            inverted_residual_setting: Network structure
-            round_nearest (int): Round the number of channels in each layer to be a multiple of this number
-            Set to 1 to turn off rounding
-            block: Module specifying inverted residual building block for mobilenet
-            norm_layer: Module specifying the normalization layer to use
-            dropout (float): The dropout probability
-            pretrained (bool): If True, returns a model pre-trained on ImageNet
-        Returns:
-            MobileNetV2 model
-        """
+    Args:
+        num_classes (int): Number of classes
+        width_mult (float): Width multiplier - adjusts number of channels in each layer by this amount
+        inverted_residual_setting: Network structure
+        round_nearest (int): Round the number of channels in each layer to be a multiple of this number
+        Set to 1 to turn off rounding
+        block: Module specifying inverted residual building block for mobilenet
+        norm_layer: Module specifying the normalization layer to use
+        dropout (float): The dropout probability
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    Returns:
+        MobileNetV2 model
+    """
     def __init__(
         self,
         num_classes: int = 1000,

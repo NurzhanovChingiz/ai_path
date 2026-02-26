@@ -18,17 +18,18 @@ from torch.nn import functional as F
 
 
 def mse_np(pred: np.ndarray, target: np.ndarray) -> float:
-    '''
-    MSE loss:
+    """MSE loss.
+
     Formula:
         MSE(x) = 1/n * sum((x - y)^2)
+
     Args:
         pred: predicted values
         target: target values
 
     Returns:
         MSE loss as a float
-    '''
+    """
     diff = pred - target
     diff_squared = diff ** 2
     result: np.ndarray = np.mean(diff_squared)

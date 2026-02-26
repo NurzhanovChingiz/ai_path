@@ -4,8 +4,7 @@ from torch.nn import functional as F
 
 
 class CustomReLU(nn.Module):
-    """
-    Custom ReLU activation function.
+    """Custom ReLU activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -13,8 +12,7 @@ class CustomReLU(nn.Module):
 
 
 class CustomReLU6(nn.Module):
-    """
-    Custom ReLU6 activation function.
+    """Custom ReLU6 activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -22,8 +20,7 @@ class CustomReLU6(nn.Module):
 
 
 class CustomPReLU(nn.Module):
-    """
-    Custom PReLU activation function.
+    """Custom PReLU activation function.
     """
 
     def __init__(self, num_parameters: int = 1, init: float = 0.25) -> None:
@@ -40,8 +37,7 @@ class CustomPReLU(nn.Module):
 
 
 class CustomSELU(nn.Module):
-    """
-    Custom SELU activation function.
+    """Custom SELU activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -55,8 +51,7 @@ class CustomSELU(nn.Module):
 
 
 class CustomCELU(nn.Module):
-    """
-    Custom CELU activation function.
+    """Custom CELU activation function.
     """
 
     def __init__(self, alpha: float = 1.0):
@@ -69,8 +64,7 @@ class CustomCELU(nn.Module):
 
 
 class CustomGELU(nn.Module):
-    """
-    Custom GELU activation function.
+    """Custom GELU activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -81,8 +75,7 @@ class CustomGELU(nn.Module):
 
 
 class CustomSigmoid(nn.Module):
-    """
-    Custom Sigmoid activation function.
+    """Custom Sigmoid activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -90,8 +83,7 @@ class CustomSigmoid(nn.Module):
 
 
 class CustomMish(nn.Module):
-    """
-    Custom Mish activation function.
+    """Custom Mish activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -99,8 +91,7 @@ class CustomMish(nn.Module):
 
 
 class CustomSoftplus(nn.Module):
-    """
-    Custom Softplus activation function.
+    """Custom Softplus activation function.
     """
 
     def forward(self, x: torch.Tensor, beta: float = 1.0,
@@ -114,8 +105,7 @@ class CustomSoftplus(nn.Module):
 
 
 class CustomTanh(nn.Module):
-    """
-    Custom Tanh activation function.
+    """Custom Tanh activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -123,8 +113,7 @@ class CustomTanh(nn.Module):
 
 
 class CustomSoftmax(nn.Module):
-    """
-    Custom Softmax activation function.
+    """Custom Softmax activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -134,8 +123,7 @@ class CustomSoftmax(nn.Module):
 
 
 class CustomLeakyReLU(nn.Module):
-    """
-    Custom Leaky ReLU activation function.
+    """Custom Leaky ReLU activation function.
     """
 
     def __init__(self, negative_slope: float = 0.01):
@@ -148,8 +136,7 @@ class CustomLeakyReLU(nn.Module):
 
 
 class CustomELU(nn.Module):
-    """
-    Custom ELU activation function.
+    """Custom ELU activation function.
     """
 
     def __init__(self, alpha: float = 1.0):
@@ -161,8 +148,7 @@ class CustomELU(nn.Module):
 
 
 class CustomSwish(nn.Module):
-    """
-    Custom Swish activation function.
+    """Custom Swish activation function.
     """
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

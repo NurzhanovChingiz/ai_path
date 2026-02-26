@@ -30,6 +30,13 @@ class TypeCheckError(BaseError):
         actual_type: type | None = None,
         expected_type: type | tuple[type, ...] | None = None,
     ):
+        """Initialize the TypeCheckError.
+
+        Args:
+            message: The message.
+            actual_type: The actual type.
+            expected_type: The expected type.
+        """
         super().__init__(message)
         self.actual_type = actual_type
         self.expected_type = expected_type
@@ -133,6 +140,15 @@ def KORNIA_CHECK(
 def mask_ignore_pixels(
     target: torch.Tensor, ignore_index: int | None
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
+    """Mask the ignore pixels.
+
+    Args:
+        target: The target tensor.
+        ignore_index: The ignore index.
+
+    Returns:
+        The target tensor and the target mask.
+    """
     if ignore_index is None:
         return target, None
 

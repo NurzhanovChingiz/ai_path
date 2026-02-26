@@ -25,11 +25,11 @@ def inputs_list() -> list[list[int]]:
 
 def assert_close_all(
         custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
-    '''
-    Assert that the custom sorting function matches the numpy sorting function
+    """Assert that the custom sorting function matches the numpy sorting function.
+
     :param custom_cls: The custom sorting function
     :param input_list: The input list to be sorted
-    '''
+    """
     expected = sorted(input_list)
     arr = list(input_list)
     for _ in custom_cls(arr):
@@ -39,11 +39,11 @@ def assert_close_all(
 
 def run_sorting(
         custom_cls: Callable[[list[int]], list[int]], input_list: list[int]) -> None:
-    '''
-    Run the custom sorting function (exhausts the generator)
+    """Run the custom sorting function (exhausts the generator).
+
     :param custom_cls: The custom sorting function
     :param input_list: The input list to be sorted
-    '''
+    """
     for _ in custom_cls(input_list):
         pass
 

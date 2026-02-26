@@ -41,6 +41,18 @@ class Lamb(Optimizer):
         adam: bool = False,
         debias: bool = False
     ):
+        """Initialize the LAMB optimizer.
+
+        Args:
+            params: The parameters to optimize.
+            lr: The learning rate.
+            betas: The betas for the AdamW optimizer.
+            eps: The epsilon value for the AdamW optimizer.
+            weight_decay: The weight decay value for the AdamW optimizer.
+            clamp_value: The clamp value for the trust ratio.
+            adam: Whether to use the AdamW optimizer.
+            debias: Whether to debias the first moment estimate.
+        """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= eps:

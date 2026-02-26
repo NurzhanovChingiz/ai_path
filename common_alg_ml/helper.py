@@ -22,5 +22,4 @@ def save_py_files_structure(base_folder: str, output_file: str) -> None:
 
             sub_indent = "│   " * level + "├── "
             py_files = [file for file in files if file.endswith(".py")]
-            for file in py_files:
-                outfile.write(f"{sub_indent}{file}\n")
+            outfile.writelines(f"{sub_indent}{file}\n" for file in py_files)

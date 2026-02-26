@@ -28,7 +28,7 @@ extend-select = [
   "DTZ",  # flake8-datetimez
   "ERA",  # eradicate
   "PERF",# Perflint
-  
+  "FURB", # refurb
   #"PD",   # pandas-vet
   "FIX",
   "RUF",  # Ruff

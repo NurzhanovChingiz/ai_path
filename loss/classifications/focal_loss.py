@@ -66,11 +66,11 @@ def one_hot_np(
     flat = labels.reshape(-1)
     one_hot = np.eye(num_classes, dtype=np.float32)[flat]  # (N*..., C)
 
-    target_shape = labels.shape + (num_classes,)
+    target_shape = (*labels.shape, num_classes)
     one_hot = one_hot.reshape(target_shape)
 
     ndim = labels.ndim
-    perm = [0] + [ndim] + list(range(1, ndim))
+    perm = [0, ndim, *list(range(1, ndim))]
     one_hot = one_hot.transpose(perm)
 
     result: np.ndarray = one_hot * (1.0 - eps) + eps
@@ -154,10 +154,10 @@ def one_hot_torch(
     """
     flat = labels.reshape(-1)
     one_hot = torch.eye(num_classes, dtype=torch.float32)[flat]  # (N*..., C)
-    target_shape = labels.shape + (num_classes,)
+    target_shape = (*labels.shape, num_classes)
     one_hot = one_hot.reshape(target_shape)
     ndim = labels.ndim
-    perm = [0] + [ndim] + list(range(1, ndim))
+    perm = [0, ndim, *list(range(1, ndim))]
     one_hot = one_hot.permute(perm)
     result: torch.Tensor = one_hot * (1.0 - eps) + eps
     return result

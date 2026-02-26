@@ -42,10 +42,7 @@ class SGD_with_nesterov(Optimizer):
         """
         super().__init__(
             params,
-            defaults=dict(
-                lr=lr,
-                momentum=momentum,
-                nesterov=nesterov))
+              defaults={"lr": lr, "momentum": momentum, "nesterov": nesterov})
         self.momentum = momentum
         self.inplace = inplace
         self.nesterov = nesterov

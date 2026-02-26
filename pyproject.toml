@@ -11,17 +11,17 @@ extend-select = [
   "UP",  # pyupgrade
   "D",   # pydocstyle
   "I",   # isort
-  "E",   # pycodestyle
-  "F",   # Pyflakes
+  "E",   # flake8-errors
+  "F",   # flake8-pyflakes
   "B",   # flake8-bugbear
+  "C4",   # flake8-comprehensions
   "SIM", # flake8-simplify
   "PL",  # Pylint
   "BLE", # flake8-blind-except
   "RSE", # flake8-raise
   "S",   # flake8-bandit
   "PERF",# Perflint
-  "W",   # pycodestyle
-  "E",   # pycodestyle
+  "W",   # flake8-warnings
   "Q",   # flake8-quotes
   #"PD",   # pandas-vet
   "FIX",

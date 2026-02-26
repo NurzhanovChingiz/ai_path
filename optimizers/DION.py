@@ -124,7 +124,7 @@ class DionOptimizer(Optimizer):
         self.scalar_optimizer_class = self._get_scalar_optimizer_class(scalar_optimizer)
         self.scalar_kwargs = scalar_kwargs
 
-        defaults = dict(lr=lr, momentum=momentum, weight_decay=weight_decay, eps=eps)
+        defaults = {"lr": lr, "momentum": momentum, "weight_decay": weight_decay, "eps": eps}
         super().__init__(params, defaults)
 
         # Initialize parameter classification and scalar optimizers

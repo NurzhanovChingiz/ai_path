@@ -36,7 +36,7 @@ class SGD(Optimizer):
             lr: The learning rate.
             inplace: Whether to use inplace operations.
         """
-        super().__init__(params, defaults=dict(lr=lr))
+        super().__init__(params, defaults={"lr": lr})
         self.inplace = inplace
 
     @torch.no_grad()

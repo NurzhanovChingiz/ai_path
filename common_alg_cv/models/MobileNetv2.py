@@ -8,7 +8,7 @@ from torchvision.models import (  # type: ignore[import-untyped]
 )
 from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-untyped]
 
-__all__ = ["MobileNetV2",  "InvertedResidual"]
+__all__ = ["InvertedResidual", "MobileNetV2"]
 
 def _make_divisible(v: float, divisor: int, min_value: int | None = None) -> int:
     """This function is taken from the original tf repo.
@@ -63,7 +63,7 @@ class InvertedResidual(nn.Module):
         self.stride = stride
         self.use_res_connect = self.stride == 1 and in_channels == out_channels
 
-        hidden_channels = int(round(in_channels * expand_ratio))
+        hidden_channels = round(in_channels * expand_ratio)
 
         if stride not in [1, 2]:
             raise ValueError(f"stride should be 1 or 2 instead of {stride}")

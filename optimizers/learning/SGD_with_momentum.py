@@ -38,7 +38,7 @@ class SGD_with_momentum(Optimizer):
             inplace: Whether to use inplace operations.
             momentum: The momentum.
         """
-        super().__init__(params, defaults=dict(lr=lr, momentum=momentum))
+        super().__init__(params, defaults={"lr": lr, "momentum": momentum})
         self.momentum = momentum
         self.inplace = inplace
 

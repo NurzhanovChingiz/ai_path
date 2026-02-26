@@ -208,7 +208,7 @@ def one_hot(
     # We need it at position 1: (N, C, *)
     # Permute: move the last dimension (num_classes) to position 1
     ndim = labels.ndim
-    permute_dims = [0] + [ndim] + list(range(1, ndim))
+    permute_dims = [0, ndim, *list(range(1, ndim))]
     one_hot_tensor = one_hot_tensor.permute(*permute_dims)
 
     # Convert to desired dtype and device, then apply eps for numerical

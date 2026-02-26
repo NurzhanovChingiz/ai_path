@@ -69,8 +69,7 @@ class Lamb(Optimizer):
             )
         if clamp_value < 0.0:
             raise ValueError(f"Invalid clamp value: {clamp_value}")
-        defaults = dict(lr=lr, betas=betas, eps=eps,
-                        weight_decay=weight_decay)
+        defaults = {"lr": lr, "betas": betas, "eps": eps, "weight_decay": weight_decay}
         self.clamp_value = clamp_value
         self.adam = adam
         self.debias = debias

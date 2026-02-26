@@ -38,7 +38,7 @@ class SGD_with_weight_decay(Optimizer):
             inplace: Whether to use inplace operations.
             weight_decay: The weight decay.
         """
-        super().__init__(params, defaults=dict(lr=lr, weight_decay=weight_decay))
+        super().__init__(params, defaults={"lr": lr, "weight_decay": weight_decay})
         self.inplace = inplace
         self.weight_decay = weight_decay
 

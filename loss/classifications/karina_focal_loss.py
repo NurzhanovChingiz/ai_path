@@ -316,7 +316,7 @@ def one_hot(
     # We need it at position 1: (N, C, *)
     # Permute: move the last dimension (num_classes) to position 1
     ndim = labels.ndim
-    permute_dims = [0] + [ndim] + list(range(1, ndim))
+    permute_dims = [0, ndim, *list(range(1, ndim))]
     one_hot_tensor = one_hot_tensor.permute(*permute_dims)
 
     # Convert to desired dtype and device, then apply eps for numerical
@@ -375,7 +375,7 @@ def focal_loss(
 
     """
     KORNIA_CHECK_SHAPE(pred, ["B", "C", "*"])
-    out_size = (pred.shape[0],) + pred.shape[2:]
+    out_size = (pred.shape[0], *pred.shape[2:])
     KORNIA_CHECK(
         (pred.shape[0] == target.shape[0] and target.shape[1:] == pred.shape[2:]),
         f"Expected target size {out_size}, got {target.shape}",

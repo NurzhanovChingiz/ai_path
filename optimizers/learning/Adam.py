@@ -34,7 +34,7 @@ class Adam(Optimizer):
                                         0.999),
                  eps: float = 1e-8) -> None:
         """Initialize Adam optimizer with learning rate, betas, and eps."""
-        super().__init__(params, defaults=dict(lr=lr, betas=betas, eps=eps))
+        super().__init__(params, defaults={"lr": lr, "betas": betas, "eps": eps})
         self.inplace = inplace
 
     @torch.no_grad()

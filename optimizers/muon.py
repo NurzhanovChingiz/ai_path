@@ -118,14 +118,15 @@ class Muon(Optimizer):
         """
         super().__init__(
             params,
-            defaults=dict(
-                lr=lr,
-                weight_decay=weight_decay,
-                momentum=momentum,
-                nesterov=nesterov,
-                adjust_lr_fn=adjust_lr_fn,
-                eps=eps,
-                steps=steps))
+              defaults={
+                  "lr": lr,
+                  "weight_decay": weight_decay,
+                  "momentum": momentum,
+                  "nesterov": nesterov,
+                  "adjust_lr_fn": adjust_lr_fn,
+                  "eps": eps,
+                  "steps": steps,
+              })
         self.lr = lr
         self.weight_decay = weight_decay
         self.momentum = momentum

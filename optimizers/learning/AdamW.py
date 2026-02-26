@@ -37,11 +37,7 @@ class AdamW(Optimizer):
         """Initialize AdamW optimizer with learning rate, betas, eps, and weight decay."""
         super().__init__(
             params,
-            defaults=dict(
-                lr=lr,
-                betas=betas,
-                eps=eps,
-                weight_decay=weight_decay))
+              defaults={"lr": lr, "betas": betas, "eps": eps, "weight_decay": weight_decay})
         self.inplace = inplace
 
     @torch.no_grad()

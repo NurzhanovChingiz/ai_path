@@ -10,7 +10,7 @@ def save_py_files_structure(base_folder: str, output_file: str) -> None:
         output_file (str): The file to save the structure to.
     """
     with open(output_file, 'w', encoding='utf-8') as outfile:
-        for root, dirs, files in os.walk(base_folder):
+        for root, _, files in os.walk(base_folder):
             if '.git' in root:
                 continue  # Skip .git directories
             level = root.replace(base_folder, '').count(os.sep)

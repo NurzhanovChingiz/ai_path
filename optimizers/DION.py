@@ -245,7 +245,7 @@ class DionOptimizer(Optimizer):
             info["local_shape"] = param._local_tensor.shape  # type: ignore[attr-defined]
             info["global_shape"] = param.shape
             placements = param.placements  # type: ignore[attr-defined]
-            for i, placement in enumerate(placements):
+            for _, placement in enumerate(placements):
                 if isinstance(placement, Shard):
                     info["shard_dims"].append(placement.dim)  # type: ignore[attr-defined]
 
@@ -396,7 +396,7 @@ class DionOptimizer(Optimizer):
 
         # Check for NaN or Inf in gradient
         if torch.isnan(grad).any() or torch.isinf(grad).any():
-            warnings.warn("NaN or Inf detected in gradient. Skipping update.")
+            warnings.warn("NaN or Inf detected in gradient. Skipping update.", stacklevel=2)
             return
 
         # Clip gradient to prevent extreme values
@@ -452,7 +452,7 @@ class DionOptimizer(Optimizer):
             else:
                 P, R = self._power_iteration(buffer, right_factor)
         except RuntimeError as e:
-            warnings.warn(f"Power iteration failed: {e}. Skipping update.")
+            warnings.warn(f"Power iteration failed: {e}. Skipping update.", stacklevel=2)
             return
 
         # Approximation
@@ -545,7 +545,8 @@ class DionOptimizer(Optimizer):
             if distributed_config["distributed"] != self.distributed:
                 warnings.warn(
                     f"Distributed mode mismatch: checkpoint has distributed={distributed_config['distributed']}, "
-                    f"current has distributed={self.distributed}"
+                    f"current has distributed={self.distributed}",
+                    stacklevel=2,
                 )
 
     def add_param_group(self, param_group: dict[str, Any]) -> None:

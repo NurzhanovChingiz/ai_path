@@ -47,7 +47,7 @@ def fuse_model_inplace(model: nn.Module) -> nn.Module:
     Only eval-mode pairs are fused; others are left unchanged.
     """
     # Work bottom-up
-    for name, child in list(model.named_children()):
+    for _name, child in list(model.named_children()):
         fuse_model_inplace(child)
 
     # Now try to fuse adjacent children in this module

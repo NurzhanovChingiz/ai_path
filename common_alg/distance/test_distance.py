@@ -35,7 +35,7 @@ def inputs_ndarray() -> list[tuple[np.ndarray, np.ndarray]]:
     inputs = []
     for d1 in d1_cases:
         for d2 in d2_cases:
-            inputs.append((d1, d2))
+            inputs.extend((d1, d2))
     return inputs
 
 

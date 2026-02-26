@@ -10,7 +10,7 @@ from typing import Any
 
 import torch
 import torch.distributed as dist
-import torch.nn as nn
+from torch import nn
 from torch.distributed._tensor import DTensor, Shard
 from torch.optim.adamw import AdamW
 from torch.optim.optimizer import Optimizer, ParamsT

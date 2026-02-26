@@ -1,7 +1,7 @@
 """AlexNet model implementation."""
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class AlexNet(nn.Module):

@@ -262,7 +262,7 @@ class ResNet(nn.Module):
         )
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
-            layers.append(
+            layers.extend(
                 block(
                     self.inplanes,
                     planes,

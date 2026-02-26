@@ -1,6 +1,6 @@
 """Module fusion utilities for conv-bn and linear-bn layers."""
 
-import torch.nn as nn
+from torch import nn
 from torch.nn.utils.fusion import fuse_conv_bn_eval, fuse_linear_bn_eval
 
 

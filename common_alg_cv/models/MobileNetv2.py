@@ -2,6 +2,10 @@
 from collections.abc import Callable
 
 from torch import Tensor, nn
+from torchvision.models import (  # type: ignore[import-untyped]
+    MobileNet_V2_Weights,
+    mobilenet_v2,
+)
 from torchvision.ops.misc import Conv2dNormActivation  # type: ignore[import-untyped]
 
 __all__ = ['MobileNetV2',  "InvertedResidual"]
@@ -261,11 +265,6 @@ class MobileNetV2(nn.Module):
                 
     def _pretrained(self) -> None:
         """Load pretrained weights from torchvision."""
-        from torchvision.models import (  # type: ignore[import-untyped]
-            MobileNet_V2_Weights,
-            mobilenet_v2,
-        )
-
         pretrained_model = mobilenet_v2(weights=MobileNet_V2_Weights.IMAGENET1K_V2)
         state_dict = pretrained_model.state_dict()
 

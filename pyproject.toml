@@ -6,7 +6,7 @@ disallow_untyped_defs = true
 check_untyped_defs = true
 
 [tool.ruff.lint]
-extend-ignore = ["E501"]
+extend-ignore = ["E501","PLR0913", "PLR2004", "PLR2004", "PLR0912", "PLW2901"]
 extend-select = [
   "UP",  # pyupgrade
   "D",   # pydocstyle
@@ -15,9 +15,11 @@ extend-select = [
   "F",   # Pyflakes
   "B",   # flake8-bugbear
   "SIM", # flake8-simplify
+  "PL",   # Pylint
   "BLE", # flake8-blind-except
   "RSE", # flake8-raise
   "S",   # flake8-bandit
+  "PERF", # Perflint
 ]
 
 [tool.ruff.lint.pydocstyle]

@@ -6,7 +6,7 @@ from collections.abc import Callable
 
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.optim.optimizer import Optimizer, ParamsT
 
 

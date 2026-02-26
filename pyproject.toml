@@ -14,6 +14,7 @@ extend-select = [
   "E",   # pycodestyle
   "F",   # Pyflakes
   "B",   # flake8-bugbear
+  "SIM", # flake8-simplify
 ]
 
 [tool.ruff.lint.pydocstyle]

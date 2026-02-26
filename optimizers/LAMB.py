@@ -53,9 +53,9 @@ class Lamb(Optimizer):
             adam: Whether to use the AdamW optimizer.
             debias: Whether to debias the first moment estimate.
         """
-        if not 0.0 <= lr:
+        if not lr >= 0.0:
             raise ValueError(f"Invalid learning rate: {lr}")
-        if not 0.0 <= eps:
+        if not eps >= 0.0:
             raise ValueError(f"Invalid epsilon value: {eps}")
         if not 0.0 <= betas[0] < 1.0:
             raise ValueError(

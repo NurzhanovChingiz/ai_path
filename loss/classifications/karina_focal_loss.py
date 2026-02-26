@@ -72,14 +72,13 @@ def KORNIA_CHECK_SHAPE(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
-    if "*" == shape[0]:
+    if shape[0] == "*":
         shape_to_check = shape[1:]
         x_shape_to_check = x.shape[-len(shape) + 1:]
-    elif "*" == shape[-1]:
+    elif shape[-1] == "*":
         shape_to_check = shape[:-1]
         x_shape_to_check = x.shape[: len(shape) - 1]
     else:
@@ -156,16 +155,12 @@ def KORNIA_CHECK(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if not condition:
         if raises:
-            if msg is None:
-                error_msg = "Validation condition failed"
-            else:
-                error_msg = msg
+            error_msg = "Validation condition failed" if msg is None else msg
             raise BaseError(error_msg)
         return False
     return True
@@ -245,9 +240,8 @@ def KORNIA_CHECK_IS_TENSOR(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if not isinstance(x, torch.Tensor):
         if raises:

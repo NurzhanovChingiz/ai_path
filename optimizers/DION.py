@@ -89,13 +89,13 @@ class DionOptimizer(Optimizer):
         **scalar_kwargs: Any,
     ) -> None:
         """Initialize DionOptimizer with matrix and scalar parameter settings."""
-        if not 0.0 <= lr:
+        if not lr >= 0.0:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= momentum < 1.0:
             raise ValueError(f"Invalid momentum value: {momentum}")
         if not 0.0 < rank_factor <= 1.0:
             raise ValueError(f"Invalid rank factor: {rank_factor}")
-        if not 0.0 <= weight_decay:
+        if not weight_decay >= 0.0:
             raise ValueError(f"Invalid weight decay value: {weight_decay}")
 
         self.rank_factor = rank_factor
@@ -153,10 +153,7 @@ class DionOptimizer(Optimizer):
     def _is_matrix_param(self, param: torch.Tensor) -> bool:
         """Determine if parameter should be treated as a matrix."""
         # Handle DTensor and FSDP wrapped parameters
-        if hasattr(param, "_local_tensor"):
-            local_param = param._local_tensor
-        else:
-            local_param = param
+        local_param = param._local_tensor if hasattr(param, "_local_tensor") else param
 
         # Must be 2D and both dimensions >= threshold
         return bool(
@@ -200,10 +197,7 @@ class DionOptimizer(Optimizer):
     def _get_lr_scale(self, param: torch.Tensor) -> float:
         """Get learning rate scaling factor based on parameter type and shape."""
         # Get actual tensor for shape calculation
-        if hasattr(param, "_local_tensor"):
-            actual_param = param._local_tensor
-        else:
-            actual_param = param
+        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param
 
         if actual_param.dim() == 0:  # Scalar (normalization)
             return 1.0
@@ -221,10 +215,7 @@ class DionOptimizer(Optimizer):
     def _get_weight_decay(self, param: torch.Tensor) -> float:
         """Get weight decay for parameter type."""
         # Get actual tensor for dimension check
-        if hasattr(param, "_local_tensor"):
-            actual_param = param._local_tensor
-        else:
-            actual_param = param
+        actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param
 
         # Only apply weight decay to matrix parameters (not bias/normalization)
         if actual_param.dim() >= 2:
@@ -541,13 +532,12 @@ class DionOptimizer(Optimizer):
             self.scalar_optimizer.load_state_dict(scalar_state)
 
         # Verify distributed configuration matches
-        if distributed_config is not None:
-            if distributed_config["distributed"] != self.distributed:
-                warnings.warn(
-                    f"Distributed mode mismatch: checkpoint has distributed={distributed_config['distributed']}, "
-                    f"current has distributed={self.distributed}",
-                    stacklevel=2,
-                )
+        if distributed_config is not None and distributed_config["distributed"] != self.distributed:
+            warnings.warn(
+                f"Distributed mode mismatch: checkpoint has distributed={distributed_config['distributed']}, "
+                f"current has distributed={self.distributed}",
+                stacklevel=2,
+            )
 
     def add_param_group(self, param_group: dict[str, Any]) -> None:
         """Add a parameter group to the optimizer."""

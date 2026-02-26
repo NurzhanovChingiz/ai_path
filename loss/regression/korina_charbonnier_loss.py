@@ -105,9 +105,8 @@ def KORNIA_CHECK_IS_TENSOR(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if not isinstance(x, torch.Tensor):
         if raises:
@@ -160,9 +159,8 @@ def KORNIA_CHECK_SAME_DEVICE(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if x.device != y.device:
         if raises:
@@ -204,16 +202,12 @@ def KORNIA_CHECK(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if not condition:
         if raises:
-            if msg is None:
-                error_msg = "Validation condition failed"
-            else:
-                error_msg = msg
+            error_msg = "Validation condition failed" if msg is None else msg
             raise BaseError(error_msg)
         return False
     return True
@@ -246,9 +240,8 @@ def KORNIA_CHECK_SAME_SHAPE(
         True
 
     """
-    if not torch.jit.is_scripting():
-        if not _KORNIA_CHECKS_ENABLED:
-            return True
+    if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
+        return True
 
     if x.shape != y.shape:
         if raises:

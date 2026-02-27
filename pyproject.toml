@@ -45,10 +45,12 @@ extend-select = [
   "TC",   # flake8-type-checking
   "ARG",  # flake8-unused-arguments
   "PTH",  # flake8-use-pathlib
+  "PGH",  # pygrep-hooks
+  "TRY",  # tryceratops
   "FLY",  # flynt
   "C90",  # mccabe
-
-
+  #"DOC",  # pydoclint  # warning: Selection `DOC` has no effect because preview is not enabled.
+  "PD",   # pandas-vet
   "PL",   # Pylint
   "RUF",  # Ruff
   "ERA",  # eradicate
@@ -56,9 +58,6 @@ extend-select = [
   "FURB", # refurb
   #"PD",  # pandas-vet
   "FURB", # refurb
-  
-  
-
 ]
 
 [tool.ruff.lint.pydocstyle]

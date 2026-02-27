@@ -319,13 +319,12 @@ class DionOptimizer(Optimizer):
         """Orthogonalize matrix using QR decomposition."""
         try:
             Q, _ = torch.linalg.qr(matrix)
-            return Q  # type: ignore[no-any-return]
         except RuntimeError as e:
             print(f"QR decomposition failed: {e}")
             # Fallback for numerical issues
             matrix_stabilized = matrix + 1e-8 * torch.randn_like(matrix)
             Q, _ = torch.linalg.qr(matrix_stabilized)
-            return Q  # type: ignore[no-any-return]
+        return Q  # type: ignore[no-any-return]
 
     def _distributed_orthogonalize(self, matrix: torch.Tensor) -> torch.Tensor:
         """Distributed orthogonalization using randomized Cholesky QR (Algorithm 2 in the paper)."""

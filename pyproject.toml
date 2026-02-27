@@ -44,7 +44,9 @@ extend-select = [
   "TID",  # flake8-tidy-imports
   "TC",   # flake8-type-checking
   "ARG",  # flake8-unused-arguments
-
+  "PTH",  # flake8-use-pathlib
+  "FLY",  # flynt
+  "C90",  # mccabe
 
 
   "PL",   # Pylint

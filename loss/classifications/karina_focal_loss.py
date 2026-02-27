@@ -36,11 +36,88 @@ class ShapeError(BaseError):
         self.expected_shape = expected_shape
 
 
+def _resolve_shape_slices(
+    shape: list[str],
+    x: torch.Tensor,
+) -> tuple[list[str], torch.Size]:
+    """Resolve shape and tensor slices for comparison based on wildcard handling."""
+    if shape[0] == "*":
+        return shape[1:], x.shape[-len(shape) + 1 :]
+    if shape[-1] == "*":
+        return shape[:-1], x.shape[: len(shape) - 1]
+    return shape, x.shape
+
+
+def _raise_shape_count_error(
+    expected_dims: int,
+    actual_dims: int,
+    shape: list[str],
+    x: torch.Tensor,
+    msg: str | None,
+) -> None:
+    """Raise ShapeError for dimension count mismatch."""
+    error_msg = f"Shape dimension mismatch: expected {expected_dims} dimensions, got {actual_dims}.\n"
+    error_msg += f"  Expected shape: {shape}\n"
+    error_msg += f"  Actual shape: {list(x.shape)}"
+    if msg is not None:
+        error_msg += f"\n  {msg}"
+    raise ShapeError(
+        error_msg,
+        actual_shape=list(x.shape),
+        expected_shape=shape,
+    )
+
+
+def _raise_shape_value_error(
+    i: int,
+    expected: int,
+    actual: int,
+    shape: list[str],
+    x: torch.Tensor,
+    msg: str | None,
+) -> None:
+    """Raise ShapeError for dimension value mismatch."""
+    error_msg = f"Shape mismatch at dimension {i}: expected {expected}, got {actual}.\n"
+    error_msg += f"  Expected shape: {shape}\n"
+    error_msg += f"  Actual shape: {list(x.shape)}"
+    if msg is not None:
+        error_msg += f"\n  {msg}"
+    raise ShapeError(
+        error_msg,
+        actual_shape=list(x.shape),
+        expected_shape=shape,
+    )
+
+
+def _validate_dimension_values(
+    shape_to_check: list[str],
+    x_shape_to_check: torch.Size,
+    shape: list[str],
+    x: torch.Tensor,
+    msg: str | None,
+    raises: bool,
+) -> bool:
+    """Validate each dimension value where shape spec is numeric. Returns False on mismatch if not raises."""
+    for i in range(len(x_shape_to_check)):
+        dim_spec: str = shape_to_check[i]
+        if not dim_spec.isnumeric():
+            continue
+        dim = int(dim_spec)
+        if x_shape_to_check[i] != dim:
+            if raises:
+                _raise_shape_value_error(
+                    i, dim, int(x_shape_to_check[i]), shape, x, msg,
+                )
+            return False
+    return True
+
+
 def KORNIA_CHECK_SHAPE(
-        x: torch.Tensor,
-        shape: list[str],
-        msg: str | None = None,
-        raises: bool = True) -> bool:
+    x: torch.Tensor,
+    shape: list[str],
+    msg: str | None = None,
+    raises: bool = True,
+) -> bool:
     """Check whether a tensor has a specified shape.
 
     The shape can be specified with a implicit or explicit list of strings.
@@ -74,56 +151,18 @@ def KORNIA_CHECK_SHAPE(
     if not torch.jit.is_scripting() and not _KORNIA_CHECKS_ENABLED:
         return True
 
-    if shape[0] == "*":
-        shape_to_check = shape[1:]
-        x_shape_to_check = x.shape[-len(shape) + 1:]
-    elif shape[-1] == "*":
-        shape_to_check = shape[:-1]
-        x_shape_to_check = x.shape[: len(shape) - 1]
-    else:
-        shape_to_check = shape
-        x_shape_to_check = x.shape
+    shape_to_check, x_shape_to_check = _resolve_shape_slices(shape, x)
 
     if len(x_shape_to_check) != len(shape_to_check):
         if raises:
-            expected_dims = len(shape_to_check)
-            actual_dims = len(x_shape_to_check)
-            error_msg = f"Shape dimension mismatch: expected {expected_dims} dimensions, got {actual_dims}.\n"
-            error_msg += f"  Expected shape: {shape}\n"
-            x_shape_list = list(x.shape)
-            error_msg += f"  Actual shape: {x_shape_list}"
-            if msg is not None:
-                error_msg += f"\n  {msg}"
-            raise ShapeError(
-                error_msg,
-                actual_shape=x_shape_list,
-                expected_shape=shape,
+            _raise_shape_count_error(
+                len(shape_to_check), len(x_shape_to_check), shape, x, msg,
             )
         return False
 
-    for i in range(len(x_shape_to_check)):
-        # The voodoo below is because torchscript does not like
-        # that dim can be both int and str
-        dim_: str = shape_to_check[i]
-        if not dim_.isnumeric():
-            continue
-        dim = int(dim_)
-        if x_shape_to_check[i] != dim:
-            if raises:
-                error_msg = f"Shape mismatch at dimension {i}: expected {dim}, got {
-                    x_shape_to_check[i]}.\n"
-                error_msg += f"  Expected shape: {shape}\n"
-                x_shape_list = list(x.shape)
-                error_msg += f"  Actual shape: {x_shape_list}"
-                if msg is not None:
-                    error_msg += f"\n  {msg}"
-                raise ShapeError(
-                    error_msg,
-                    actual_shape=x_shape_list,
-                    expected_shape=shape,
-                )
-            return False
-    return True
+    return _validate_dimension_values(
+        shape_to_check, x_shape_to_check, shape, x, msg, raises,
+    )
 
 
 def KORNIA_CHECK(

@@ -78,6 +78,42 @@ class Lamb(Optimizer):
 
         super().__init__(params, defaults)
 
+    def _update_param(
+        self,
+        p: torch.Tensor,
+        group: dict,
+        state: dict,
+        grad: torch.Tensor,
+    ) -> None:
+        """Update a single parameter with LAMB step."""
+        exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
+        beta1, beta2 = group["betas"]
+
+        state["step"] += 1
+        exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
+        exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
+
+        if self.debias:
+            bias_correction1 = 1 - beta1 ** state["step"]
+            bias_correction2 = 1 - beta2 ** state["step"]
+            step_size = group["lr"] * math.sqrt(bias_correction2) / bias_correction1
+        else:
+            step_size = group["lr"]
+
+        weight_norm = p.data.pow(2).sum().sqrt().clamp(0, self.clamp_value)
+        adam_step = exp_avg / exp_avg_sq.sqrt().add(group["eps"])
+        if group["weight_decay"] != 0:
+            adam_step.add_(p.data, alpha=group["weight_decay"])
+
+        adam_norm = adam_step.pow(2).sum().sqrt()
+        trust_ratio = 1 if (weight_norm == 0 or adam_norm == 0) else weight_norm / adam_norm
+        if self.adam:
+            trust_ratio = 1
+        state["weight_norm"] = weight_norm
+        state["adam_norm"] = adam_norm
+        state["trust_ratio"] = trust_ratio
+
+        p.data.add_(adam_step, alpha=-step_size * trust_ratio)
 
     def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         """Performs a single optimization step.
@@ -100,54 +136,11 @@ class Lamb(Optimizer):
                     raise RuntimeError(msg)
 
                 state = self.state[p]
-
-                # State initialization
                 if len(state) == 0:
                     state["step"] = 0
-                    # Exponential moving average of gradient values
                     state["exp_avg"] = torch.zeros_like(p.data)
-                    # Exponential moving average of squared gradient values
                     state["exp_avg_sq"] = torch.zeros_like(p.data)
 
-                exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
-                beta1, beta2 = group["betas"]
-
-                state["step"] += 1
-
-                # Decay the first and second moment running average coefficient
-                # m_t
-                exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
-                # v_t
-                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
-
-                # Paper v3 does not use debiasing.
-                if self.debias:
-                    bias_correction1 = 1 - beta1 ** state["step"]
-                    bias_correction2 = 1 - beta2 ** state["step"]
-                    step_size = group["lr"] * \
-                        math.sqrt(bias_correction2) / bias_correction1
-
-                else:
-                    step_size = group["lr"]
-
-                weight_norm = p.data.pow(
-                    2).sum().sqrt().clamp(0, self.clamp_value)
-
-                adam_step = exp_avg / exp_avg_sq.sqrt().add(group["eps"])
-                if group["weight_decay"] != 0:
-                    adam_step.add_(p.data, alpha=group["weight_decay"])
-
-                adam_norm = adam_step.pow(2).sum().sqrt()
-                if weight_norm == 0 or adam_norm == 0:
-                    trust_ratio = 1
-                else:
-                    trust_ratio = weight_norm / adam_norm
-                state["weight_norm"] = weight_norm
-                state["adam_norm"] = adam_norm
-                state["trust_ratio"] = trust_ratio
-                if self.adam:
-                    trust_ratio = 1
-
-                p.data.add_(adam_step, alpha=-step_size * trust_ratio)
+                self._update_param(p, group, state, grad)
 
         return loss

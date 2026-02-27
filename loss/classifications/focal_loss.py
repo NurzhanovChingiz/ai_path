@@ -15,7 +15,8 @@
 
 import numpy as np
 import torch
-from karina_focal_loss import focal_loss
+
+from loss.classifications.karina_focal_loss import focal_loss
 
 
 def softmax_np(logits: np.ndarray) -> np.ndarray:

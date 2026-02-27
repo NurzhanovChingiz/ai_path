@@ -1,5 +1,6 @@
 """MobileNet V2 model implementation."""
 from collections.abc import Callable
+from typing import cast
 
 from torch import Tensor, nn
 from torchvision.models import (  # type: ignore[import-untyped]
@@ -235,7 +236,7 @@ class MobileNetV2(nn.Module):
         out = self.features(x)
         out = self.avgpool(out)
         out = out.flatten(1)
-        return self.classifier(out)
+        return cast("Tensor", self.classifier(out))
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass (delegates to _forward_impl for torch.script)."""

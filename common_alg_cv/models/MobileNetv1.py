@@ -1,6 +1,7 @@
 """MobileNetV1 model implementation."""
 
 from collections.abc import Callable
+from typing import cast
 
 from torch import Tensor, nn
 
@@ -57,7 +58,7 @@ class MobileNetV1(nn.Module):
 
         out = self.avgpool(out)
         out = out.flatten(1)
-        return self.classifier(out)
+        return cast("Tensor", self.classifier(out))
 
 
     def _initialize_weights(self) -> None:

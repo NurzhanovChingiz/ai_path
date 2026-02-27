@@ -1,5 +1,7 @@
 """CNN model implementation."""
 
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -54,4 +56,4 @@ class CNNModel(nn.Module):
         x = x.flatten(1)
 
         # Linear function (readout)
-        return self.fc1(x)
+        return cast("torch.Tensor", self.fc1(x))

@@ -1,5 +1,7 @@
 """AlexNet model implementation."""
 
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -46,7 +48,7 @@ class AlexNet(nn.Module):
         x = self.features(x)
         x = self.avgpool(x)
         x = x.flatten(1)
-        return self.classifier(x)
+        return cast("torch.Tensor", self.classifier(x))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass (delegates to forward_impl for torch.script)."""

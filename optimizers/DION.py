@@ -6,11 +6,11 @@ import math
 import warnings
 from collections.abc import Callable
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import torch
 import torch.distributed as dist
-from torch import nn
+from torch import Tensor, nn
 from torch.distributed._tensor import DTensor, Shard
 from torch.optim.adamw import AdamW
 from torch.optim.optimizer import Optimizer, ParamsT
@@ -153,7 +153,7 @@ class DionOptimizer(Optimizer):
 
         return optimizer_map[optimizer_name]
 
-    def _is_matrix_param(self, param: torch.Tensor) -> bool:
+    def _is_matrix_param(self, param: Tensor) -> bool:
         """Determine if parameter should be treated as a matrix."""
         # Handle DTensor and FSDP wrapped parameters
         local_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
@@ -197,7 +197,7 @@ class DionOptimizer(Optimizer):
 
         self.scalar_optimizer = self.scalar_optimizer_class(scalar_groups)
 
-    def _get_lr_scale(self, param: torch.Tensor) -> float:
+    def _get_lr_scale(self, param: Tensor) -> float:
         """Get learning rate scaling factor based on parameter type and shape."""
         # Get actual tensor for shape calculation
         actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
@@ -214,7 +214,7 @@ class DionOptimizer(Optimizer):
             return math.sqrt(d_out / d_in)
         return 1.0
 
-    def _get_weight_decay(self, param: torch.Tensor) -> float:
+    def _get_weight_decay(self, param: Tensor) -> float:
         """Get weight decay for parameter type."""
         # Get actual tensor for dimension check
         actual_param = param._local_tensor if hasattr(param, "_local_tensor") else param  # noqa: SLF001
@@ -224,7 +224,7 @@ class DionOptimizer(Optimizer):
             return self.scalar_weight_decay
         return 0.0
 
-    def _get_param_info(self, param: torch.Tensor) -> dict[str, Any]:
+    def _get_param_info(self, param: Tensor) -> dict[str, Any]:
         """Get sharding information for a parameter."""
         info = {
             "is_dtensor": isinstance(param, DTensor),
@@ -248,7 +248,7 @@ class DionOptimizer(Optimizer):
 
         return info
 
-    def _init_matrix_state(self, param: torch.Tensor) -> dict[str, Any]:
+    def _init_matrix_state(self, param: Tensor) -> dict[str, Any]:
         """Initialize state for matrix parameter."""
         state = {}
         param_info = self._get_param_info(param)
@@ -278,15 +278,15 @@ class DionOptimizer(Optimizer):
 
         return state
 
-    def _normalize_columns(self, matrix: torch.Tensor) -> torch.Tensor:
+    def _normalize_columns(self, matrix: Tensor) -> Tensor:
         """Normalize columns of matrix to unit norm."""
         norms = torch.norm(matrix, dim=0, keepdim=True)
         norms = torch.clamp(norms, min=1e-8)
         return matrix / norms
 
     def _power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+        self, B: Tensor, Q_prev: Tensor,
+    ) -> tuple[Tensor, Tensor]:
         """Single step of power iteration for low-rank approximation."""
         # P = BQ (left factor)
         P = torch.mm(B, Q_prev)
@@ -300,8 +300,8 @@ class DionOptimizer(Optimizer):
         return P, R
 
     def _distributed_power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+        self, B: Tensor, Q_prev: Tensor,
+    ) -> tuple[Tensor, Tensor]:
         """Distributed power iteration (Algorithm 3, lines 5-6 in the paper)."""
         # P = BQ with local computation
         P_local = torch.mm(B, Q_prev)
@@ -315,7 +315,7 @@ class DionOptimizer(Optimizer):
 
         return P, R
 
-    def _orthogonalize_matrix(self, matrix: torch.Tensor) -> torch.Tensor:
+    def _orthogonalize_matrix(self, matrix: Tensor) -> Tensor:
         """Orthogonalize matrix using QR decomposition."""
         try:
             Q, _ = torch.linalg.qr(matrix)
@@ -326,7 +326,7 @@ class DionOptimizer(Optimizer):
             Q, _ = torch.linalg.qr(matrix_stabilized)
         return Q  # type: ignore[no-any-return]
 
-    def _distributed_orthogonalize(self, matrix: torch.Tensor) -> torch.Tensor:
+    def _distributed_orthogonalize(self, matrix: Tensor) -> Tensor:
         """Distributed orthogonalization using randomized Cholesky QR (Algorithm 2 in the paper)."""
         m, r = matrix.shape
         k = max(r, int(self.oversampling_factor * r))
@@ -365,15 +365,15 @@ class DionOptimizer(Optimizer):
                     return Q  # type: ignore[no-any-return]
 
         # Final orthogonalized result
-        return torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t()
+        return cast("Tensor", torch.linalg.solve_triangular(R2.t(), B.t(), upper=False).t())
 
-    def _distributed_column_normalize(self, matrix: torch.Tensor) -> torch.Tensor:
+    def _distributed_column_normalize(self, matrix: Tensor) -> Tensor:
         """Distributed column normalization."""
         # For local computation ala FSDP2, we just normalize columns directly (unlike Muon)
         return self._normalize_columns(matrix)
 
     def _step_matrix_param(
-        self, param: torch.Tensor, grad: torch.Tensor, group: dict[str, Any], state: dict[str, Any],
+        self, param: Tensor, grad: Tensor, group: dict[str, Any], state: dict[str, Any],
     ) -> None:
         """Perform Dion update step for matrix parameter."""
         momentum = group["momentum"]
@@ -431,9 +431,7 @@ class DionOptimizer(Optimizer):
         # Power iteration: approximate B_t ≈ P_t R_t^T
         try:
             if param_info["is_dtensor"] or param_info["is_fsdp"]:
-                P, R = self._distributed_power_iteration(
-                    buffer, right_factor, param_info,
-                )
+                P, R = self._distributed_power_iteration(buffer, right_factor)
             else:
                 P, R = self._power_iteration(buffer, right_factor)
         except RuntimeError as e:
@@ -483,7 +481,7 @@ class DionOptimizer(Optimizer):
                 if self._is_matrix_param(param):
                     # Initialize state if needed
                     if param not in self.state:
-                        self.state[param] = self._init_matrix_state(param, group)
+                        self.state[param] = self._init_matrix_state(param)
 
                     self._step_matrix_param(param, param.grad, group, self.state[param])
 

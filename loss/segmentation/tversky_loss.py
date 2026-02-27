@@ -11,7 +11,8 @@
 
 import numpy as np
 import torch
-from karina_tversky_loss import tversky_loss
+
+from loss.segmentation.karina_tversky_loss import tversky_loss
 
 # numpy implementation
 

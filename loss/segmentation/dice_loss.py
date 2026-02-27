@@ -13,7 +13,8 @@
 # when overlap is the main goal under imbalance
 import numpy as np
 import torch
-from karina_dice_loss import dice_loss
+
+from loss.segmentation.karina_dice_loss import dice_loss
 
 # numpy implementation
 

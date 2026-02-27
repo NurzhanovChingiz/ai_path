@@ -1,5 +1,6 @@
 """ResNet model implementation."""
 from collections.abc import Callable
+from typing import cast
 
 import torch
 from torch import Tensor, nn
@@ -88,7 +89,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        return self.relu(out)
+        return cast("Tensor", self.relu(out))
 
 class Bottleneck(nn.Module):
     """Bottleneck block implementation."""
@@ -153,7 +154,7 @@ class Bottleneck(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        return self.relu(out)  # type: ignore[no-any-return]
+        return cast("Tensor", self.relu(out))
 
 class ResNet(nn.Module):
     """ResNet model implementation."""
@@ -253,7 +254,7 @@ class ResNet(nn.Module):
                 norm_layer(planes * block.expansion),
             )
 
-        layers = []
+        layers: list[nn.Module] = []
         layers.append(
             block(
                 self.inplanes, planes, stride, downsample, self.groups, self.base_width, previous_dilation, norm_layer,
@@ -261,7 +262,7 @@ class ResNet(nn.Module):
         )
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
-            layers.extend(
+            layers.append(# noqa: PERF401
                 block(
                     self.inplanes,
                     planes,
@@ -296,7 +297,7 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = x.flatten(1)
 
-        return self.fc(x)
+        return cast("Tensor", self.fc(x))
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass through the ResNet model.

@@ -11,7 +11,8 @@
 
 import numpy as np
 import torch
-from korina_charbonnier_loss import charbonnier_loss
+
+from loss.regression.korina_charbonnier_loss import charbonnier_loss
 
 # numpy implementation
 

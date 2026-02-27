@@ -1,4 +1,6 @@
 """VGG model implementation."""
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -37,7 +39,7 @@ class VGG(nn.Module):
         if init_weights:
             self._initialize_weights()
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor | None:
         """Forward pass through the VGG model.
 
         Args:
@@ -52,7 +54,7 @@ class VGG(nn.Module):
             self.classifier.dropout2 = nn.Identity()
         x = self.features(x)
         x = x.flatten(1)
-        return self.classifier(x)
+        return cast("torch.Tensor | None", self.classifier(x))
 
     def _initialize_weights(self) -> None:
         """Initialize the weights of the VGG model.

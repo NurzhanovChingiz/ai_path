@@ -2,11 +2,14 @@
 
 from typing import Any
 
+from PIL import Image
 from torch import Tensor, tensor
 from torch.utils.data import Dataset
 
-from ..read_img import read_image  # type: ignore[import-not-found]
 
+def read_image(img_path: str) -> Image.Image:
+    """Read an image from the given path."""
+    return Image.open(img_path)
 
 class MNISTImageDataset(Dataset):
     """PyTorch Dataset for MNIST images loaded from disk by file path."""

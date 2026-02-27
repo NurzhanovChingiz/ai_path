@@ -118,13 +118,14 @@ def train(
         raise ValueError(msg)
     size = len(dataloader.dataset)  # type: ignore[arg-type]
 
-    model.train()
+    model.to(device).train()
     if prefetcher is None:
         msg = "CUDAPrefetcher is required for train()"
         raise ValueError(msg)
     batch = prefetcher.next()
-    loss_train = 0
-    count = 0
+    batch = move_to_device(batch, device)
+    loss_train: float = 0.0
+    count: int = 0
     while batch is not None:
         count += 1
         # unpack according to your dataset
@@ -133,6 +134,7 @@ def train(
             targets = batch["targets"]
         else:
             inputs, targets = batch  # (inputs, targets) tuple
+        inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         pred = model(inputs)
         loss = loss_fn(pred, targets)

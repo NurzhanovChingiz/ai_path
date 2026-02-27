@@ -40,6 +40,12 @@ extend-select = [
   "PT",   # flake8-pytest-style
   "RET",  # flake8-return
   "SLF",  # flake8-self
+  "SLOT", # flake8-slots
+  "TID",  # flake8-tidy-imports
+  "TC",   # flake8-type-checking
+  "ARG",  # flake8-unused-arguments
+
+
 
   "PL",   # Pylint
   "RUF",  # Ruff

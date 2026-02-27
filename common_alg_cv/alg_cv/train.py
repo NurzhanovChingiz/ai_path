@@ -1,7 +1,9 @@
 """Training functions for PyTorch models."""
 
-from collections.abc import Sized
-from typing import cast
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from collections.abc import Sized
 
 import torch
 from torch import nn
@@ -28,7 +30,7 @@ def train(
     """
     model.train()
     batch_idx: int = 0
-    size: int = len(cast(Sized, dataloader.dataset))
+    size: int = len(cast("Sized", dataloader.dataset))
     for batch_idx, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
         optimizer.zero_grad()

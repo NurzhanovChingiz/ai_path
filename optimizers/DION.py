@@ -248,7 +248,7 @@ class DionOptimizer(Optimizer):
 
         return info
 
-    def _init_matrix_state(self, param: torch.Tensor, group: dict[str, Any]) -> dict[str, Any]:
+    def _init_matrix_state(self, param: torch.Tensor) -> dict[str, Any]:
         """Initialize state for matrix parameter."""
         state = {}
         param_info = self._get_param_info(param)
@@ -300,7 +300,7 @@ class DionOptimizer(Optimizer):
         return P, R
 
     def _distributed_power_iteration(
-        self, B: torch.Tensor, Q_prev: torch.Tensor, param_info: dict,
+        self, B: torch.Tensor, Q_prev: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Distributed power iteration (Algorithm 3, lines 5-6 in the paper)."""
         # P = BQ with local computation
@@ -551,7 +551,6 @@ def create_dion_optimizer(
     lr: float = 0.01,
     rank_factor: float = 0.25,
     scalar_optimizer: str = "adamw",
-    sharding_strategy: ShardingStrategy = ShardingStrategy.FULL_SHARD,
     **kwargs: Any,
 ) -> DionOptimizer:
     """Create a Dion optimizer with recommended settings.
